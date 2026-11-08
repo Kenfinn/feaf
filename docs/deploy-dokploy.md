@@ -48,7 +48,7 @@ Tab **General**, bagian **Provider**:
 |---|---|
 | Provider | GitHub |
 | Repository | `<owner>/FEAF` |
-| Branch | `feature/blissful-clarke-9iuasr` (atau `main` setelah digabung) |
+| Branch | `main` |
 | Build Path | `/` |
 
 Bagian **Build Type**: pilih **Dockerfile**, dengan Docker File `Dockerfile`.
