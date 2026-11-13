@@ -79,9 +79,9 @@ Jawab langsung di dokumen ini atau di chat tim. Cukup "setuju" atau koreksinya.
    data 10 Nov, 7 dari 55 pengumuman pasal 20 jatuh ke "remeh" (sewa ruang beberapa
    juta NTD). Batas ini wajar menurut kalian?
 
-## Keputusan tim (jawaban anggota tim keuangan, 11 Nov)
+## Keputusan tim (jawaban tim keuangan, 11 Nov)
 
-Sumber: jawaban anggota tim keuangan atas PDF `docs/untuk-tim/Pertanyaan-Pasal-11-22-FEAF.pdf`
+Sumber: jawaban tim keuangan atas PDF `docs/untuk-tim/Pertanyaan-Pasal-11-22-FEAF.pdf`
 (Q1–Q9) dan pertanyaan susulannya. Bagian ini menjadi spesifikasi B1. Bila bertentangan
 dengan tabel "Usulan" di atas, bagian ini yang berlaku.
 
@@ -119,7 +119,7 @@ sekarang ada ditampilkan sebagai skenario "bila terealisasi", tidak sebagai valu
 Terpasang di `app/agent/screen.py` (jalur per pasal), `app/agent/sinyal.py` (pengurai),
 `app/ambang_profil.py` (ambang per profil risiko), `app/agent/pipeline.py` (keputusan),
 `app/templates/_sinyal.html` (tampilan). Ambang dipilih lewat profil risiko (konservatif /
-moderat / agresif); moderat = jawaban anggota tim keuangan, dua lainnya usulan tim teknis yang menunggu cek tim:
+moderat / agresif); moderat = jawaban tim keuangan, dua lainnya usulan tim teknis yang menunggu cek tim:
 
 | Ambang | Konservatif | Moderat | Agresif |
 |---|---|---|---|
@@ -131,7 +131,7 @@ moderat / agresif); moderat = jawaban anggota tim keuangan, dua lainnya usulan t
 | Rasio utang laporan kuartal (liabilitas ÷ aset), kalibrasi 11 Nov | ≥ 40% | ≥ 50% | ≥ 65% |
 | Pinjaman dana pasal 23 ÷ ekuitas = perlu diperhatikan, kalibrasi 11 Nov | ≥ 40% | ≥ 40% | ≥ 40% |
 
-Kalibrasi 11 Nov dari gold set anggota tim keuangan: lihat [`hasil-gold-set.md`](./hasil-gold-set.md).
+Kalibrasi 11 Nov dari gold set tim keuangan: lihat [`hasil-gold-set.md`](./hasil-gold-set.md).
 Juga: saham baru yang jumlahnya tidak terbaca = perlu diperhatikan; pasal 20 dengan anak
 perusahaan 100% = arsip.
 
@@ -141,7 +141,7 @@ longgar (konservatif). Pilihan sementara tim teknis sambil menunggu tim:
 - Pasal 23 memakai ambang serius yang sama dengan pasal 22, ditambah "perlu diperhatikan" mulai 40% ekuitas (batas regulasi).
 - Pasal 1, 3, 40 → selalu HELD (boleh disetujui setelah ditinjau). Butir nama di pasal 1
   (公司名稱(或負責人姓名)) tidak diambil karena bisa nama orang.
-- Pasal 51/53, 6, 10, 26, 28 → dilewati. Pasal 7/8 → sinyal tata kelola (jawaban anggota tim keuangan 11 Nov).
+- Pasal 51/53, 6, 10, 26, 28 → dilewati. Pasal 7/8 → sinyal tata kelola (jawaban tim keuangan 11 Nov).
 - Pasal 31 → ringkasan angka dari isi pengumuman (pendapatan, laba, EPS, aset, liabilitas,
   ekuitas YTD), lalu valuasi otomatis emiten watchlist dibangun ulang.
 
@@ -149,7 +149,7 @@ Hasil pada 578 pengumuman asli 10 Nov (tanpa model): 177 laporan, 38 sinyal penj
 pinjaman, dan 26 sinyal modal terbit; 6 risiko serius dan 4 kejadian berat ditahan untuk
 manusia; 783 halaman sinyal tampil di tiga bahasa tanpa galat.
 
-### Jawaban lanjutan anggota tim keuangan (11 Nov siang) dan implementasinya
+### Jawaban lanjutan tim keuangan (11 Nov siang) dan implementasinya
 
 | Pasal | Jawaban | Implementasi |
 |---|---|---|
@@ -159,7 +159,7 @@ manusia; 783 halaman sinyal tampil di tiga bahasa tanpa galat.
 | 8 (pejabat) | Penting, perlu info | Sinyal tata kelola. Jabatan kunci (keuangan, akuntansi, audit internal, CEO/direktur utama/presiden/COO, ketua direksi) yang keluar (辭職/資遣/解任/死亡) = Perlu diperhatikan. Jabatan kunci lain = Info (konservatif: Perlu diperhatikan). Jabatan lain = Info |
 
 Nama akuntan dan pejabat tidak diambil: butir berlabel 姓名 tidak dikutip dan teks bebas
-異動原因 tidak dipakai. Usulan tingkat di atas dari tim teknis, perlu dicek anggota tim keuangan.
+異動原因 tidak dipakai. Usulan tingkat di atas dari tim teknis, perlu dicek tim keuangan.
 
 ### Masih terbuka
 
