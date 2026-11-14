@@ -1,18 +1,18 @@
-# Evaluasi Tanya FEAF — Percakapan Multi-Giliran (C6)
+# Ask FEAF Evaluation — Multi-Turn Conversation (C6)
 
-- Waktu: 2026-11-12T15:04:27+00:00
-- Model: **tanpa model (jalur aturan)**
+- Time: 2026-11-12T15:04:27+00:00
+- Model: **no model (rule path)**
 
-| Metrik | Nilai |
+| Metric | Value |
 |---|---|
-| Giliran tepat / total | 36/36 (100%) |
-| Skenario tepat semua giliran | 12/12 (100%) |
-| Kata rekomendasi yang lolos | 0 |
-| Riwayat tidak sah / injeksi yang dibuang | 1 |
-| Jalur jawaban | template 28, recap_template 5, tolak 3 |
-| Latensi rata-rata / maks per giliran | 2 / 42 ms |
-| Panggilan alat / model | 31 / 0 |
+| Correct turns / total | 36/36 (100%) |
+| Scenarios correct on every turn | 12/12 (100%) |
+| Recommendation words that got through | 0 |
+| Invalid history / injection discarded | 1 |
+| Answer path | template 28, recap_template 5, tolak (refusal) 3 |
+| Average / max latency per giliran | 2 / 42 ms |
+| Tool / model calls | 31 / 0 |
 
-## Giliran yang tidak tepat
+## Incorrect turns
 
-Tidak ada.
+None.

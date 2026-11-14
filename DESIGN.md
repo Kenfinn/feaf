@@ -1,33 +1,33 @@
-# DESIGN.md: arah tampilan FEAF
+# DESIGN.md: FEAF's visual direction
 
-Dibaca oleh agent pembuat kode (anti-slop) sebelum mengubah tampilan. Tampilan FEAF sudah
-ada; pekerjaan baru mengikuti gaya ini, tidak membuat gaya baru.
+Read by the coding agent (anti-slop) before changing the look. FEAF's interface already
+exists; new work follows this style and does not invent a new one.
 
-## Untuk siapa
+## Who it is for
 
-Investor ritel dan analis di Taiwan, juri lomba, dan tim. Mereka membaca angka dan
-sumbernya. Layar harus padat informasi, tenang, dan mudah dicocokkan dengan dokumen asli.
+Retail investors and analysts in Taiwan, competition judges, and the team. They read numbers
+and their sources. The screen must be information-dense, calm, and easy to match against the original document.
 
-## Bahan yang sudah ada (pakai, jangan ganti)
+## Existing materials (use them, do not replace)
 
-- Warna di `app/static/app.css` `:root`: `--navy` untuk menu dan tombol utama, `--naik`
-  merah untuk harga naik, `--turun` hijau untuk harga turun (konvensi bursa Taiwan),
-  `--amber` untuk status ditahan atau peringatan, `--tolak` untuk gagal, abu untuk teks
-  sekunder.
-- Huruf: Instrument Sans untuk teks, IBM Plex Mono untuk angka, kode saham, dan data.
-- Komponen: `.kartu` (blok isi), `.kv` (baris label dan nilai), `.cek` (baris
-  pemeriksaan ✓/✕), `.lencana` (status), `.pita` (pemberitahuan; `.fixture` kuning,
-  `.nyata` hijau, `.bahaya` merah), `.tombol`, `.tombol.tipis`, `.tombol.abu`, tabel `.wl`.
-- Server-rendered Jinja2. Tanpa framework JavaScript, tanpa build step, tanpa CDN baru.
+- Colors in `app/static/app.css` `:root`: `--navy` for the menu and primary buttons, `--naik`
+  (up) red for rising prices, `--turun` (down) green for falling prices (Taiwan exchange convention),
+  `--amber` for the held status or warnings, `--tolak` (reject) for failure, gray for secondary
+  text.
+- Fonts: Instrument Sans for text, IBM Plex Mono for numbers, stock codes, and data.
+- Components: `.kartu` (card, a content block), `.kv` (a label and value row), `.cek` (a
+  check row ✓/✕), `.lencana` (badge, status), `.pita` (banner, notification; `.fixture` yellow,
+  `.nyata` (real) green, `.bahaya` (danger) red), `.tombol` (button), `.tombol.tipis` (thin), `.tombol.abu` (gray), the `.wl` table.
+- Server-rendered Jinja2. No JavaScript framework, no build step, no new CDN.
 
-## Aturan
+## Rules
 
-- Angka selalu rata kanan dan memakai huruf mono. Format angka lewat filter `rb` dan `pct`
-  (mengikuti bahasa).
-- Setiap angka yang berasal dari sumber luar punya tautan atau keterangan sumber di dekatnya.
-- Status memakai nama state brief: PUBLISHED, HELD, ARCHIVED.
-- Semua teks lewat `t()` di `app/i18n.py`, tiga bahasa.
-- Tidak ada gradien, bayangan tebal, ikon dekoratif, atau animasi. Emoji hanya 👍/👎 yang
-  sudah dipakai.
-- Halaman baru meniru struktur halaman yang ada: `.kepala` (kicker + judul), lalu kartu.
-- Penafian riset tampil sebagai `.pita.fixture` di halaman analisis.
+- Numbers are always right-aligned and use the mono font. Number formatting goes through the filters `rb` and `pct`
+  (following the language).
+- Every number that comes from an outside source has a link or source note near it.
+- Statuses use the brief's state names: PUBLISHED, HELD, ARCHIVED.
+- All text goes through `t()` in `app/i18n.py`, three languages.
+- No gradients, heavy shadows, decorative icons, or animation. The only emoji are the 👍/👎 that
+  are already in use.
+- A new page copies the structure of existing pages: `.kepala` (header: kicker + title), then cards.
+- The research disclaimer is shown as `.pita.fixture` on analysis pages.

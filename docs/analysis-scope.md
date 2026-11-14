@@ -1,134 +1,132 @@
-# Lingkup Analisis Finansial — Keputusan Setelah Diskusi 13–14 Sep
+# Financial Analysis Scope — Decisions After the 13–14 Sep Discussion
 
-Versi lengkap: (private design canvas, not published)
+Full version: (private design canvas, not published)
 
 ---
 
-## 1. Valuasi tetap dibangun
+## 1. Valuation is still built
 
-Pertanyaan yang muncul: kalau ramalan harga tidak perlu dibangun, apakah valuasi juga tidak perlu?
+The question that came up: if price forecasting does not need to be built, does valuation not
+need to be either?
 
-**Perlu.** Deskripsi tantangan menyebut *"investment models"* secara eksplisit sebagai bagian
-yang harus diintegrasikan. Batasnya bukan antara meramal dan tidak meramal, tapi antara
-**angka yang bisa ditelusuri juri** dan angka yang tidak.
+**It does.** The challenge description explicitly names *"investment models"* as a part that
+must be integrated. The line is not between forecasting and not forecasting, but between
+**figures the judges can trace** and figures they cannot.
 
-| Bisa diverifikasi | Tidak bisa diverifikasi |
+| Verifiable | Not verifiable |
 |---|---|
-| Input dari laporan MOPS, tiap angka bisa diklik ke sumbernya | "Harga akan naik ke NT$120 bulan depan" |
-| Asumsi (growth, WACC, terminal multiple) tampil di layar dan bisa diubah | Model ML yang mengeluarkan target harga tanpa asumsi terbaca |
-| Output berupa rentang nilai wajar | Sinyal beli/jual tanpa penjelasan |
-| Sensitivity analysis menunjukkan kerapuhan hasil | Skor gabungan dengan bobot tak diungkap |
+| Inputs from MOPS reports, every figure clickable to its source | "The price will rise to NT$120 next month" |
+| Assumptions (growth, WACC, terminal multiple) shown on screen and changeable | An ML model that outputs a target price without readable assumptions |
+| Output as a fair-value range | Buy/sell signals without explanation |
+| Sensitivity analysis showing how fragile the result is | A composite score with undisclosed weights |
 
-Tiga syarat yang membuatnya aman:
+Three conditions that make it safe:
 
-1. Setiap input model wajib membawa sitasi ke dokumen sumbernya.
-2. Asumsi harus terlihat dan bisa diubah — DCF dengan asumsi tersembunyi itu ramalan yang menyamar.
-3. Jangan keluarkan kata "BELI" telanjang. Keluarkan rentang nilai wajar versus harga pasar,
-   asumsi yang menghasilkannya, dan apa yang harus terjadi supaya kesimpulan itu salah.
+1. Every model input must carry a citation to its source document.
+2. Assumptions must be visible and changeable — a DCF with hidden assumptions is a forecast in disguise.
+3. Never output a bare "BUY". Output a fair-value range versus the market price, the
+   assumptions that produce it, and what would have to happen for the conclusion to be wrong.
 
-### Monte Carlo — penyebutan menentukan
+### Monte Carlo — the wording decides
 
-- ❌ "72% kemungkinan saham ini naik." → pernyataan tentang masa depan, tidak bisa dibuktikan.
-- ✅ "Dengan sebaran asumsi ini, nilai wajar melampaui harga pasar pada 72% dari 10.000 simulasi."
-  → pernyataan tentang model, bisa direproduksi dan diaudit.
-
----
-
-## 2. Dua arah produk harus disatukan
-
-Setelah diskusi, ada dua produk berbeda di kepala tim:
-
-- **Arah A** — agen pemantau: memantau pengumuman, kirim peringatan. Dipicu peristiwa.
-- **Arah B** — agen riset ekuitas: hitung rasio dan valuasi mendalam. Dipicu pertanyaan.
-
-Dalam 32 hari dengan satu orang teknis, dua-duanya tidak mungkin. Penyatuannya:
-
-> **Valuasi jadi mesinnya. Pemantauan jadi pemicunya.** Ketika ada pengumuman material untuk
-> saham di watchlist, agent menghitung ulang valuasinya dan memberi tahu apakah kesimpulan
-> undervalued/overvalued *berubah* — dan asumsi mana yang bergeser.
-
-```
-pengumuman baru → tarik angka terbaru → hitung ulang valuasi
-  → bandingkan dengan kesimpulan lama → [berubah?] → kirim peringatan bersitasi
-  → reaksi user → setel ambang
-```
-
-Kalimat scope yang diperbarui:
-
-> "Agen yang menilai kewajaran harga saham dari laporan keuangan resmi, memantau pengumuman
-> baru, dan memberi tahu investor ketika ada kejadian yang mengubah kesimpulan itu — lengkap
-> dengan sumber dan asumsinya."
-
-Ini juga menjawab "kenapa bukan Excel?" dengan telak: Excel tidak tahu kapan harus dihitung ulang.
+- ❌ "There is a 72% chance this stock goes up." → a statement about the future, cannot be proven.
+- ✅ "Under this distribution of assumptions, fair value exceeds the market price in 72% of 10,000 simulations."
+  → a statement about the model, reproducible and auditable.
 
 ---
 
-## 3. Prioritas analisis sampai 16 Oktober
+## 2. The two product directions must be merged
 
-| Prioritas | Yang dibangun | Alasan |
+After the discussion, the team had two different products in mind:
+
+- **Direction A** — monitoring agent: watches announcements, sends alerts. Event-triggered.
+- **Direction B** — equity research agent: computes ratios and in-depth valuation. Question-triggered.
+
+In 32 days with one technical person, both are impossible. The merge:
+
+> **Valuation is the engine. Monitoring is the trigger.** When a material announcement arrives for
+> a stock on the watchlist, the agent recalculates its valuation and tells the user whether the
+> undervalued/overvalued conclusion *changed* — and which assumption shifted.
+
+```
+new announcement → pull the latest figures → recalculate valuation
+  → compare with the old conclusion → [changed?] → send a cited alert
+  → user reaction → tune the threshold
+```
+
+The updated scope sentence:
+
+> "An agent that judges whether a stock price is fair from official financial reports, monitors
+> new announcements, and tells investors when an event changes that conclusion — complete
+> with sources and assumptions."
+
+This also answers "why not Excel?" decisively: Excel does not know when to recalculate.
+
+---
+
+## 3. Analysis priorities until 16 October
+
+| Priority | What gets built | Reason |
 |---|---|---|
-| **Wajib** | CAGR, EBIT margin, D/E, ROA, ROE, dividend payout & yield | Dihitung langsung dari baris laporan. Deterministik, bisa disitasi, cepat. |
-| **Wajib** | Unlevered DCF 2-stage | Satu model valuasi cukup membuktikan konsep. Paling detail dan paling bisa dipertahankan. |
-| **Wajib** | Sensitivity analysis (WACC × terminal growth) | Murah dihitung, dan elemen demo paling meyakinkan. |
-| Kalau sempat | Exit multiple sebagai terminal value kedua, dirata-rata dengan perpetuity | Murah ditambahkan setelah DCF jalan. |
-| Kalau sempat | Monte Carlo | Efek naratif besar, tapi hanya dengan penyebutan yang benar. |
-| **Tunda** | SOTP | Butuh data per segmen yang sulit diambil dari MOPS, hanya berlaku untuk perusahaan multi-lini. Masukkan ke halaman "pengembangan ke depan" di deck. |
+| **Must** | CAGR, EBIT margin, D/E, ROA, ROE, dividend payout & yield | Computed directly from report rows. Deterministic, citable, fast. |
+| **Must** | Unlevered DCF 2-stage | One valuation model is enough to prove the concept. Most detailed and most defensible. |
+| **Must** | Sensitivity analysis (WACC × terminal growth) | Cheap to compute, and the most convincing demo element. |
+| If time allows | Exit multiple as a second terminal value, averaged with the perpetuity | Cheap to add once the DCF works. |
+| If time allows | Monte Carlo | Large narrative effect, but only with the correct wording. |
+| **Postpone** | SOTP | Needs per-segment data that is hard to extract from MOPS, and applies only to multi-line companies. Put it on the "future development" slide in the deck. |
 
-### Poin arsitektur
+### Architecture point
 
-Semua perhitungan di atas adalah **kalkulator deterministik**, bukan keluaran AI. Akibatnya:
+All of the calculations above are **deterministic calculators**, not AI output. As a result:
 
-1. Tidak ada risiko halusinasi pada angkanya — masalah verifikasi sebagian besar hilang.
-2. Ceritanya justru lebih agentic: tugas agent bukan berhitung, tapi *memilih* analisis mana yang
-   dijalankan, *mengumpulkan dan memvalidasi* inputnya, *menafsirkan*, dan *menjelaskan*.
+1. There is no hallucination risk on the figures — most of the verification problem disappears.
+2. The story is actually more agentic: the agent's job is not to calculate, but to *choose* which
+   analysis to run, *collect and validate* its inputs, *interpret*, and *explain*.
 
-Pengetahuan finansial masuk sebagai **tool yang dikodekan**, bukan sebagai prompt.
-
----
-
-## 4. Koreksi metodologi wawancara
-
-Rencana wawancara yang disusun untuk membenarkan rencana produk menghasilkan bukti lemah.
-Kriteria yang dinilai adalah *kualitas validasi kebutuhan*, dan wawancara yang menggiring mudah
-dikenali juri.
-
-**Cara bertanya:**
-- Mulai terbuka sebelum menyebut konsep apa pun: "Ceritakan terakhir kali kamu mempertimbangkan
-  beli saham. Apa yang kamu cari? Di mana? Berapa lama?"
-- Jangan sebut kata "rasio" sampai mereka yang menyebut duluan.
-- Tanya apa yang bikin mereka *batal* beli — biasanya di situ pain point sebenarnya.
-- Catat juga jawaban yang tidak cocok dengan rencana.
-
-**Bukti paling kuat:** tunjukkan satu hal yang diubah gara-gara wawancara. Satu slide seperti itu
-mengalahkan sepuluh kutipan yang kebetulan setuju.
-
-**Soal narasumber:** utamakan orang yang benar-benar pernah membeli saham, sekecil apa pun
-nominalnya. Narasumber yang tidak pernah berinvestasi menjawab secara hipotetis.
-
-Dua catatan administratif: tim yang melakukan validasi lapangan nyata wajib menunjuk
-**field liaison**, dan bukti wawancara di deck harus sudah di-de-identifikasi karena penilaian
-penyisihan bersifat anonim.
+Financial knowledge enters as **coded tools**, not as a prompt.
 
 ---
 
-## 5. Jawaban singkat untuk pertanyaan lain
+## 4. Correcting the interview methodology
 
-**Bentuk output — 50/50 fundamental dan analytics?** Jangan dibagi berdasarkan teknik, bagi
-berdasarkan urutan pengambilan keputusan: (1) kesimpulan undervalued/overvalued berikut
-rentangnya; (2) kenapa — 3–4 rasio penentu, masing-masing bersitasi; (3) apa yang bisa
-mengubahnya — sensitivity dan asumsi paling rapuh; (4) apa yang sedang terjadi — pengumuman
-terbaru yang menyentuh kesimpulan itu.
+An interview plan built to justify the product plan produces weak evidence. The criterion being
+scored is the *quality of need validation*, and leading interviews are easy for judges to spot.
 
-**Fisher-Yates?** Tidak ada tempatnya sebagai fitur — itu algoritma pengacak urutan. Kegunaan sah
-di sini: mengacak urutan soal uji supaya evaluasi tidak bias urutan, atau sampling untuk uji
-holdout. Layak satu baris di metodologi, jangan masuk deck sebagai teknik.
+**How to ask:**
+- Start open, before mentioning any concept: "Tell me about the last time you considered buying
+  a stock. What were you looking for? Where? For how long?"
+- Do not say the word "ratio" until they say it first.
+- Ask what made them *back out* of buying — that is usually where the real pain point is.
+- Also record answers that do not fit the plan.
 
-**Fuzzy logic?** Bisa dipakai mengubah rasio kontinu jadi label ("margin sehat"), dan itu sah.
-Tapi ambang batas eksplisit melakukan pekerjaan yang sama, lebih mudah dijelaskan saat tanya
-jawab, dan asal angkanya bisa disitasi ke wawancara atau tolok ukur industri. Pakai ambang
-eksplisit dulu.
+**Strongest evidence:** show one thing that was changed because of the interviews. One slide like
+that beats ten quotes that happen to agree.
 
-**5 emiten yang beda-beda.** Setuju beda sektor, tambah tiga syarat: laporannya lengkap dan
-formatnya konsisten; minimal satu punya pengumuman material yang baru terbit (supaya demo
-pemantauan ada isinya); minimal satu perusahaan multi-lini kalau SOTP disimpan sebagai rencana
-lanjutan.
+**On interviewees:** prefer people who have actually bought stocks, however small the amount.
+Interviewees who have never invested answer hypothetically.
+
+Two administrative notes: teams that do real field validation must appoint a
+**field liaison**, and the interview evidence in the deck must be de-identified because the
+preliminary-round judging is anonymous.
+
+---
+
+## 5. Short answers to other questions
+
+**Output form — 50/50 fundamental and analytics?** Do not split by technique, split by the order
+of decision-making: (1) the undervalued/overvalued conclusion with its range; (2) why — the 3–4
+deciding ratios, each cited; (3) what could change it — sensitivity and the most fragile
+assumption; (4) what is happening now — the latest announcements touching that conclusion.
+
+**Fisher-Yates?** It has no place as a feature — it is a shuffling algorithm. Legitimate uses
+here: shuffling the order of test questions so evaluation is not order-biased, or sampling for a
+holdout test. Worth one line in the methodology, do not put it in the deck as a technique.
+
+**Fuzzy logic?** It can be used to turn continuous ratios into labels ("healthy margin"), and
+that is legitimate. But explicit thresholds do the same job, are easier to explain in Q&A, and
+their origin can be cited to interviews or industry benchmarks. Use explicit thresholds first.
+
+**The 5 different issuers.** Agree they should be from different sectors, with three added
+conditions: the reports are complete and consistently formatted; at least one has a recently
+published material announcement (so the monitoring demo has content); and at least one is a
+multi-line company if SOTP is kept as a future plan.

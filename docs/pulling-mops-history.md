@@ -1,91 +1,91 @@
-# Menarik riwayat pengumuman MOPS → server FEAF
+# Pulling MOPS announcement history → the FEAF server
 
-**Kenapa perlu:** server hanya bisa menarik pengumuman **hari berjalan** (OpenAPI bursa).
-Riwayat sebelumnya, yang dibutuhkan untuk gold set dan demo, hanya ada di MOPS, dan
-MOPS **hanya bisa diakses dari jaringan Taiwan**. Jadi: laptop di Taiwan menarik,
-lalu mengirim hasilnya ke server.
+**Why it is needed:** the server can only fetch **the current day's** announcements (the exchange OpenAPI).
+Earlier history, which the gold set and the demo need, exists only on MOPS, and
+MOPS **can only be accessed from a Taiwan network**. So: a laptop in Taiwan pulls the data,
+then sends the result to the server.
 
 ```
-Laptop (wifi kampus / hotspot kartu Taiwan)          Server (feaf.example.com)
-  spike_mops.py   → daftar pengumuman
-  parse_mops.py   → alamat tiap pengumuman
-  fetch_details.py→ isi lengkap (data pribadi dibuang)
-  kirim_riwayat.py ─────────── HTTPS + kode akses ───►  /api/impor → digabung tanpa duplikat
+Laptop (campus wifi / phone hotspot with a Taiwan SIM)    Server (feaf.example.com)
+  spike_mops.py   → list of announcements
+  parse_mops.py   → address of each announcement
+  fetch_details.py→ full content (personal data removed)
+  kirim_riwayat.py ─────────── HTTPS + access code ───►  /api/impor → merged without duplicates
 ```
 
-Tidak perlu `pip install`: skrip penarik hanya memakai pustaka bawaan Python 3.9+.
+No `pip install` needed: the pulling scripts use only the Python 3.9+ standard library.
 
 ---
 
-## 0. Persiapan (2 menit)
+## 0. Preparation (2 minutes)
 
-- Laptop di **wifi kampus atau hotspot HP kartu Taiwan**. **VPN mati.**
-- Repo terbaru:
+- Laptop on **campus wifi or a phone hotspot with a Taiwan SIM**. **VPN off.**
+- Latest repo:
 
 ```bash
 git checkout main && git pull
 ```
 
-## 1. Tarik daftar pengumuman (±1 menit)
+## 1. Pull the announcement list (±1 minute)
 
-Pakai kode yang ada di watchlist server:
+Use the codes that are in the server watchlist:
 
 ```bash
 python3 scripts/spike_mops.py --codes 2330 2454 2317 2881 1301
 ```
 
-✅ Tiap emiten: `OK — N baris via mopsov.twse.com.tw`
-❌ `diblokir`: jaringan bukan Taiwan, atau VPN masih menyala.
-❌ `tidak menemukan tabel`: tampilan MOPS berubah. Kirim berkas `data/raw/*.html` yang disebut di pesan itu ke tim teknis.
+✅ Each issuer: `OK — N baris via mopsov.twse.com.tw` (N rows via mopsov.twse.com.tw)
+❌ `diblokir` (blocked): the network is not in Taiwan, or the VPN is still on.
+❌ `tidak menemukan tabel` (table not found): the MOPS layout changed. Send the `data/raw/*.html` file named in that message to the technical team.
 
-## 2. Ambil alamat tiap pengumuman (detik)
+## 2. Get the address of each announcement (seconds)
 
 ```bash
 python3 scripts/parse_mops.py --since 2026-06-01
 ```
 
-Mulai dari Juni dulu supaya cepat. Bisa diulang dengan tanggal lebih awal nanti.
+Start from June first to keep it fast. It can be repeated with an earlier date later.
 
-## 3. Tarik isi lengkap (±2,5 detik per pengumuman)
+## 3. Pull the full content (±2.5 seconds per announcement)
 
 ```bash
 python3 scripts/fetch_details.py --since 2026-06-01 --all
 ```
 
-Lima emiten sejak Juni ≈ 400 pengumuman ≈ **15–20 menit**. Biarkan berjalan; jedanya
-sengaja lambat karena MOPS server publik. **Jangan diturunkan.**
+Five issuers since June ≈ 400 announcements ≈ **15–20 minutes**. Let it run; the pause is
+deliberately slow because MOPS is a public server. **Do not reduce it.**
 
-Hasilnya **digabung** ke `data/parsed/details.json`, tidak menimpa. Kalau terputus di
-tengah jalan, jalankan lagi; yang sudah ada dilewati.
+The result is **merged** into `data/parsed/details.json`, not overwritten. If it is interrupted
+midway, run it again; what already exists is skipped.
 
-## 4. Kirim ke server (±1 menit)
+## 4. Send to the server (±1 minute)
 
 ```bash
 python3 scripts/kirim_riwayat.py --server https://feaf.example.com
 ```
 
-Skrip menanyakan **kode akses** (isi `SENTINEL_KODE_AKSES` di Dokploy). Kode tidak
-tampil saat diketik.
+The script asks for the **access code** (the value of `SENTINEL_KODE_AKSES` in Dokploy). The code is not
+shown as you type it.
 
-✅ `Selesai: N pengumuman baru masuk ke server`
-❌ `HTTP 403`: kode akses salah, atau `SENTINEL_KODE_AKSES` belum diisi di Dokploy.
+✅ `Selesai: N pengumuman baru masuk ke server` (Done: N new announcements entered the server)
+❌ `HTTP 403`: wrong access code, or `SENTINEL_KODE_AKSES` has not been set in Dokploy.
 
-Mengirim dua kali aman: yang sudah ada di server dilewati.
+Sending twice is safe: what already exists on the server is skipped.
 
-## 5. Cek di web
+## 5. Check on the web
 
-Buka `https://feaf.example.com/?lang=en`. Riwayat muncul di **Alerts** dan di tab
-**Stream** setiap halaman saham. Untuk pengumuman yang lolos saringan pasal, agent
-memanggil Gemini **sekali per pengumuman**. Hasilnya disimpan, jadi pemeriksaan
-berkala berikutnya tidak memanggil model lagi.
+Open `https://feaf.example.com/?lang=en`. The history appears in **Alerts** and in the **Stream**
+tab of every stock page. For announcements that pass the article filter, the agent
+calls Gemini **once per announcement**. The result is stored, so later periodic checks
+do not call the model again.
 
 ---
 
-## Catatan
+## Notes
 
-- **Data pribadi** (`發言人`, jabatan, telepon) dibuang di laptop oleh `fetch_details.py`,
-  dan **dibuang sekali lagi** di server saat impor.
-- **Folder `data/` tidak di-commit.** Jangan kirim `details.json` lewat chat atau git;
-  pakai `kirim_riwayat.py`.
-- Untuk menambah emiten lain nanti: ulangi langkah 1–4 dengan `--codes` yang baru.
-  Pengumuman lama yang sudah terkirim tidak terduplikasi.
+- **Personal data** (`發言人` (spokesperson), job title, phone) is removed on the laptop by `fetch_details.py`,
+  and **removed once more** on the server at import.
+- **The `data/` folder is not committed.** Do not send `details.json` through chat or git;
+  use `kirim_riwayat.py`.
+- To add other issuers later: repeat steps 1–4 with the new `--codes`.
+  Old announcements that were already sent are not duplicated.

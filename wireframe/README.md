@@ -1,61 +1,61 @@
 # Wireframe — Sentinel Saham
 
-Delapan layar lo-fi. Terpisah dari `design/` yang berisi versi hi-fi.
+Eight lo-fi screens. Separate from `design/`, which holds the hi-fi version.
 
-Canvas hidup: (private design canvas, not published)
+Live canvas: (private design canvas, not published)
 
-## Kenapa ada dua versi
+## Why there are two versions
 
-Hi-fi menjawab **"kelihatannya seperti apa"**. Wireframe menjawab **"kenapa begitu"**.
+Hi-fi answers **"what does it look like"**. The wireframe answers **"why is it like that"**.
 
-Tiap layar di sini punya pita catatan bernomor di bawahnya. Catatan itu bukan label
-("ini tombol") melainkan alasan — kenapa delta nilai wajar harus ada di kartu, kenapa
-profil risiko tidak boleh disembunyikan di halaman Pengaturan, kenapa satu langkah
-penolakan verifier adalah elemen terpenting di seluruh rancangan.
+Each screen here has a numbered strip of notes beneath it. The notes are not labels
+("this is a button") but reasons — why the fair value delta must be on the card, why the
+risk profile must not be hidden on a Settings page, why a single verifier
+rejection step is the most important element in the whole design.
 
-Dipakai untuk dua hal:
+It is used for two things:
 
-1. **Rapat tim.** Tanpa warna dan tipografi, orang berdebat soal struktur — dan itu
-   perdebatan yang berguna. Anggota tim keuangan bisa menolak susunan tanpa merasa sedang
-   mengkritik selera.
-2. **Dokumen 16 Oktober.** Penilaian tahap pertama adalah tinjauan dokumen, bukan uji
-   sistem. Catatan bernomor ini adalah alasan rancangan yang tidak terbaca dari mockup.
+1. **Team meetings.** Without color and typography, people argue about structure — and that is a
+   useful argument. A finance team member can reject a layout without feeling they are
+   criticising someone's taste.
+2. **The 16 October document.** The first-stage assessment is a document review, not a system
+   test. These numbered notes are the design rationale that cannot be read from a mockup.
 
-## Isi
+## Contents
 
-| Berkas | Layar | Ukuran |
+| File | Screen | Size |
 |---|---|---|
-| `Main.dc.html` | Feed peringatan | 1440×1040 |
-| `DetailPeringatan.dc.html` | Detail + sitasi MOPS | 1440×840 |
-| `Valuasi.dc.html` | Valuasi DCF | 1440×820 |
-| `RiwayatNilaiWajar.dc.html` | Riwayat nilai wajar | 1440×900 |
-| `TanyaJawab.dc.html` | Tanya jawab | 1440×860 |
-| `Watchlist.dc.html` | Watchlist & profil risiko | 1440×780 |
-| `JejakAudit.dc.html` | Jejak audit agent | 1440×900 |
-| `NotifPonsel.dc.html` | Notifikasi ponsel | 390×1080 |
+| `Main.dc.html` | Alert feed | 1440×1040 |
+| `DetailPeringatan.dc.html` | Detail + MOPS citation | 1440×840 |
+| `Valuasi.dc.html` | DCF valuation | 1440×820 |
+| `RiwayatNilaiWajar.dc.html` | Fair value history | 1440×900 |
+| `TanyaJawab.dc.html` | Q&A | 1440×860 |
+| `Watchlist.dc.html` | Watchlist & risk profile | 1440×780 |
+| `JejakAudit.dc.html` | Agent audit trail | 1440×900 |
+| `NotifPonsel.dc.html` | Phone notification | 390×1080 |
 
-## Membaca wireframe ini
+## Reading these wireframes
 
 ```
-Kotak abu-abu          isinya belum diputuskan — teks, angka, atau data
-Teks yang ditulis penuh kalimat yang memang harus persis seperti itu
-Lingkaran oranye        penanda catatan, nomornya merujuk ke pita di bawah
-Kotak bergaris putus    wadah atau tautan, bukan elemen padat
+Gray box               content not yet decided — text, numbers, or data
+Fully written text     sentences that really must read exactly like that
+Orange circle          note marker, its number refers to the strip below
+Dashed box             a container or link, not a solid element
 ```
 
-Satu-satunya warna adalah oranye penanda. Itu disengaja: begitu wireframe punya palet,
-diskusi langsung melenceng ke warna.
+The only color is the orange marker. That is deliberate: as soon as a wireframe has a palette,
+the discussion drifts straight to color.
 
-## Yang sengaja belum dijawab
+## What is deliberately left unanswered
 
-Tiga hal ada di catatan tempel canvas dan belum digambar — **keadaan kosong** (hari tanpa
-satu pun peringatan), **keadaan error** (MOPS tidak bisa dijangkau), dan **berapa lama
-riwayat disimpan**. Ketiganya perlu diputuskan sebelum layar dibangun, bukan sesudah.
+Three things are in the canvas sticky notes and have not been drawn — the **empty state** (a day without
+a single alert), the **error state** (MOPS cannot be reached), and **how long
+history is kept**. All three need to be decided before the screens are built, not after.
 
-## Membangun ulang
+## Rebuilding
 
-Artboard dihasilkan dari script Python supaya pola berulang (bar teks, kotak zona,
-pita catatan) tidak ditulis ulang delapan kali:
+The artboards are generated from Python scripts so that repeated patterns (text bars, zone boxes,
+note strips) are not written out eight times:
 
 ```
 python3 build_01_feed.py
@@ -65,15 +65,15 @@ python3 build_04_tanya_watchlist.py
 python3 build_05_audit_ponsel.py
 ```
 
-`build_common.py` memuat pembungkus dan pembuat pita catatan; `style_bersama.txt` memuat
-satu blok gaya yang disisipkan ke tiap berkas.
+`build_common.py` holds the wrapper and the note-strip builder; `style_bersama.txt` holds
+one style block that is inserted into every file.
 
-Export untuk Figma dan deck:
+Export for Figma and the deck:
 
 ```
 node scripts/render_design.js wireframe
 python3 scripts/build_figma_svg.py wireframe
 ```
 
-Keduanya dijalankan dari akar repo. Hasilnya di `wireframe/export/` —
-`Sentinel-Saham-wireframe.svg` adalah berkas yang diseret ke Figma.
+Both are run from the repo root. The output is in `wireframe/export/` —
+`Sentinel-Saham-wireframe.svg` is the file that is dragged into Figma.

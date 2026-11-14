@@ -732,11 +732,11 @@ class TestR4PengungkapanPihakKetiga(unittest.TestCase):
             )
 
     def test_r4_tabel_tim_kosong(self):
-        """Bagian 'Pembagian kerja tim' ada dan baris isinya kosong."""
+        """Bagian 'Team division of labour' ada dan baris isinya kosong."""
         doc = (ROOT / "docs" / "third-party-disclosure.md").read_text(encoding="utf-8")
-        self.assertIn("pembagian kerja tim", doc.lower())
+        self.assertIn("team division of labour", doc.lower())
 
-        bagian_tim = doc.lower().split("pembagian kerja tim")[1]
+        bagian_tim = doc.lower().split("team division of labour")[1]
         lines = [l.strip() for l in bagian_tim.splitlines() if l.strip()]
         table_lines = [l for l in lines if l.startswith("|")]
         self.assertEqual(

@@ -1,123 +1,123 @@
-# Desain UI — Sentinel Saham
+# UI Design — Sentinel Saham
 
-Delapan layar hi-fi untuk agen pemantau saham Taiwan, plus dua diagram yang
-diwajibkan Appendix 1 sebagai halaman deck 5 dan 6.
+Eight hi-fi screens for the Taiwan stock-monitoring agent, plus two diagrams
+required by Appendix 1 as deck pages 5 and 6.
 
-Kedua diagram sengaja digambar **sebelum** kode pipeline ditulis: diagram state
-adalah spesifikasinya, bukan ilustrasi hasil jadi. Menggambarnya memaksa menjawab
-apa yang terjadi saat API gagal, kapan agent berhenti sendiri, dan kapan manusia
-dipanggil — pertanyaan yang kalau tidak dijawab di sini baru ketahuan saat demo.
+Both diagrams were deliberately drawn **before** the pipeline code was written: the state
+diagram is the specification, not an illustration of the finished result. Drawing it forces answers to
+what happens when an API fails, when the agent stops on its own, and when a human
+is called in — questions that, if not answered here, only surface during the demo.
 
-Canvas hidup: (private design canvas, not published)
+Live canvas: (private design canvas, not published)
 
-## Isi
+## Contents
 
-| Berkas | Layar | Ukuran |
+| File | Screen | Size |
 |---|---|---|
-| `Main.dc.html` | Feed peringatan | 1440×960 |
-| `DetailPeringatan.dc.html` | Detail pengumuman + sitasi MOPS | 1440×960 |
-| `Valuasi.dc.html` | Valuasi DCF, asumsi geser, sensitivitas | 1440×1080 |
-| `RiwayatNilaiWajar.dc.html` | Riwayat nilai wajar vs harga pasar | 1440×980 |
-| `TanyaJawab.dc.html` | Tanya jawab — tempat juri menguji | 1440×960 |
-| `Watchlist.dc.html` | Watchlist & profil risiko | 1440×900 |
-| `JejakAudit.dc.html` | Jejak audit agent | 1440×1000 |
-| `NotifPonsel.dc.html` | Notifikasi ponsel | 390×844 |
-| `AlurState.dc.html` | **Alur tugas & state agent — deck hal 5** | 1440×710 |
-| `Arsitektur.dc.html` | **Arsitektur sistem, model, tool — deck hal 6** | 1440×820 |
-| `canvas.json` | Tata letak canvas + catatan tempel | — |
+| `Main.dc.html` | Alert feed | 1440×960 |
+| `DetailPeringatan.dc.html` | Announcement detail + MOPS citation | 1440×960 |
+| `Valuasi.dc.html` | DCF valuation, adjustable assumptions, sensitivity | 1440×1080 |
+| `RiwayatNilaiWajar.dc.html` | Fair value history vs market price | 1440×980 |
+| `TanyaJawab.dc.html` | Q&A — where the judges test | 1440×960 |
+| `Watchlist.dc.html` | Watchlist & risk profile | 1440×900 |
+| `JejakAudit.dc.html` | Agent audit trail | 1440×1000 |
+| `NotifPonsel.dc.html` | Phone notification | 390×844 |
+| `AlurState.dc.html` | **Agent task flow & states — deck page 5** | 1440×710 |
+| `Arsitektur.dc.html` | **System architecture, model, tools — deck page 6** | 1440×820 |
+| `canvas.json` | Canvas layout + sticky notes | — |
 
-## Keputusan desain yang mengikat
+## Binding design decisions
 
-**Angka di layar valuasi adalah keluaran asli `scripts/dcf.py`** — EV 59,684 T, WACC 8,09%,
-g tersirat 6,29%, dan seluruh tabel sensitivitas. Kalau kalkulatornya berubah, layar ini
-harus ikut diperbarui supaya tetap cocok saat juri mencocokkan dengan kertas kerja.
+**The numbers on the valuation screen are the real output of `scripts/dcf.py`** — EV 59,684 T, WACC 8.09%,
+implied g 6.29%, and the entire sensitivity table. If the calculator changes, this screen
+must be updated so it still matches when the judges check it against the worksheet.
 
-**Merah = naik, hijau = turun**, mengikuti konvensi bursa Taiwan — kebalikan dari bursa
-Barat. Dan merah/hijau hanya dipakai untuk pergerakan harga; label valuasi
-(overvalued / wajar / undervalued) memakai warna netral supaya tidak tertukar dengan
-arah harga.
+**Red = up, green = down**, following the Taiwan exchange convention — the opposite of Western
+exchanges. And red/green are used only for price movement; the valuation labels
+(overvalued / fair / undervalued) use a neutral color so they are not confused with
+price direction.
 
-**Hanya satu grafik yang dibangun: nilai wajar vs harga pasar.** Bukan candlestick — itu
-ada di setiap aplikasi sekuritas, tidak bisa disitasi, dan tidak membuktikan apa pun
-tentang agent kita. Garis nilai wajar sengaja berbentuk anak tangga karena memang hanya
-dihitung ulang saat ada dokumen baru; tiap anak tangga bisa diklik ke dokumen MOPS-nya.
+**Only one chart is built: fair value vs market price.** Not a candlestick — that
+is in every brokerage app, cannot be cited, and proves nothing
+about our agent. The fair value line is deliberately a staircase because it is only
+recomputed when a new document arrives; each step can be clicked through to its MOPS document.
 
-**Jejak audit adalah layar produk, bukan dokumen terpisah.** Di dalamnya ada satu langkah
-di mana verifier menolak draf peringatan karena angkanya tidak ditemukan di dokumen
-sumber — itu bukti paling langsung untuk kriteria Safety, Controllability & Governance.
+**The audit trail is a product screen, not a separate document.** In it there is one step
+where the verifier rejects an alert draft because its number cannot be found in the source
+document — that is the most direct evidence for the Safety, Controllability & Governance criterion.
 
-**Data juru bicara ditampilkan sebagai dibuang.** Halaman MOPS memuat nama, jabatan, dan
-telepon; layar detail menyatakan secara eksplisit bahwa ketiganya tidak disimpan, sesuai
-Pasal 14.1 tentang minimisasi data pribadi.
+**Spokesperson data is shown as removed.** The MOPS page contains a name, job title, and
+phone number; the detail screen states explicitly that all three are not stored, in line with
+Article 14.1 on personal data minimisation.
 
-## Token
+## Tokens
 
 ```
-Navy    #16324F   struktur, aksi utama
-Amber   #A86A0B   perhatian (bukan bahaya)
-Naik    #C6362C   merah — konvensi TW
-Turun   #17795E   hijau — konvensi TW
+Navy    #16324F   structure, primary action
+Amber   #A86A0B   attention (not danger)
+Up      #C6362C   red — TW convention
+Down    #17795E   green — TW convention
 Ground  #EEF0F2   Surface #FFFFFF   Ink #101418
-Tipografi: Instrument Sans (UI) + IBM Plex Mono (angka)
+Typography: Instrument Sans (UI) + IBM Plex Mono (numbers)
 
-Seri data grafik — BUKAN warna UI di atas:
-Nilai wajar  #B5730C
-Harga pasar  #2F74C0
+Chart data series — NOT the UI colors above:
+Fair value   #B5730C
+Market price #2F74C0
 ```
 
-Navy `#16324F` gagal uji sebagai warna seri data (terbaca abu-abu, chroma terlalu rendah),
-jadi grafik memakai `#2F74C0` dan `#B5730C` — pasangan ini lolos seluruh pemeriksaan
-keterbacaan termasuk simulasi buta warna. Navy tetap dipakai untuk struktur dan tombol.
+Navy `#16324F` failed the test as a data series color (it reads as gray, chroma too low),
+so the chart uses `#2F74C0` and `#B5730C` — this pair passes every
+legibility check including a color-blindness simulation. Navy is still used for structure and buttons.
 
-## Membangun ulang canvas
+## Rebuilding the canvas
 
-Berkas `sentinel-saham-aaic-2026.html` sengaja tidak di-commit — 2,5 MB, dan seluruhnya
-bisa dibuat ulang dari berkas di folder ini lewat skill `design`. Edit `.dc.html`, seed
-ulang, lalu publikasikan ke URL yang sama.
+The file `sentinel-saham-aaic-2026.html` is deliberately not committed — it is 2.5 MB, and it can
+be fully regenerated from the files in this folder through the `design` skill. Edit the `.dc.html`, re-seed,
+then publish to the same URL.
 
-## Status Figma
+## Figma status
 
-Koneksi Figma sudah pulih. File `Sentinel Saham — AAIC 2026` (key `ZTux17Ef8AZGb4yHUumizI`)
-masih kosong dan menunggu diisi sebagai layer asli.
+The Figma connection has recovered. The file `Sentinel Saham — AAIC 2026` (key `ZTux17Ef8AZGb4yHUumizI`)
+is still empty and waiting to be filled in as real layers.
 
-Catatan penting soal bentuk impor: berkas SVG gabungan di bawah menanam PNG sebagai
-data URI, jadi **semua artboard masuk Figma sebagai gambar rata**, termasuk kedua
-diagram. Untuk diagram, layer yang bisa diedit jauh lebih berguna — anggota tim keuangan perlu
-mengoreksi label dan panah tanpa lewat build ulang. Itu dikerjakan lewat Figma MCP,
-bukan lewat berkas SVG ini.
+Important note about the import format: the combined SVG file below embeds PNGs as
+data URIs, so **all artboards enter Figma as flat images**, including both
+diagrams. For the diagrams, editable layers are far more useful — a finance team member needs to
+correct labels and arrows without going through a rebuild. That is done through the Figma MCP,
+not through this SVG file.
 
-## Export untuk Figma / deck
+## Export for Figma / deck
 
 ```
 node scripts/render_design.js
 ```
 
-Menulis PNG 2x ke `design/export/`. Script ini menunggu Instrument Sans dan IBM Plex
-Mono benar-benar termuat sebelum memotret — tanpa itu hasilnya jatuh ke font sistem dan
-seluruh tata letak bergeser.
+Writes 2x PNGs to `design/export/`. This script waits for Instrument Sans and IBM Plex
+Mono to be fully loaded before capturing — without that the result falls back to the system font and
+the whole layout shifts.
 
 ```
 python3 scripts/build_figma_svg.py
 ```
 
-Menggabungkan seluruh PNG jadi satu `design/export/Sentinel-Saham-figma.svg`, tersusun
-sesuai `canvas.json`. **Ini berkas yang diseret ke Figma** — sekali import, seluruh papan
-terbentuk lengkap dengan judul tiap layar.
+Combines all the PNGs into one `design/export/Sentinel-Saham-figma.svg`, arranged
+according to `canvas.json`. **This is the file that is dragged into Figma** — in one import, the whole board
+is formed, complete with the title of each screen.
 
-`RiwayatNilaiWajar-chart.svg` adalah grafiknya saja, diekstrak sebagai SVG berdiri
-sendiri. Ini satu-satunya berkas yang masuk ke Figma sebagai **layer asli** — garis jadi
-vector path, angka sumbu jadi text layer yang bisa diedit. PNG yang lain masuk sebagai
-gambar rata, bukan layer.
+`RiwayatNilaiWajar-chart.svg` is the chart only, extracted as a standalone SVG.
+This is the only file that enters Figma as **real layers** — lines become
+vector paths, axis numbers become editable text layers. The other PNGs enter as
+flat images, not layers.
 
-## Versi bahasa Inggris
+## English version
 
-`design/en/` berisi versi bahasa Inggris dari kesepuluh berkas di atas, dan PNG-nya ada di
-`design/en/export/`. Versi inilah yang dipakai di Figma dan materi lomba. Buat ulang setelah
-mengubah layar berbahasa Indonesia:
+`design/en/` holds the English version of the ten files above, and its PNGs are in
+`design/en/export/`. This version is the one used in Figma and the competition materials. Rebuild it after
+changing the Indonesian-language screens:
 
 ```bash
-python3 scripts/design_en.py          # terjemahkan → design/en/*.dc.html
+python3 scripts/design_en.py          # translate → design/en/*.dc.html
 node scripts/render_design.js design/en
 ```
 
-Teks baru yang belum ada di kamus `EN` di `scripts/design_en.py` dilaporkan saat skrip jalan.
+New text that is not yet in the `EN` dictionary in `scripts/design_en.py` is reported when the script runs.

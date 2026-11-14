@@ -137,7 +137,7 @@ flowchart LR
 
 ### 2.3 Phân luồng theo điều khoản
 
-Danh sách điều khoản và ngưỡng được xây dựng cùng các thành viên tài chính của nhóm. Bảng đối chiếu đầy đủ và lý do của từng quyết định: [`docs/clause-mapping.md`](docs/clause-mapping.md) (tiếng Indonesia).
+Danh sách điều khoản và ngưỡng được xây dựng cùng các thành viên tài chính của nhóm. Bảng đối chiếu đầy đủ và lý do của từng quyết định: [`docs/clause-mapping.md`](docs/clause-mapping.md).
 
 | Điều khoản | Luồng | Cách xử lý |
 |---|---|---|
@@ -459,7 +459,7 @@ napaincu-ai-comp/
 └── CHANGELOG.md, LICENSE
 ```
 
-Chi tiết thêm: [Thiết kế hệ thống](docs/system-design.md) · [Sơ đồ luồng](docs/flow-diagrams.md) (tiếng Indonesia).
+Chi tiết thêm: [Thiết kế hệ thống](docs/system-design.md) · [Sơ đồ luồng](docs/flow-diagrams.md).
 
 ---
 
@@ -576,7 +576,7 @@ Báo cáo được ghi vào `eval/hasil/` (trong image Docker, nơi `/app` chỉ
 Các số liệu này được đo **trước** khi tinh chỉnh. Những điểm không khớp đã làm lộ ra hai lỗi bộ phân tích (khoản lỗ trong ngoặc bị đọc thành lãi; số cổ phiếu tính bằng 仟股 không được đọc) và ba ngưỡng; tất cả đều đã được sửa sau đó. Trên cùng 46 công bố, tác tử sau tinh chỉnh đạt 43/46 và 29/29, nhưng đó là kết quả trong mẫu và không được báo cáo như độ chính xác.
 
 ### 9.2 Đường mô hình trên máy chủ
-Gemini 3.6 Flash, lời gọi mới không dùng bộ đệm, ngày 11/11: 0/46 con số sai được phát hành (không có bộ kiểm chứng: 5/46), độ trễ trung bình 0,7 giây mỗi công bố (tối đa 9,9 giây), 5 lời gọi mô hình, 7.212 token vào / 392 token ra, khoảng **0,007 USD cho cả 46 công bố** theo giá gói trả phí. Chỉ công bố điều 20 mới gọi mô hình. Báo cáo đầy đủ với phân loại lỗi, tỷ lệ can thiệp trên máy chủ thật (12% bị giữ) và một dấu vết có chú thích: [`docs/evaluation-report.md`](docs/evaluation-report.md) (tiếng Indonesia).
+Gemini 3.6 Flash, lời gọi mới không dùng bộ đệm, ngày 11/11: 0/46 con số sai được phát hành (không có bộ kiểm chứng: 5/46), độ trễ trung bình 0,7 giây mỗi công bố (tối đa 9,9 giây), 5 lời gọi mô hình, 7.212 token vào / 392 token ra, khoảng **0,007 USD cho cả 46 công bố** theo giá gói trả phí. Chỉ công bố điều 20 mới gọi mô hình. Báo cáo đầy đủ với phân loại lỗi, tỷ lệ can thiệp trên máy chủ thật (12% bị giữ) và một dấu vết có chú thích: [`docs/evaluation-report.md`](docs/evaluation-report.md).
 
 ### 9.3 Bộ tấn công
 12 kiểu tấn công trên công bố thật (chèn lệnh, bịa số và trích dẫn, nhãn giả, tráo đơn vị, ngoại tệ, độ lớn cực đoan), 72 trường hợp, bị tấn công bởi cả bộ suy luận quy tắc lẫn một mô hình mô phỏng tuân theo mọi lệnh chèn: **0 con số sai được phát hành** ([báo cáo](eval/hasil/serangan-2026-11-10.md)).
@@ -714,7 +714,7 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 Đánh giá rủi ro
 
-Quy chế cuộc thi, Điều 14.3. Các khoảng trống còn mở theo từng nhóm: [`docs/security-report.md`](docs/security-report.md) (tiếng Indonesia). Bằng chứng kiểm thử: [9.7](#97-kết-quả-kiểm-thử-an-toàn).
+Quy chế cuộc thi, Điều 14.3. Các khoảng trống còn mở theo từng nhóm: [`docs/security-report.md`](docs/security-report.md). Bằng chứng kiểm thử: [9.7](#97-kết-quả-kiểm-thử-an-toàn).
 
 | Rủi ro | Bảo vệ | Giám sát | Phục hồi |
 |---|---|---|---|
@@ -787,7 +787,7 @@ FEAF tuân theo [semantic versioning](https://semver.org/). Phiên bản đang c
 
 ### 13.1 Tài nguyên của bên thứ ba
 
-Quy chế cuộc thi, Điều 13. Tóm tắt của [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md) (tiếng Indonesia), tài liệu này cũng ghi trạng thái kiểm chứng của từng mục.
+Quy chế cuộc thi, Điều 13. Tóm tắt của [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md), tài liệu này cũng ghi trạng thái kiểm chứng của từng mục.
 
 | Tên | Loại | Dùng để làm gì | Phạm vi dữ liệu | Giấy phép hoặc điều khoản |
 |---|---|---|---|---|

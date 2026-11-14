@@ -714,7 +714,7 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 Risk assessment
 
-Competition rules, Article 14.3. Open gaps per category: [`docs/security-report.md`](docs/security-report.md) (Indonesian). Test evidence: [9.7](#97-safety-test-results).
+Competition rules, Article 14.3. Open gaps per category: [`docs/security-report.md`](docs/security-report.md). Test evidence: [9.7](#97-safety-test-results).
 
 | Risk | Protection | Monitoring | Recovery |
 |---|---|---|---|
@@ -787,7 +787,7 @@ FEAF follows [semantic versioning](https://semver.org/). The running version is 
 
 ### 13.1 Third-party resources
 
-Competition rules, Article 13. Summary of [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md) (Indonesian), which also records the verification status of each item.
+Competition rules, Article 13. Summary of [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md), which also records the verification status of each item.
 
 | Name | Type | Purpose | Data scope | License or terms |
 |---|---|---|---|---|

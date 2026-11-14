@@ -21,6 +21,14 @@
   `cari` name-search tool was missing from the list); the banner and two gallery pictures use
   the wide-screen screenshots.
 - Internal working files, prompts and meeting material are git-ignored.
+- All public documentation is in English: `docs/` files renamed to English names
+  (`clause-mapping.md`, `security-report.md`, `attack-test-report.md`, `qa-report.md`,
+  `evaluation-report.md`, `auto-valuation.md`, `data-access.md`, `flow-diagrams.md`,
+  `third-party-disclosure.md`, `gold-set-results.md`, `gold-set-guide.md`,
+  `pulling-mops-history.md`, `analysis-scope.md`) and translated, together with `DESIGN.md`,
+  `design/README.md`, `wireframe/README.md` and the reports in `eval/hasil/`. The third-party
+  disclosure adds Google Fonts and Swagger UI. The gold-set labelling sheet moved to
+  `docs/gold-set/`. Internal planning notes are no longer published.
 - Tests: 311.
 
 ## 1.2.0 · 14 Nov 2026

@@ -459,7 +459,7 @@ napaincu-ai-comp/
 └── CHANGELOG.md, LICENSE
 ```
 
-更多細節：[系統設計](docs/system-design.md) · [流程圖](docs/flow-diagrams.md)（印尼文）。
+更多細節：[系統設計](docs/system-design.md) · [流程圖](docs/flow-diagrams.md)。
 
 ---
 
@@ -714,7 +714,7 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 風險評估
 
-競賽規則第 14.3 條。各類別尚待補強之處：[`docs/security-report.md`](docs/security-report.md)（印尼文）。測試佐證：[9.7](#97-安全測試結果)。
+競賽規則第 14.3 條。各類別尚待補強之處：[`docs/security-report.md`](docs/security-report.md)。測試佐證：[9.7](#97-安全測試結果)。
 
 | 風險 | 防護 | 監控 | 復原 |
 |---|---|---|---|
@@ -787,7 +787,7 @@ FEAF 遵循[語意化版本](https://semver.org/)。執行中的版本顯示於 
 
 ### 13.1 第三方資源
 
-競賽規則第 13 條。摘要自 [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)（印尼文），該文件也記錄了每一項的查證狀態。
+競賽規則第 13 條。摘要自 [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)，該文件也記錄了每一項的查證狀態。
 
 | 名稱 | 類型 | 用途 | 資料範圍 | 授權或條款 |
 |---|---|---|---|---|

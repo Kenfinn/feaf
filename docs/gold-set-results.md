@@ -1,62 +1,62 @@
-# Hasil gold set (11 Nov 2026)
+# Gold set results (11 Nov 2026)
 
-Pelabel: anggota tim keuangan, 46 pengumuman asli 9 Nov (sekitar 7 per jenis). Berkas jawaban:
-berkas Excel jawaban tim keuangan di `docs/untuk-tim/`, versi CSV di `eval/gold.csv`.
-Evaluasi dijalankan tanpa model (penalar aturan), dengan data pasar dari OpenAPI TWSE/TPEx.
+Labeller: a finance team member, 46 real announcements from 9 Nov (about 7 per type). Answer file:
+the finance team's Excel answer file (internal team material, not published), CSV version at `eval/gold.csv`.
+The evaluation ran without a model (rule-based reasoner), with market data from the TWSE/TPEx OpenAPI.
 
-## Angka resmi untuk deck dan README
+## Official numbers for the deck and README
 
-Angka ini diambil **sebelum** agent disetel ulang dari jawaban tim keuangan. Ini angka yang jujur
-untuk dilaporkan.
+These numbers were taken **before** the agent was re-tuned from the finance team's answers. They are the
+honest numbers to report.
 
-| Metrik | Agent FEAF | Tanpa pemeriksa |
+| Metric | FEAF agent | Without the checker |
 |---|---|---|
-| Angka salah yang terbit | 0/46 | 5/46 |
-| Keputusan terbit/tahan/arsip sama dengan ahli | 41/46 (89%) | 15/46 (33%) |
-| Tingkat sinyal sama dengan ahli (profil moderat) | 21/29 (72%) | 0/29 |
-| Ditahan untuk manusia | 13/46 (28%) | 33/46 (72%) |
+| Wrong numbers published | 0/46 | 5/46 |
+| Publish/hold/archive decision matches the expert | 41/46 (89%) | 15/46 (33%) |
+| Signal level matches the expert (moderate profile) | 21/29 (72%) | 0/29 |
+| Held for a human | 13/46 (28%) | 33/46 (72%) |
 
-Laporan lengkap: `eval/hasil/evaluasi-20261111T084547Z.md`.
+Full report: `eval/hasil/evaluasi-20261111T084547Z.md`.
 
-Baseline kerja manual dari tim keuangan: **20–30 menit per pengumuman** (dipakai 25). Untuk 46
-pengumuman itu setara sekitar 1.150 menit kerja analis. Agent memprosesnya dalam hitungan
-milidetik per pengumuman tanpa model.
+Manual-work baseline from the finance team: **20–30 minutes per announcement** (25 used). For 46
+announcements that equals about 1,150 minutes of analyst work. The agent processes them in
+milliseconds per announcement without a model.
 
-## Yang ditemukan dari selisihnya
+## What the differences revealed
 
-1. **Bug: rugi terbaca laba.** Laporan Taiwan menulis angka negatif dalam kurung, misalnya
-   `(339,123)`. Pengurai membacanya positif, jadi 29 dari 177 laporan kuartal yang rugi
-   tampil sebagai laba. Ditemukan anggota tim keuangan lewat kasus 6535.
-2. **Bug: jumlah saham dalam 仟股 tidak terbaca**, begitu juga label saham privat (私募股數)
-   dan opsi karyawan (認股權行使…新股總數).
-3. Ambang rasio utang laporan kuartal terlalu longgar: tim keuangan menandai 55–58%.
-4. Pinjaman dana pasal 23 di 47% ekuitas ditandai tim keuangan. Batas regulasinya sekitar 40%.
-5. Transaksi pasal 20 dengan anak perusahaan 100% diarsipkan tim keuangan: kas tidak keluar grup.
+1. **Bug: a loss read as a profit.** Taiwan reports write negative numbers in parentheses, for example
+   `(339,123)`. The parser read them as positive, so 29 of 177 loss-making quarterly reports
+   showed up as profits. Found by a finance team member through case 6535.
+2. **Bug: share counts in 仟股 (thousand shares) were not read**, and neither were the private-placement share label (私募股數)
+   and the employee stock option label (認股權行使…新股總數).
+3. The debt-ratio threshold for quarterly reports was too loose: the finance team flagged 55–58%.
+4. A fund loan under article 23 at 47% of equity was flagged by the finance team. The regulatory limit is about 40%.
+5. Article 20 transactions with a 100% subsidiary were archived by the finance team: no cash leaves the group.
 
-## Kalibrasi yang dipasang (disetujui ketua tim, 11 Nov)
+## Calibration applied (approved by the team lead, 11 Nov)
 
-| | Perubahan | Berkas |
+| | Change | File |
 |---|---|---|
-| Bug 1 | Angka dalam kurung = negatif | `app/agent/sinyal.py` (`_f`) |
-| Bug 2 | Satuan 仟股/萬股/張, label saham privat dan opsi karyawan | `app/agent/sinyal.py` (`_lembar`) |
-| a | Rasio utang: konservatif 40%, moderat 50%, agresif 65% (sebelumnya 50/60/75) | `app/ambang_profil.py` |
-| b | Saham baru yang jumlahnya tidak terbaca = perlu diperhatikan | `app/ambang_profil.py` |
-| c | Pinjaman dana ≥ 40% ekuitas = perlu diperhatikan, semua profil | `app/ambang_profil.py` |
-| d | Pasal 20 dengan anak perusahaan 100% = arsip | `app/agent/screen.py` (`antar_grup`) |
+| Bug 1 | Numbers in parentheses = negative | `app/agent/sinyal.py` (`_f`) |
+| Bug 2 | Units 仟股/萬股/張, private-placement share and employee option labels | `app/agent/sinyal.py` (`_lembar`) |
+| a | Debt ratio: conservative 40%, moderate 50%, aggressive 65% (previously 50/60/75) | `app/ambang_profil.py` |
+| b | New shares whose count cannot be read = needs attention | `app/ambang_profil.py` |
+| c | Fund loan ≥ 40% of equity = needs attention, all profiles | `app/ambang_profil.py` |
+| d | Article 20 with a 100% subsidiary = archive | `app/agent/screen.py` (`antar_grup`) |
 
-Sesudah kalibrasi, pada 46 pengumuman yang sama: keputusan 43/46, tingkat 29/29
-(`eval/hasil/evaluasi-20261111T090230Z.md`). **Ini angka di dalam sampel**, karena diuji
-pada data yang dipakai untuk menyetel. Jangan dilaporkan sebagai akurasi. Untuk angka uji
-yang bersih perlu 15–20 pengumuman baru yang dilabeli tanpa melihat hasil agent.
+After calibration, on the same 46 announcements: decision 43/46, level 29/29
+(`eval/hasil/evaluasi-20261111T090230Z.md`). **These are in-sample numbers**, because they were tested
+on the data used for tuning. Do not report them as accuracy. For a clean test
+number, 15–20 new announcements labelled without looking at the agent's output are needed.
 
-Sisa selisih: 4749 (beli tanah, tim keuangan: terbit) ditahan karena emiten belum punya model
-valuasi; 2072 (akhir sewa dengan pihak terkait) dan 6830 (mesin anak perusahaan) ditahan,
-tim keuangan mengarsipkan.
+Remaining differences: 4749 (land purchase, finance team: publish) is held because the issuer has no valuation
+model yet; 2072 (end of a lease with a related party) and 6830 (subsidiary machinery) are held,
+while the finance team archived them.
 
-Dampak ke 578 pengumuman lokal: 79 laporan kuartal kini "perlu diperhatikan", 9 transaksi
-antar-grup diarsipkan, yang ditahan turun dari 65 ke 49.
+Impact on the 578 local announcements: 79 quarterly reports are now "needs attention", 9 inter-group
+transactions are archived, and the held count dropped from 65 to 49.
 
-## Belum
+## Not yet done
 
-- Evaluasi dengan Gemini di server (D5).
-- Set uji baru 15–20 pengumuman untuk angka di luar sampel.
+- Evaluation with Gemini on the server (D5).
+- A new test set of 15–20 announcements for out-of-sample numbers.

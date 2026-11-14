@@ -1,32 +1,31 @@
-# Panduan gold set
+# Gold set guide
 
-Versi untuk tim keuangan ada di [`untuk-tim/Panduan-Gold-Set-FEAF.pdf`](./untuk-tim/Panduan-Gold-Set-FEAF.pdf)
-(sumbernya `untuk-tim/gold-set.html`), dikirim bersama [`gold-set/gold-set-labelling-sheet.xlsx`](./gold-set/gold-set-labelling-sheet.xlsx).
-Isinya: kolom yang diisi, aturan per jenis pengumuman yang sudah disepakati, konversi satuan,
-contoh, dan kolom `menit` untuk baseline kerja manual.
+The version for the finance team is internal team material, not published. It is sent together with [`gold-set/gold-set-labelling-sheet.xlsx`](./gold-set/gold-set-labelling-sheet.xlsx).
+It covers: the columns to fill in, the agreed rules per announcement type, unit conversions,
+examples, and the `menit` (minutes) column for the manual-work baseline.
 
-Berkas ini catatan teknis untuk tim.
+This file is a technical note for the team.
 
-## Membuat paket
+## Building the package
 
-Excel berisi 46 pengumuman asli 9 Nov, sekitar 7 per jalur, dengan lembar "Isi pengumuman"
-supaya pelabel tidak perlu MOPS atau kode akses. Nama orang tidak ikut: butir berlabel 姓名
-dibuang, dan untuk pasal 1/6/7/8 hanya butir dari daftar izin (`app/gold.py`,
-`LABEL_AMAN_ORANG`) yang diambil.
-
-```bash
-SENTINEL_DATA_DIR=<folder data> python3 scripts/buat_paket_gold.py --keluar docs/gold-set/gold-set-labelling-sheet.xlsx
-```
-
-## Setelah Excel kembali
+The Excel file holds 46 real announcements from 9 Nov, about 7 per path, with an "Isi pengumuman" (announcement content)
+sheet so labellers do not need MOPS or an access code. Person names are not included: items labelled 姓名 (name)
+are dropped, and for articles 1/6/7/8 only items from the allow-list (`app/gold.py`,
+`LABEL_AMAN_ORANG`) are taken.
 
 ```bash
-python3 scripts/buat_paket_gold.py --ke-csv <excel yang diisi> --keluar eval/gold.csv
-python3 scripts/evaluasi.py --menit-manual <rata-rata kolom menit> --simpan
+SENTINEL_DATA_DIR=<data folder> python3 scripts/buat_paket_gold.py --keluar docs/gold-set/gold-set-labelling-sheet.xlsx
 ```
 
-Baris tanpa `keputusan` dilewati. Kolom `keputusan` (terbit/tahan/arsip) dan `tingkat` dibaca
-oleh `scripts/evaluasi.py` mode gold. Kolom lama `harus_terbit` tetap diterima (ya = terbit,
-tidak = arsip).
+## After the Excel file comes back
 
-Kandidat juga bisa diunduh dari server: `/ekspor/kandidat-gold.csv` (butuh kode akses).
+```bash
+python3 scripts/buat_paket_gold.py --ke-csv <filled-in excel> --keluar eval/gold.csv
+python3 scripts/evaluasi.py --menit-manual <average of the menit column> --simpan
+```
+
+Rows without `keputusan` (decision) are skipped. The `keputusan` column (`terbit`/`tahan`/`arsip`, i.e. publish/hold/archive) and `tingkat` (level) are read
+by `scripts/evaluasi.py` in gold mode. The old `harus_terbit` column is still accepted (`ya` = `terbit`,
+`tidak` = `arsip`).
+
+Candidates can also be downloaded from the server: `/ekspor/kandidat-gold.csv` (needs an access code).
