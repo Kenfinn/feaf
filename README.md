@@ -513,6 +513,30 @@ docker run -p 8000:8000 -v feaf-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 
 
 Pulled filings, the watchlist, audit traces and review decisions live in the `/data` volume and survive redeploys. The container health check calls `GET /health`. Full Dokploy steps: [`docs/deploy-dokploy.md`](docs/deploy-dokploy.md).
 
+### 8.5 Access Code (Testing the Lock Locally)
+
+Without `SENTINEL_KODE_AKSES` everything is open. To test the access lock locally:
+
+```bash
+# 1. Create a random code (keep it secret; never commit it)
+export SENTINEL_KODE_AKSES="$(python3 -c 'import secrets; print(secrets.token_urlsafe(12))')"
+echo "$SENTINEL_KODE_AKSES"
+
+# 2. Optional: also lock reading (every page and /api/* need the code)
+export SENTINEL_KUNCI_BACA=1
+
+# 3. Start the server
+uvicorn app.main:app --reload
+```
+
+Windows PowerShell: `$env:SENTINEL_KODE_AKSES = python -c "import secrets; print(secrets.token_urlsafe(12))"`, then `$env:SENTINEL_KUNCI_BACA = "1"`.
+
+How to unlock:
+- **Read lock on** (`SENTINEL_KUNCI_BACA=1`): opening <http://127.0.0.1:8000> shows a lock page (HTTP 401); type the code in the form.
+- **Read lock off**: pages stay readable; actions (watchlist, Check now, review, thresholds) answer "needs an access code". Open `http://127.0.0.1:8000/akses?kode=<your-code>` once.
+
+Either way the browser keeps a signed `akses` cookie for 30 days (an HMAC digest, never the code itself). `/health` and static files stay open. On Docker or Dokploy set the same two variables in the environment (`-e SENTINEL_KODE_AKSES=... -e SENTINEL_KUNCI_BACA=1`, or Dokploy → Environment), never in the repository.
+
 ---
 
 ## 9. Evaluation & Testing

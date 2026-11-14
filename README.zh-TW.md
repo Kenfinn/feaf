@@ -513,6 +513,30 @@ docker run -p 8000:8000 -v feaf-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 
 
 抓取的公告、自選股、稽核軌跡與審查決定都存放在 `/data` volume，重新部署後仍會保留。容器健康檢查呼叫 `GET /health`。完整 Dokploy 步驟：[`docs/deploy-dokploy.md`](docs/deploy-dokploy.md)。
 
+### 8.5 存取碼（在本機測試鎖定功能）
+
+未設定 `SENTINEL_KODE_AKSES` 時一切開放。若要在本機測試存取鎖定：
+
+```bash
+# 1. 產生隨機存取碼（請保密，切勿提交到儲存庫）
+export SENTINEL_KODE_AKSES="$(python3 -c 'import secrets; print(secrets.token_urlsafe(12))')"
+echo "$SENTINEL_KODE_AKSES"
+
+# 2. 選用：連閱讀也鎖定（所有頁面與 /api/* 都需要存取碼）
+export SENTINEL_KUNCI_BACA=1
+
+# 3. 啟動伺服器
+uvicorn app.main:app --reload
+```
+
+Windows PowerShell：`$env:SENTINEL_KODE_AKSES = python -c "import secrets; print(secrets.token_urlsafe(12))"`，再設定 `$env:SENTINEL_KUNCI_BACA = "1"`。
+
+解鎖方式：
+- **閱讀鎖定開啟**（`SENTINEL_KUNCI_BACA=1`）：開啟 <http://127.0.0.1:8000> 會顯示鎖定頁（HTTP 401），在表單輸入存取碼即可。
+- **閱讀鎖定關閉**：頁面仍可閱讀；操作（自選股、立即檢查、審查、門檻）會提示需要存取碼。開啟一次 `http://127.0.0.1:8000/akses?kode=<你的存取碼>` 即可。
+
+兩種方式下，瀏覽器都會保存 30 天的已簽章 `akses` cookie（HMAC 摘要，絕不是存取碼本身）。`/health` 與靜態檔案仍開放。在 Docker 或 Dokploy 上，請在環境變數中設定同樣兩個變數（`-e SENTINEL_KODE_AKSES=... -e SENTINEL_KUNCI_BACA=1`，或 Dokploy → Environment），切勿寫進儲存庫。
+
 ---
 
 ## 9. 評估與測試

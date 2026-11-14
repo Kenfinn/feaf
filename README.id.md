@@ -513,6 +513,30 @@ docker run -p 8000:8000 -v feaf-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 
 
 Pengumuman tarikan, watchlist, jejak audit, dan keputusan review tersimpan di volume `/data` dan tetap ada setelah redeploy. Health check container memanggil `GET /health`. Langkah lengkap Dokploy: [`docs/deploy-dokploy.md`](docs/deploy-dokploy.md).
 
+### 8.5 Kode Akses (Menguji Kunci di Lokal)
+
+Tanpa `SENTINEL_KODE_AKSES` semuanya terbuka. Untuk menguji kunci akses di lokal:
+
+```bash
+# 1. Buat kode acak (rahasiakan; jangan pernah di-commit)
+export SENTINEL_KODE_AKSES="$(python3 -c 'import secrets; print(secrets.token_urlsafe(12))')"
+echo "$SENTINEL_KODE_AKSES"
+
+# 2. Opsional: kunci juga untuk membaca (semua halaman dan /api/* butuh kode)
+export SENTINEL_KUNCI_BACA=1
+
+# 3. Jalankan server
+uvicorn app.main:app --reload
+```
+
+Windows PowerShell: `$env:SENTINEL_KODE_AKSES = python -c "import secrets; print(secrets.token_urlsafe(12))"`, lalu `$env:SENTINEL_KUNCI_BACA = "1"`.
+
+Cara membuka:
+- **Kunci baca aktif** (`SENTINEL_KUNCI_BACA=1`): membuka <http://127.0.0.1:8000> menampilkan halaman kunci (HTTP 401); ketik kodenya di formulir.
+- **Kunci baca mati**: halaman tetap bisa dibaca; aksi (watchlist, Periksa sekarang, review, ambang) menjawab "butuh kode akses". Buka `http://127.0.0.1:8000/akses?kode=<kode-anda>` sekali.
+
+Dua-duanya membuat browser menyimpan cookie `akses` bertanda tangan selama 30 hari (digest HMAC, bukan kodenya). `/health` dan berkas statis tetap terbuka. Di Docker atau Dokploy, isi dua variabel yang sama di environment (`-e SENTINEL_KODE_AKSES=... -e SENTINEL_KUNCI_BACA=1`, atau Dokploy → Environment), jangan di repositori.
+
 ---
 
 ## 9. Evaluasi dan Pengujian

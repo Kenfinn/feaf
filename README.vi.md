@@ -513,6 +513,30 @@ docker run -p 8000:8000 -v feaf-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 
 
 Công bố đã kéo, danh mục theo dõi, dấu vết kiểm toán và quyết định duyệt nằm trong volume `/data` và vẫn còn sau khi triển khai lại. Kiểm tra tình trạng của container gọi `GET /health`. Các bước Dokploy đầy đủ: [`docs/deploy-dokploy.md`](docs/deploy-dokploy.md).
 
+### 8.5 Mã truy cập (kiểm thử khóa truy cập cục bộ)
+
+Khi chưa đặt `SENTINEL_KODE_AKSES`, mọi thứ đều mở. Để thử khóa truy cập trên máy cục bộ:
+
+```bash
+# 1. Tạo mã ngẫu nhiên (giữ bí mật; không bao giờ commit)
+export SENTINEL_KODE_AKSES="$(python3 -c 'import secrets; print(secrets.token_urlsafe(12))')"
+echo "$SENTINEL_KODE_AKSES"
+
+# 2. Tùy chọn: khóa cả việc đọc (mọi trang và /api/* đều cần mã)
+export SENTINEL_KUNCI_BACA=1
+
+# 3. Khởi động máy chủ
+uvicorn app.main:app --reload
+```
+
+Windows PowerShell: `$env:SENTINEL_KODE_AKSES = python -c "import secrets; print(secrets.token_urlsafe(12))"`, rồi `$env:SENTINEL_KUNCI_BACA = "1"`.
+
+Cách mở khóa:
+- **Bật khóa đọc** (`SENTINEL_KUNCI_BACA=1`): mở <http://127.0.0.1:8000> sẽ thấy trang khóa (HTTP 401); nhập mã vào biểu mẫu.
+- **Tắt khóa đọc**: các trang vẫn đọc được; thao tác (danh mục theo dõi, Check now, duyệt, ngưỡng) báo "cần mã truy cập". Mở `http://127.0.0.1:8000/akses?kode=<mã-của-bạn>` một lần.
+
+Cả hai cách đều khiến trình duyệt giữ cookie `akses` có chữ ký trong 30 ngày (bản tóm tắt HMAC, không bao giờ là mã gốc). `/health` và tệp tĩnh vẫn mở. Trên Docker hoặc Dokploy, đặt hai biến này trong biến môi trường (`-e SENTINEL_KODE_AKSES=... -e SENTINEL_KUNCI_BACA=1`, hoặc Dokploy → Environment), không bao giờ ghi vào kho mã.
+
 ---
 
 ## 9. Đánh giá và kiểm thử
