@@ -271,7 +271,9 @@ class TestUI(unittest.TestCase):
             app_css,
             r"\.lipat\s*>\s*summary::before\s*\{[^}]*transition:\s*none\b",
         )
-        self.assertIn("view-transition-name: garis-tab", app_css)
+        # L3: pseudo-element tidak bisa diberi view-transition-name, jadi aturan garis-tab dihapus
+        self.assertNotIn("garis-tab)", app_css)
+        self.assertNotIn("view-transition-name: garis-tab", app_css)
         self.assertIn("[hidden] { display: none !important; }", app_css)
 
     def test_tata_letak_l1_konten_lebar_penuh(self) -> None:

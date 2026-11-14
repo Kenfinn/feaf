@@ -249,11 +249,6 @@ a.kartu:active { transform: translateY(0); }
 .tab-saham a[aria-current="page"]::after {
   height: 3px; background: var(--navy); transform: scaleX(1);
   animation: feaf-garis-tab-masuk var(--gerak-sedang) var(--kurva-masuk);
-  view-transition-name: garis-tab;
-}
-::view-transition-group(garis-tab) {
-  animation-duration: var(--gerak-sedang);
-  animation-timing-function: var(--kurva-masuk);
 }
 
 /* --- teks bantu --- */
