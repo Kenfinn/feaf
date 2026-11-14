@@ -332,7 +332,7 @@ body.laci-terbuka { overflow: hidden; }
 .isi { flex: 1; padding: 26px 32px 72px; min-width: 0; max-width: 1600px; margin-inline: auto; }
 @media (min-width: 1441px) { .isi { padding-left: 40px; padding-right: 40px; } }
 /* blok prosa tetap enak dibaca di layar lebar; tabel, grid kartu, dan grafik boleh selebar penuh */
-.catatan, .lede, .kepala .sub, .kalimat-polos, .pita, .kartu p, .kosong p { max-width: 80ch; }
+.catatan, .lede, .kepala .sub, .kalimat-polos, .kartu p, .kosong p { max-width: 80ch; }
 .kosong p { margin-inline: auto; }
 .remah { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 var(--j-2);
          font-size: var(--h-label); color: var(--abu-2); }
