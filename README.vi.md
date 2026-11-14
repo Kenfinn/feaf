@@ -8,6 +8,7 @@
 
 **FEAF** là một tác tử (agent) theo dõi các công bố thông tin chính thức của sàn giao dịch Đài Loan (MOPS 重大訊息), xác định mỗi công bố tác động đến đầu vào định giá nào, tính lại định giá khi số liệu thay đổi, và **từ chối phát hành cảnh báo** khi một con số không thể truy ngược về công bố gốc. Dự án được xây dựng cho cuộc thi NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), nhánh SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-feaf.web.id-0A7B83)](https://feaf.web.id)
 [![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -17,6 +18,8 @@
 [![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-kiểm-thử)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-giao-diện-ba-ngôn-ngữ)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
+
+**Bản demo trực tuyến:** <https://feaf.web.id> · Tài liệu API: <https://feaf.web.id/docs> · Các thao tác thay đổi dữ liệu cần mã truy cập, được cung cấp cho giám khảo qua biểu mẫu cuộc thi.
 
 </div>
 

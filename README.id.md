@@ -8,6 +8,7 @@
 
 **FEAF** adalah agent yang memantau pengumuman resmi bursa Taiwan (MOPS 重大訊息), menentukan input valuasi mana yang disentuh tiap pengumuman, menghitung ulang valuasi saat angkanya berubah, dan **menolak menerbitkan peringatan** bila sebuah angka tidak bisa ditelusuri kembali ke pengumuman asalnya. Dibuat untuk NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), jalur SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-feaf.web.id-0A7B83)](https://feaf.web.id)
 [![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -17,6 +18,8 @@
 [![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-tes)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-antarmuka-tiga-bahasa)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
+
+**Demo langsung:** <https://feaf.web.id> · Dokumentasi API: <https://feaf.web.id/docs> · Aksi yang mengubah data butuh kode akses, yang diberikan ke juri lewat formulir lomba.
 
 </div>
 

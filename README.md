@@ -8,6 +8,7 @@
 
 **FEAF** is an agent that watches official Taiwan exchange filings (MOPS 重大訊息), works out which valuation input each filing touches, recalculates the valuation when the numbers change, and **refuses to publish an alert** when a number cannot be traced back to the filing it came from. Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-feaf.web.id-0A7B83)](https://feaf.web.id)
 [![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -17,6 +18,8 @@
 [![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-tests)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-three-language-interface)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
+
+**Live demo:** <https://feaf.web.id> · API docs: <https://feaf.web.id/docs> · Actions that change data need an access code, given to judges through the competition form.
 
 </div>
 

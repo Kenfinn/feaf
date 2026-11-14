@@ -8,6 +8,7 @@
 
 **FEAF** 是一個監看臺灣證交所官方重大訊息（MOPS）的代理：判斷每則公告影響哪一項估值輸入、數字變動時重新計算估值，並且在數字**無法追溯回原始公告時拒絕發布警示**。本專案為 NAPAI 2026 代理式 AI 創新競賽（AAIC 2026）SYSTEX 賽道作品：*Investment Intelligence & AI-Powered Stock Selection Agent*。
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-feaf.web.id-0A7B83)](https://feaf.web.id)
 [![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -17,6 +18,8 @@
 [![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-測試)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-三語介面)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
+
+**線上展示：** <https://feaf.web.id> · API 文件：<https://feaf.web.id/docs> · 會變更資料的操作需要存取碼，評審的存取碼透過競賽表單提供。
 
 </div>
 
