@@ -130,7 +130,7 @@ class BentukSalah(Exception):
 
 
 def _ambil_json(url: str) -> list[dict]:
-    """GET + validasi bentuk. Status 200 saja tidak cukup — lihat docs/akses-data.md."""
+    """GET + validasi bentuk. Status 200 saja tidak cukup — lihat docs/data-access.md."""
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
         teks = r.read().decode("utf-8-sig", "replace")

@@ -17,7 +17,7 @@ import re
 
 from ..i18n import pesan
 
-# Pemetaan pasal → jalur. Keputusan tim 11 Nov (docs/pemetaan-pasal.md, "Keputusan tim").
+# Pemetaan pasal → jalur. Keputusan tim 11 Nov (docs/clause-mapping.md, "Keputusan tim").
 #   valuasi  angka transaksi dihitung ulang; karena DCF berbasis kas, hasilnya SKENARIO
 #            "bila terealisasi", bukan valuasi baru
 #   risiko   sinyal risiko, tidak mengubah DCF

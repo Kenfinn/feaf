@@ -277,7 +277,7 @@ async function icon(Comp, color, size = 256) {
   // 6b · Architecture and data flow
   {
     const s = light("Method", "ARCHITECTURE AND DATA FLOW", "Where data comes from, and where it goes",
-      "Based on docs/diagram-alur.md part 1. The server holds the only copy of data and traces. The model sees public filing text only. Edit routes (add or remove a stock, change a threshold, approve a review) need an access code; there is no route that trades, sends email or pays. Ask FEAF can only call six read-only tools, at most five steps per question.");
+      "Based on docs/flow-diagrams.md part 1. The server holds the only copy of data and traces. The model sees public filing text only. Edit routes (add or remove a stock, change a threshold, approve a review) need an access code; there is no route that trades, sends email or pays. Ask FEAF can only call six read-only tools, at most five steps per question.");
     // sources
     const src = [
       ["TWSE / TPEx OpenAPI", "Daily filings (material information)"],
@@ -608,7 +608,7 @@ async function icon(Comp, color, size = 256) {
   // 17 · Third party + team
   {
     const s = light("Business", "RESOURCES AND TEAM (ART. 13)", "Open sources, tools and who did what",
-      "TODO(team): fill the division-of-labour table with real names and roles. Advisers and technical consultants may only guide; they must not do core design, code, evaluation or presentation. Full list of third parties: docs/pengungkapan-pihak-ketiga.md.");
+      "TODO(team): fill the division-of-labour table with real names and roles. Advisers and technical consultants may only guide; they must not do core design, code, evaluation or presentation. Full list of third parties: docs/third-party-disclosure.md.");
     const rows = [
       [th("Type", { fontSize: 11 }), th("What", { fontSize: 11 }), th("Used for", { fontSize: 11 })],
       ["Market data", "TWSE / TPEx OpenAPI, MOPS", "Filings, prices, shares, profiles"],

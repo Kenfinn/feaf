@@ -4,7 +4,7 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · [Bahasa Indonesia](README.id.md) · **Tiếng Việt**
 
-![Bảng cảnh báo FEAF](docs/ui/l1-sesudah/feed-en-1920.png)
+![Bảng cảnh báo FEAF](docs/ui/l1-after/feed-en-1920.png)
 
 **FEAF** là một tác tử (agent) theo dõi các công bố thông tin chính thức của sàn giao dịch Đài Loan (MOPS 重大訊息), xác định mỗi công bố tác động đến đầu vào định giá nào, tính lại định giá khi số liệu thay đổi, và **từ chối phát hành cảnh báo** khi một con số không thể truy ngược về công bố gốc. Dự án được xây dựng cho cuộc thi NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), nhánh SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
@@ -137,7 +137,7 @@ flowchart LR
 
 ### 2.3 Phân luồng theo điều khoản
 
-Danh sách điều khoản và ngưỡng được xây dựng cùng các thành viên tài chính của nhóm. Bảng đối chiếu đầy đủ và lý do của từng quyết định: [`docs/pemetaan-pasal.md`](docs/pemetaan-pasal.md) (tiếng Indonesia).
+Danh sách điều khoản và ngưỡng được xây dựng cùng các thành viên tài chính của nhóm. Bảng đối chiếu đầy đủ và lý do của từng quyết định: [`docs/clause-mapping.md`](docs/clause-mapping.md) (tiếng Indonesia).
 
 | Điều khoản | Luồng | Cách xử lý |
 |---|---|---|
@@ -192,7 +192,7 @@ Sáu thẻ: tóm tắt (điểm mạnh, điểm cần lưu ý và đoạn tườ
 Trang cảnh báo hiển thị trích dẫn MOPS, kết luận của bộ kiểm chứng, và với trường hợp bị giữ, một câu dễ hiểu cho mỗi loại kiểm tra không đạt, phần chi tiết kỹ thuật được thu gọn. Trang dấu vết liệt kê mọi bước, lời gọi mô hình, số token, độ trễ và lý do chuyển dự phòng.
 
 ### 3.4 Định giá (`/valuasi/{code}`)
-`scripts/dcf.py` là bộ tính DCF độc lập; ứng dụng web gọi cùng hàm `compute()`, nên màn hình không thể lặng lẽ khác với bảng tính. `valuation/inputs/2330.json` là bảng tính thủ công có nguồn cho từng đầu vào. Với các tổ chức phát hành phi tài chính khác, `app/valuasi_otomatis.py` dựng cùng cấu trúc đầu vào từ giá trên sàn và báo cáo tài chính FinMind, lưu đệm 12 giờ ([`docs/valuasi-otomatis.md`](docs/valuasi-otomatis.md)). Trang hiển thị chi phí vốn, tăng trưởng ngụ ý theo DCF ngược, phân tích độ nhạy và nguồn của từng đầu vào. Doanh nghiệp tài chính (ngân hàng, bảo hiểm) không có DCF.
+`scripts/dcf.py` là bộ tính DCF độc lập; ứng dụng web gọi cùng hàm `compute()`, nên màn hình không thể lặng lẽ khác với bảng tính. `valuation/inputs/2330.json` là bảng tính thủ công có nguồn cho từng đầu vào. Với các tổ chức phát hành phi tài chính khác, `app/valuasi_otomatis.py` dựng cùng cấu trúc đầu vào từ giá trên sàn và báo cáo tài chính FinMind, lưu đệm 12 giờ ([`docs/auto-valuation.md`](docs/auto-valuation.md)). Trang hiển thị chi phí vốn, tăng trưởng ngụ ý theo DCF ngược, phân tích độ nhạy và nguồn của từng đầu vào. Doanh nghiệp tài chính (ngân hàng, bảo hiểm) không có DCF.
 
 ### 3.5 Hàng đợi duyệt thủ công (`/review`)
 Các trường hợp bị giữ chờ tại đây. Người duyệt chấp thuận (chỉ khi được phép) hoặc từ chối kèm ghi chú; quyết định được lưu và hiển thị trong dấu vết.
@@ -214,11 +214,11 @@ Mọi trang đều có tiếng Anh (mặc định), 繁體中文 và tiếng Ind
 
 | Cảnh báo bị giữ | Tóm tắt cổ phiếu |
 |---|---|
-| ![Cảnh báo bị giữ](docs/ui/qa6-sesudah/peringatan-ditahan-en-1440.png) | ![Tóm tắt cổ phiếu](docs/ui/l1-sesudah/saham-ringkasan-en-1920.png) |
+| ![Cảnh báo bị giữ](docs/ui/qa6-after/peringatan-ditahan-en-1440.png) | ![Tóm tắt cổ phiếu](docs/ui/l1-after/saham-ringkasan-en-1920.png) |
 | **Định giá** | **Dấu vết vận hành** |
-| ![Định giá](docs/ui/l1-sesudah/valuasi-en-1920.png) | ![Dấu vết](docs/ui/qa6-sesudah/jejak-en-1440.png) |
+| ![Định giá](docs/ui/l1-after/valuasi-en-1920.png) | ![Dấu vết](docs/ui/qa6-after/jejak-en-1440.png) |
 | **Hàng đợi duyệt** | **Danh mục theo dõi** |
-| ![Duyệt](docs/ui/qa6-sesudah/review-en-1440.png) | ![Danh mục](docs/ui/qa6-sesudah/watchlist-en-1440.png) |
+| ![Duyệt](docs/ui/qa6-after/review-en-1440.png) | ![Danh mục](docs/ui/qa6-after/watchlist-en-1440.png) |
 
 </details>
 
@@ -459,7 +459,7 @@ napaincu-ai-comp/
 └── CHANGELOG.md, LICENSE
 ```
 
-Chi tiết thêm: [Thiết kế hệ thống](docs/system-design.md) · [Sơ đồ luồng](docs/diagram-alur.md) (tiếng Indonesia).
+Chi tiết thêm: [Thiết kế hệ thống](docs/system-design.md) · [Sơ đồ luồng](docs/flow-diagrams.md) (tiếng Indonesia).
 
 ---
 
@@ -515,7 +515,7 @@ python3 scripts/tarik.py                 # kéo cho danh mục trong data/watchl
 python3 scripts/tarik.py --ulang 600     # kiểm tra mỗi 10 phút cho đến khi nhấn Ctrl+C
 ```
 
-Nguồn dữ liệu là các endpoint OpenAPI chính thức của TWSE (`t187ap04_L`) và TPEx (`mopsfin_t187ap04_O`). Chúng chứa toàn văn các công bố trọng yếu trong ngày và truy cập được từ ngoài Đài Loan. Chúng không lưu lịch sử, nên mỗi lần kéo đều được hợp nhất vào `data/parsed/details.json` mà không trùng lặp. Lịch sử cũ hơn chỉ kéo được từ MOPS trong mạng Đài Loan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, xem [`docs/tarik-riwayat.md`](docs/tarik-riwayat.md)) rồi tải lên bằng `scripts/kirim_riwayat.py` tới `POST /api/import`.
+Nguồn dữ liệu là các endpoint OpenAPI chính thức của TWSE (`t187ap04_L`) và TPEx (`mopsfin_t187ap04_O`). Chúng chứa toàn văn các công bố trọng yếu trong ngày và truy cập được từ ngoài Đài Loan. Chúng không lưu lịch sử, nên mỗi lần kéo đều được hợp nhất vào `data/parsed/details.json` mà không trùng lặp. Lịch sử cũ hơn chỉ kéo được từ MOPS trong mạng Đài Loan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, xem [`docs/pulling-mops-history.md`](docs/pulling-mops-history.md)) rồi tải lên bằng `scripts/kirim_riwayat.py` tới `POST /api/import`.
 
 ### 8.4 Triển khai (Docker / Dokploy)
 
@@ -561,7 +561,7 @@ python3 scripts/evaluasi.py --chat-percakapan --simpan  # bộ Ask FEAF nhiều 
 python3 scripts/uji_serangan.py --simpan                # bộ tấn công
 ```
 
-Báo cáo được ghi vào `eval/hasil/` (trong image Docker, nơi `/app` chỉ đọc, thì ghi vào `/data/eval-hasil/`). 46 công bố chuẩn đi kèm trong `eval/gold_dokumen.json` (đã bỏ các mục chứa tên người, vốn hóa theo lần chạy chính thức), nên có thể tái lập đánh giá trên mọi máy mà không cần kéo dữ liệu. Thêm `--tanpa-cache` để đo độ trễ và chi phí mô hình thực tế. Bộ chuẩn và hướng dẫn gán nhãn: [`docs/hasil-gold-set.md`](docs/hasil-gold-set.md), [`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
+Báo cáo được ghi vào `eval/hasil/` (trong image Docker, nơi `/app` chỉ đọc, thì ghi vào `/data/eval-hasil/`). 46 công bố chuẩn đi kèm trong `eval/gold_dokumen.json` (đã bỏ các mục chứa tên người, vốn hóa theo lần chạy chính thức), nên có thể tái lập đánh giá trên mọi máy mà không cần kéo dữ liệu. Thêm `--tanpa-cache` để đo độ trễ và chi phí mô hình thực tế. Bộ chuẩn và hướng dẫn gán nhãn: [`docs/gold-set-results.md`](docs/gold-set-results.md), [`docs/gold-set-guide.md`](docs/gold-set-guide.md).
 
 ### 9.1 Bộ dữ liệu chuẩn
 46 công bố thật ngày 9/11/2026, khoảng 7 công bố mỗi luồng, được một thành viên nhóm tài chính gán nhãn phát hành / giữ / lưu trữ và mức tín hiệu. Thành công = tác tử đưa ra cùng quyết định và không phát hành con số sai nào. Mốc so sánh ("không có bộ kiểm chứng"): cùng bộ sàng lọc điều khoản và bộ trích xuất nhưng không có bộ kiểm chứng và quy tắc giữ lại, nên mọi thứ trích xuất được đều được phát hành, như một quy trình LLM thông thường.
@@ -576,7 +576,7 @@ Báo cáo được ghi vào `eval/hasil/` (trong image Docker, nơi `/app` chỉ
 Các số liệu này được đo **trước** khi tinh chỉnh. Những điểm không khớp đã làm lộ ra hai lỗi bộ phân tích (khoản lỗ trong ngoặc bị đọc thành lãi; số cổ phiếu tính bằng 仟股 không được đọc) và ba ngưỡng; tất cả đều đã được sửa sau đó. Trên cùng 46 công bố, tác tử sau tinh chỉnh đạt 43/46 và 29/29, nhưng đó là kết quả trong mẫu và không được báo cáo như độ chính xác.
 
 ### 9.2 Đường mô hình trên máy chủ
-Gemini 3.6 Flash, lời gọi mới không dùng bộ đệm, ngày 11/11: 0/46 con số sai được phát hành (không có bộ kiểm chứng: 5/46), độ trễ trung bình 0,7 giây mỗi công bố (tối đa 9,9 giây), 5 lời gọi mô hình, 7.212 token vào / 392 token ra, khoảng **0,007 USD cho cả 46 công bố** theo giá gói trả phí. Chỉ công bố điều 20 mới gọi mô hình. Báo cáo đầy đủ với phân loại lỗi, tỷ lệ can thiệp trên máy chủ thật (12% bị giữ) và một dấu vết có chú thích: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) (tiếng Indonesia).
+Gemini 3.6 Flash, lời gọi mới không dùng bộ đệm, ngày 11/11: 0/46 con số sai được phát hành (không có bộ kiểm chứng: 5/46), độ trễ trung bình 0,7 giây mỗi công bố (tối đa 9,9 giây), 5 lời gọi mô hình, 7.212 token vào / 392 token ra, khoảng **0,007 USD cho cả 46 công bố** theo giá gói trả phí. Chỉ công bố điều 20 mới gọi mô hình. Báo cáo đầy đủ với phân loại lỗi, tỷ lệ can thiệp trên máy chủ thật (12% bị giữ) và một dấu vết có chú thích: [`docs/evaluation-report.md`](docs/evaluation-report.md) (tiếng Indonesia).
 
 ### 9.3 Bộ tấn công
 12 kiểu tấn công trên công bố thật (chèn lệnh, bịa số và trích dẫn, nhãn giả, tráo đơn vị, ngoại tệ, độ lớn cực đoan), 72 trường hợp, bị tấn công bởi cả bộ suy luận quy tắc lẫn một mô hình mô phỏng tuân theo mọi lệnh chèn: **0 con số sai được phát hành** ([báo cáo](eval/hasil/serangan-2026-11-10.md)).
@@ -602,11 +602,11 @@ Appendix 2 yêu cầu các chỉ số vận hành bên cạnh độ chính xác.
 
 | Chỉ số | Giá trị | Nguồn |
 |---|---|---|
-| **Tỷ lệ gọi công cụ thành công** (Ask FEAF) | **57/57 (100%)** trên đường quy tắc: 26/26 ở bộ một lượt (52 câu hỏi) và 31/31 ở bộ nhiều lượt (36 lượt). Một lời gọi được tính là thành công khi công cụ trả về kết quả không có lỗi; một trong 57 lời gọi đã trả lời đúng rằng tổ chức phát hành chưa có mô hình định giá. **Đường mô hình: chưa đo.** Lần chạy trên máy chủ ngày 11/11 thực hiện 54 lời gọi công cụ (69 lời gọi mô hình), nhưng báo cáo không ghi lỗi công cụ | Chạy lại ngày 14/11/2026 (lệnh bên dưới). Tổng số lời gọi khớp với [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 4 và [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
-| **Số lần thử lại** (lời gọi mô hình) | **0** trên đường mô hình (46 công bố chuẩn, 5 lời gọi mô hình, 11/11 09:39 UTC) và **0** ở lần chạy vận hành đường quy tắc trên 581 công bố. Đường quy tắc không gọi mô hình nên không có gì để thử lại. Cấu hình: `SENTINEL_RETRY=2` | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **Tỷ lệ chấm dứt** | **0 lần bị buộc chấm dứt** trong hai mẫu đã lấy: máy chủ thật ngày 11/11 09:22 UTC (1.106 công bố, "không có lỗi mô hình, không có dự phòng") và lần chạy bộ chuẩn đường mô hình (0 lần quay về quy tắc trong 46 công bố). Một lần chạy kết thúc sớm khi chạm một trong bốn giới hạn: 40 lời gọi mô hình, 90 giây, 3 lần thất bại liên tiếp, hoặc hết số dư trả trước (HTTP 402); các công bố còn lại khi đó dùng bộ suy luận quy tắc. Các giới hạn này được kiểm thử bằng `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py` và `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **Tỷ lệ theo thời gian chưa đo**: `GET /health` (`agent.sebab_cadangan`) đếm các lý do dự phòng, nhưng chưa tính tỷ lệ từ đó | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 2.2, 5 và 7 |
-| **Tỷ lệ can thiệp thủ công** | **28%** (13/46) trên bộ chuẩn, đường quy tắc, trước khi tinh chỉnh; **12%** (132/1.106) trên máy chủ thật, 11/11; **10%** (58/581) ở lần chạy vận hành đường quy tắc, 11/11 | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 2.1 và 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **Độ trễ và chi phí** | Đường mô hình: trung bình 0,7 giây mỗi công bố (tối đa 9,9 giây), 0,0069 USD cho 46 công bố (cận dưới: lúc đó chưa tính token suy nghĩ). Đường quy tắc: trung bình 1 ms mỗi công bố (581 công bố) | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Tỷ lệ gọi công cụ thành công** (Ask FEAF) | **57/57 (100%)** trên đường quy tắc: 26/26 ở bộ một lượt (52 câu hỏi) và 31/31 ở bộ nhiều lượt (36 lượt). Một lời gọi được tính là thành công khi công cụ trả về kết quả không có lỗi; một trong 57 lời gọi đã trả lời đúng rằng tổ chức phát hành chưa có mô hình định giá. **Đường mô hình: chưa đo.** Lần chạy trên máy chủ ngày 11/11 thực hiện 54 lời gọi công cụ (69 lời gọi mô hình), nhưng báo cáo không ghi lỗi công cụ | Chạy lại ngày 14/11/2026 (lệnh bên dưới). Tổng số lời gọi khớp với [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 4 và [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
+| **Số lần thử lại** (lời gọi mô hình) | **0** trên đường mô hình (46 công bố chuẩn, 5 lời gọi mô hình, 11/11 09:39 UTC) và **0** ở lần chạy vận hành đường quy tắc trên 581 công bố. Đường quy tắc không gọi mô hình nên không có gì để thử lại. Cấu hình: `SENTINEL_RETRY=2` | [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Tỷ lệ chấm dứt** | **0 lần bị buộc chấm dứt** trong hai mẫu đã lấy: máy chủ thật ngày 11/11 09:22 UTC (1.106 công bố, "không có lỗi mô hình, không có dự phòng") và lần chạy bộ chuẩn đường mô hình (0 lần quay về quy tắc trong 46 công bố). Một lần chạy kết thúc sớm khi chạm một trong bốn giới hạn: 40 lời gọi mô hình, 90 giây, 3 lần thất bại liên tiếp, hoặc hết số dư trả trước (HTTP 402); các công bố còn lại khi đó dùng bộ suy luận quy tắc. Các giới hạn này được kiểm thử bằng `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py` và `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **Tỷ lệ theo thời gian chưa đo**: `GET /health` (`agent.sebab_cadangan`) đếm các lý do dự phòng, nhưng chưa tính tỷ lệ từ đó | [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 2.2, 5 và 7 |
+| **Tỷ lệ can thiệp thủ công** | **28%** (13/46) trên bộ chuẩn, đường quy tắc, trước khi tinh chỉnh; **12%** (132/1.106) trên máy chủ thật, 11/11; **10%** (58/581) ở lần chạy vận hành đường quy tắc, 11/11 | [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 2.1 và 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Độ trễ và chi phí** | Đường mô hình: trung bình 0,7 giây mỗi công bố (tối đa 9,9 giây), 0,0069 USD cho 46 công bố (cận dưới: lúc đó chưa tính token suy nghĩ). Đường quy tắc: trung bình 1 ms mỗi công bố (581 công bố) | [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
 
 Tái lập số lời gọi công cụ (không cần khóa API). Bộ nhiều lượt cần thêm `SENTINEL_SERTAKAN_CONTOH=1` và `--chat-percakapan`:
 
@@ -626,9 +626,9 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # không có đầu 
 | Kiểm tra nhãn, đơn vị hoặc tiền tệ thất bại | 4 | Hai trường hợp là lỗ hổng của bộ phân tích, đã sửa; số tiền USD vẫn bị giữ theo thiết kế |
 | Điều khoản nghiêm trọng (1, 3, 40) | 3 | Luôn bị giữ, theo quyết định của nhóm |
 
-Nguồn: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 5.
+Nguồn: [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 5.
 
-**Ví dụ dấu vết vận hành.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) là dấu vết đã lưu của việc HĐQT TSMC thông qua ngân sách chi đầu tư (điều 20). Trên máy chủ đang chạy, dấu vết cùng loại mở được tại `/jejak/{id}` (ở đây là `/jejak/2330-2026-11-10-211853`) và dạng JSON tại `GET /api/traces/{id}`. Các bước ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 6):
+**Ví dụ dấu vết vận hành.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) là dấu vết đã lưu của việc HĐQT TSMC thông qua ngân sách chi đầu tư (điều 20). Trên máy chủ đang chạy, dấu vết cùng loại mở được tại `/jejak/{id}` (ở đây là `/jejak/2330-2026-11-10-211853`) và dạng JSON tại `GET /api/traces/{id}`. Các bước ([`docs/evaluation-report.md`](docs/evaluation-report.md) mục 6):
 
 | Bước | Điều đã xảy ra |
 |---|---|
@@ -650,10 +650,10 @@ Mỗi dòng nêu các bài kiểm thử bao phủ một rủi ro. Toàn bộ b�
 | Tên người lọt vào tín hiệu, câu trả lời của công cụ hoặc tệp xuất | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (không có tên thành viên nhóm trong `app/`, `eval/`, `README.md`) | Đạt |
 | Khóa API nằm trong tệp, trang hoặc dấu vết | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (không có `GEMINI_API_KEY` hay tiền tố `AIza` trong bất kỳ dấu vết nào). Khóa chỉ được đọc từ biến môi trường và `key=` được che trong các lỗi mô hình được ghi lại (`app/agent/llm.py`) | Đạt với dấu vết. Nhật ký máy chủ và trang đã render chưa có kiểm thử riêng |
 | Chèn lệnh (prompt injection) | `tests/test_agent.py`: `TestPrompInjection` (3 bài: nỗ lực được ghi vào dấu vết; số bị chèn không bao giờ được phát hành; chèn lệnh được mô hình làm theo vẫn bị bộ kiểm chứng chặn ở nhãn và độ lớn); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` và `python3 scripts/uji_serangan.py` (12 kiểu tấn công, 72 trường hợp); trò chuyện: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` và `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Đạt. **0/72** con số của kẻ tấn công được phát hành (chạy lại 14/11/2026, [báo cáo](eval/hasil/serangan-2026-11-10.md)); 1 lượt lịch sử bị chèn đã bị loại bỏ trong bộ trò chuyện 36 lượt |
-| Con số bịa | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; bộ chuẩn (`python3 scripts/evaluasi.py`) | Đạt. **0/46** con số sai được phát hành, so với 5/46 khi không có bộ kiểm chứng ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 2.1) |
+| Con số bịa | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; bộ chuẩn (`python3 scripts/evaluasi.py`) | Đạt. **0/46** con số sai được phát hành, so với 5/46 khi không có bộ kiểm chứng ([`docs/evaluation-report.md`](docs/evaluation-report.md) mục 2.1) |
 | Gọi công cụ trái phép | `tests/test_chat.py`: `TestJalurModel.test_kode_tidak_sah_dari_model_ditolak_alat` (mã `../../etc` do mô hình đưa ra bị lớp công cụ từ chối), `TestJalurModel.test_berhenti_setelah_lima_langkah` (tối đa 5 vòng gọi công cụ); `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir` (công cụ menu không làm thay đổi thư mục dữ liệu); `tests/test_agent.py`: `TestDeploy.test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka` (thao tác làm thay đổi dữ liệu cần mã truy cập) | Đạt. Mô hình có thể gọi 13 công cụ, tất cả chỉ đọc (`ALAT` trong `app/chat.py`): không công cụ nào thay đổi danh mục theo dõi, quyết định duyệt, ngưỡng hay công bố |
 | Quyền hạn và mã truy cập | `tests/test_putaran2.py`: `TestR3KunciBaca.test_r3_terkunci_tanpa_kode`, `test_r3_terbuka_dengan_kode`; `tests/test_qa_perbaikan.py`: `TestKunciBacaKeamanan.test_401_mandiri_tanpa_bocor_dan_post_akses_bertanda_hmac` (trang 401 không làm lộ dữ liệu danh mục; cookie là bản tóm tắt HMAC, không phải mã); `tests/test_agent.py`: `TestDeploy.test_kode_salah_tidak_membuka`, `TestCacheModelDanImpor.test_impor_butuh_kode_akses` (nhập dữ liệu bị đóng khi không có mã) | Đạt |
-| Đầu ra không phù hợp (khuyến nghị, dự đoán, đặt lệnh) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (không có nhãn mua/bán ngoài phần tuyên bố miễn trừ, ba ngôn ngữ); `python3 scripts/evaluasi.py --chat` | Đạt. **27/27** câu hỏi xin khuyến nghị, ngoài phạm vi và chèn lệnh bị từ chối, **0** từ khuyến nghị đến được người dùng (Gemini 3.6 Flash trên máy chủ, 11/11, [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) mục 4); đường quy tắc 27/27 (chạy lại 14/11/2026) |
+| Đầu ra không phù hợp (khuyến nghị, dự đoán, đặt lệnh) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (không có nhãn mua/bán ngoài phần tuyên bố miễn trừ, ba ngôn ngữ); `python3 scripts/evaluasi.py --chat` | Đạt. **27/27** câu hỏi xin khuyến nghị, ngoài phạm vi và chèn lệnh bị từ chối, **0** từ khuyến nghị đến được người dùng (Gemini 3.6 Flash trên máy chủ, 11/11, [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 4); đường quy tắc 27/27 (chạy lại 14/11/2026) |
 | Đầu vào độc hại | `tests/test_c1a_tautan.py`: `TestC1aTautan.test_kode_tidak_sah_tidak_dipantulkan` (mã cổ phiếu chứa `<script>` không bị phản chiếu vào trang) | Đạt |
 
 ---
@@ -714,13 +714,13 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 Đánh giá rủi ro
 
-Quy chế cuộc thi, Điều 14.3. Các khoảng trống còn mở theo từng nhóm: [`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) (tiếng Indonesia). Bằng chứng kiểm thử: [9.7](#97-kết-quả-kiểm-thử-an-toàn).
+Quy chế cuộc thi, Điều 14.3. Các khoảng trống còn mở theo từng nhóm: [`docs/security-report.md`](docs/security-report.md) (tiếng Indonesia). Bằng chứng kiểm thử: [9.7](#97-kết-quả-kiểm-thử-an-toàn).
 
 | Rủi ro | Bảo vệ | Giám sát | Phục hồi |
 |---|---|---|---|
 | **Chèn lệnh (prompt injection)** | Văn bản công bố vào prompt bên trong dấu phân cách và được coi là dữ liệu; mẫu chèn lệnh được đánh dấu (`deteksi_injeksi`); con số chỉ được chấp nhận khi nhãn hợp lệ, câu trích dẫn và chữ số có trong công bố, và độ lớn hợp lý. Ask FEAF từ chối cụm từ chèn lệnh trước mọi lời gọi công cụ hay mô hình và ký mỗi câu trả lời (HMAC), nên lịch sử giả mạo bị loại bỏ | Mỗi dấu hiệu chèn lệnh là một bước trong dấu vết; `python3 scripts/uji_serangan.py` (72 trường hợp, 0 con số sai) | Công bố bị giữ cho con người; trò chuyện quay về câu trả lời theo mẫu. Khoảng trống còn mở: một cách diễn đạt mới, kín đáo có thể lọt qua bộ lọc mẫu và khi đó chỉ bị chặn bởi các kiểm tra số liệu |
 | **Gọi công cụ trái phép** | Danh sách đóng gồm 13 công cụ chỉ đọc; không có công cụ shell, tệp, đặt lệnh hay cài đặt; tham số được kiểm tra (mẫu mã cổ phiếu); tối đa 5 vòng gọi công cụ cho mỗi câu trả lời; câu trả lời của mô hình giới hạn 60 mỗi giờ; các route làm thay đổi dữ liệu cần mã truy cập | Mọi lời gọi công cụ, tham số và kết quả được lưu trong `traces_chat/` | Công cụ không xác định trả về kết quả lỗi; đổi `SENTINEL_KODE_AKSES` rồi khởi động lại để thu hồi quyền. Khoảng trống còn mở: một mã truy cập dùng chung, không có vai trò theo người dùng |
-| **Rò rỉ dữ liệu hoặc thông tin xác thực** | Danh sách cho phép các cột hồ sơ doanh nghiệp; trường người phát ngôn bị xóa khi kéo dữ liệu và khi nhập; tên nhân sự quản lý và kiểm toán viên không bao giờ được trích xuất; khóa API chỉ lấy từ biến môi trường và bị che trong lỗi được ghi; `.env` và tệp khóa bị git bỏ qua; chỉ văn bản công bố công khai và văn bản câu hỏi được gửi tới Gemini | Các kiểm thử ở [9.7](#97-kết-quả-kiểm-thử-an-toàn), gồm quét `app/`, `eval/` và `README.md` để tìm tên thành viên nhóm | Dừng hoạt động liên quan (Điều 14.4 bên dưới), đổi khóa, xóa các tệp bị ảnh hưởng ([10.3](#103-lưu-giữ-và-xóa-dữ-liệu)). Sự cố ngày 10/11, khi bộ đệm hồ sơ giữ các trường nhân sự quản lý, đã được khắc phục bằng danh sách cho phép ([`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) mục 3) |
+| **Rò rỉ dữ liệu hoặc thông tin xác thực** | Danh sách cho phép các cột hồ sơ doanh nghiệp; trường người phát ngôn bị xóa khi kéo dữ liệu và khi nhập; tên nhân sự quản lý và kiểm toán viên không bao giờ được trích xuất; khóa API chỉ lấy từ biến môi trường và bị che trong lỗi được ghi; `.env` và tệp khóa bị git bỏ qua; chỉ văn bản công bố công khai và văn bản câu hỏi được gửi tới Gemini | Các kiểm thử ở [9.7](#97-kết-quả-kiểm-thử-an-toàn), gồm quét `app/`, `eval/` và `README.md` để tìm tên thành viên nhóm | Dừng hoạt động liên quan (Điều 14.4 bên dưới), đổi khóa, xóa các tệp bị ảnh hưởng ([10.3](#103-lưu-giữ-và-xóa-dữ-liệu)). Sự cố ngày 10/11, khi bộ đệm hồ sơ giữ các trường nhân sự quản lý, đã được khắc phục bằng danh sách cho phép ([`docs/security-report.md`](docs/security-report.md) mục 3) |
 | **Ảo giác** | Mô hình không bao giờ tính toán; DCF là mã; bộ kiểm chứng đóng khi thất bại; mọi con số trong câu trả lời trò chuyện phải xuất hiện trong kết quả công cụ | Bộ chuẩn (0/46 con số sai), bộ tấn công (0/72), `python3 scripts/evaluasi.py` | Công bố bị giữ và dấu vết nêu kiểm tra thất bại; trò chuyện hiển thị câu trả lời theo mẫu |
 | **Thiên lệch** | Ngưỡng đến từ một nhóm tài chính (hồ sơ cân bằng là câu trả lời của nhóm; thận trọng và mạo hiểm là đề xuất); nhiệt độ 0; luồng được chọn theo số điều khoản chứ không phải bởi mô hình; chỉ dùng công bố của doanh nghiệp và dữ liệu thị trường, không dùng thuộc tính nhân khẩu học hay cá nhân; Ask FEAF từ chối khuyến nghị mua/bán. Phạm vi giới hạn ở tổ chức phát hành TWSE/TPEx có dữ liệu FinMind hoặc của sàn, doanh nghiệp tài chính không có DCF, và ngoài Đài Loan chỉ có công bố trong ngày | Phân bố quyết định và tỷ lệ can thiệp thủ công trong các báo cáo của `scripts/evaluasi.py`; lịch sử ngưỡng tại `/ambang` | Đổi hồ sơ rủi ro hoặc ngưỡng tại `/ambang`; đặt lại phiếu của một điều khoản. Bộ kiểm thử ngoài mẫu là bước tiếp theo (chưa đo) |
 | **Đầu vào độc hại** | Jinja2 tự động thoát ký tự; mẫu mã cổ phiếu `^[0-9A-Z]{4,6}$`; câu hỏi trò chuyện bị cắt ở 500 ký tự; nhập dữ liệu giới hạn 25 MB, kiểm tra là JSON và đóng khi không có mã truy cập; phát hiện trang chặn của MOPS | Các dòng HTTP 4xx trong nhật ký máy chủ; `/health` | Lỗi được cô lập theo từng công bố nên một bản ghi hỏng không làm dừng phần còn lại. Khoảng trống còn mở: không có giới hạn tốc độ theo IP (chỉ có giới hạn câu trả lời của mô hình) |
@@ -787,7 +787,7 @@ FEAF tuân theo [semantic versioning](https://semver.org/). Phiên bản đang c
 
 ### 13.1 Tài nguyên của bên thứ ba
 
-Quy chế cuộc thi, Điều 13. Tóm tắt của [`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md) (tiếng Indonesia), tài liệu này cũng ghi trạng thái kiểm chứng của từng mục.
+Quy chế cuộc thi, Điều 13. Tóm tắt của [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md) (tiếng Indonesia), tài liệu này cũng ghi trạng thái kiểm chứng của từng mục.
 
 | Tên | Loại | Dùng để làm gì | Phạm vi dữ liệu | Giấy phép hoặc điều khoản |
 |---|---|---|---|---|
@@ -813,7 +813,7 @@ Quy chế cuộc thi, Điều 13. Tóm tắt của [`docs/pengungkapan-pihak-ket
 
 ### 13.2 Giấy phép
 
-Bảo lưu mọi quyền; xem [`LICENSE`](LICENSE). Ban tổ chức và giám khảo AAIC 2026 được phép chạy và kiểm tra kho mã này để đánh giá bài dự thi. Các thành phần và dữ liệu của bên thứ ba giữ nguyên giấy phép riêng ([`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)).
+Bảo lưu mọi quyền; xem [`LICENSE`](LICENSE). Ban tổ chức và giám khảo AAIC 2026 được phép chạy và kiểm tra kho mã này để đánh giá bài dự thi. Các thành phần và dữ liệu của bên thứ ba giữ nguyên giấy phép riêng ([`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)).
 
 ---
 

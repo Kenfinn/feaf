@@ -2,8 +2,8 @@
 
 Prepared 11 Nov 2026. All numbers below come from saved reports in `eval/hasil/` or from the
 live server (`/sehat`, `/api/peringatan`, `/api/jejak/{id}`). Commands to reproduce are given
-for each section. Internal working notes (Indonesian): `docs/hasil-gold-set.md`,
-`docs/laporan-keamanan.md`.
+for each section. Internal working notes (Indonesian): `docs/gold-set-results.md`,
+`docs/security-report.md`.
 
 ## 1. Task, success definition, environment
 

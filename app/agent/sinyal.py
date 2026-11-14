@@ -1,6 +1,6 @@
 """Jalur sinyal (B1): pasal yang tidak mengubah DCF, tapi perlu diketahui investor.
 
-Keputusan tim (docs/pemetaan-pasal.md, "Keputusan tim"):
+Keputusan tim (docs/clause-mapping.md, "Keputusan tim"):
     22, 23   penjaminan / pinjaman dana ke pihak lain → sinyal risiko, per penerima
     11, 35   perubahan modal, obligasi, pembelian kembali → sinyal; DCF berbasis kas
     31       laporan keuangan kuartal → ringkasan angka; memicu pembaruan valuasi

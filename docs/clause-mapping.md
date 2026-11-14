@@ -131,7 +131,7 @@ moderat / agresif); moderat = jawaban tim keuangan, dua lainnya usulan tim tekni
 | Rasio utang laporan kuartal (liabilitas ÷ aset), kalibrasi 11 Nov | ≥ 40% | ≥ 50% | ≥ 65% |
 | Pinjaman dana pasal 23 ÷ ekuitas = perlu diperhatikan, kalibrasi 11 Nov | ≥ 40% | ≥ 40% | ≥ 40% |
 
-Kalibrasi 11 Nov dari gold set tim keuangan: lihat [`hasil-gold-set.md`](./hasil-gold-set.md).
+Kalibrasi 11 Nov dari gold set tim keuangan: lihat [`gold-set-results.md`](./gold-set-results.md).
 Juga: saham baru yang jumlahnya tidak terbaca = perlu diperhatikan; pasal 20 dengan anak
 perusahaan 100% = arsip.
 

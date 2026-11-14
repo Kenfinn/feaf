@@ -13,7 +13,7 @@ distribute, sublicense or sell it is granted, except as stated below.
    the competition rules.
 
 2. Third-party components keep their own licences. They are listed with their terms in
-   docs/pengungkapan-pihak-ketiga.md, including Python packages (FastAPI: MIT; Uvicorn,
+   docs/third-party-disclosure.md, including Python packages (FastAPI: MIT; Uvicorn,
    Jinja2, httpx: BSD-3-Clause) and data sources (TWSE and TPEx OpenAPI under the
    Taiwan Open Government Data License; FinMind under its terms of service; MOPS public
    filings). Nothing in this licence restricts rights granted by those licences.

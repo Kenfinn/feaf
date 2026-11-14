@@ -4,7 +4,7 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · **Bahasa Indonesia** · [Tiếng Việt](README.vi.md)
 
-![Feed peringatan FEAF](docs/ui/l1-sesudah/feed-id-1920.png)
+![Feed peringatan FEAF](docs/ui/l1-after/feed-id-1920.png)
 
 **FEAF** adalah agent yang memantau pengumuman resmi bursa Taiwan (MOPS 重大訊息), menentukan input valuasi mana yang disentuh tiap pengumuman, menghitung ulang valuasi saat angkanya berubah, dan **menolak menerbitkan peringatan** bila sebuah angka tidak bisa ditelusuri kembali ke pengumuman asalnya. Dibuat untuk NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), jalur SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
@@ -137,7 +137,7 @@ flowchart LR
 
 ### 2.3 Jalur per Pasal
 
-Daftar pasal dan ambangnya ditetapkan bersama anggota tim keuangan. Pemetaan lengkap dan alasan tiap keputusan: [`docs/pemetaan-pasal.md`](docs/pemetaan-pasal.md).
+Daftar pasal dan ambangnya ditetapkan bersama anggota tim keuangan. Pemetaan lengkap dan alasan tiap keputusan: [`docs/clause-mapping.md`](docs/clause-mapping.md).
 
 | Pasal | Jalur | Yang terjadi |
 |---|---|---|
@@ -192,7 +192,7 @@ Enam tab: ringkasan (kekuatan, hal yang perlu diwaspadai, dan narasi AI per prof
 Halaman peringatan menampilkan sitasi MOPS, putusan pemeriksa, dan, untuk kasus yang ditahan, satu kalimat polos per jenis cek yang gagal dengan detail teknis dilipat. Jejak menampilkan setiap langkah, panggilan model, jumlah token, latensi, dan alasan peralihan.
 
 ### 3.4 Valuasi (`/valuasi/{code}`)
-`scripts/dcf.py` adalah kalkulator DCF mandiri; aplikasi web memanggil `compute()` yang sama, jadi layar tidak mungkin diam-diam berbeda dari lembar kerja. `valuation/inputs/2330.json` adalah lembar kerja manual dengan sumber untuk setiap input. Untuk emiten non-keuangan lain, `app/valuasi_otomatis.py` menyusun struktur input yang sama dari harga bursa dan laporan keuangan FinMind, di-cache 12 jam ([`docs/valuasi-otomatis.md`](docs/valuasi-otomatis.md)). Halamannya menampilkan biaya modal, pertumbuhan tersirat reverse-DCF, sensitivitas, dan sumber tiap input. Perusahaan keuangan (bank, asuransi) tidak mendapat DCF.
+`scripts/dcf.py` adalah kalkulator DCF mandiri; aplikasi web memanggil `compute()` yang sama, jadi layar tidak mungkin diam-diam berbeda dari lembar kerja. `valuation/inputs/2330.json` adalah lembar kerja manual dengan sumber untuk setiap input. Untuk emiten non-keuangan lain, `app/valuasi_otomatis.py` menyusun struktur input yang sama dari harga bursa dan laporan keuangan FinMind, di-cache 12 jam ([`docs/auto-valuation.md`](docs/auto-valuation.md)). Halamannya menampilkan biaya modal, pertumbuhan tersirat reverse-DCF, sensitivitas, dan sumber tiap input. Perusahaan keuangan (bank, asuransi) tidak mendapat DCF.
 
 ### 3.5 Antrean Review Manusia (`/review`)
 Kasus yang ditahan menunggu di sini. Reviewer menyetujui (hanya bila persetujuan diizinkan) atau menolak dengan catatan; keputusannya disimpan dan tampil di jejak.
@@ -214,11 +214,11 @@ Setiap halaman tersedia dalam bahasa Inggris (bawaan), 繁體中文, dan Bahasa 
 
 | Peringatan ditahan | Ringkasan saham |
 |---|---|
-| ![Peringatan ditahan](docs/ui/qa6-sesudah/peringatan-ditahan-id-1440.png) | ![Ringkasan saham](docs/ui/l1-sesudah/saham-ringkasan-id-1920.png) |
+| ![Peringatan ditahan](docs/ui/qa6-after/peringatan-ditahan-id-1440.png) | ![Ringkasan saham](docs/ui/l1-after/saham-ringkasan-id-1920.png) |
 | **Valuasi** | **Jejak operasi** |
-| ![Valuasi](docs/ui/l1-sesudah/valuasi-id-1920.png) | ![Jejak](docs/ui/qa6-sesudah/jejak-id-1440.png) |
+| ![Valuasi](docs/ui/l1-after/valuasi-id-1920.png) | ![Jejak](docs/ui/qa6-after/jejak-id-1440.png) |
 | **Antrean review** | **Watchlist** |
-| ![Review](docs/ui/qa6-sesudah/review-id-1440.png) | ![Watchlist](docs/ui/qa6-sesudah/watchlist-id-1440.png) |
+| ![Review](docs/ui/qa6-after/review-id-1440.png) | ![Watchlist](docs/ui/qa6-after/watchlist-id-1440.png) |
 
 </details>
 
@@ -459,7 +459,7 @@ napaincu-ai-comp/
 └── CHANGELOG.md, LICENSE
 ```
 
-Rincian lebih lanjut: [Desain sistem](docs/system-design.md) · [Diagram alur](docs/diagram-alur.md).
+Rincian lebih lanjut: [Desain sistem](docs/system-design.md) · [Diagram alur](docs/flow-diagrams.md).
 
 ---
 
@@ -515,7 +515,7 @@ python3 scripts/tarik.py                 # tarik untuk watchlist di data/watchli
 python3 scripts/tarik.py --ulang 600     # periksa tiap 10 menit sampai Ctrl+C
 ```
 
-Sumbernya adalah endpoint OpenAPI resmi TWSE (`t187ap04_L`) dan TPEx (`mopsfin_t187ap04_O`). Keduanya memuat teks lengkap pengumuman material hari ini dan bisa diakses dari luar Taiwan. Keduanya tidak menyimpan riwayat, jadi setiap tarikan digabung ke `data/parsed/details.json` tanpa duplikat. Riwayat lebih lama hanya bisa ditarik dari MOPS di jaringan Taiwan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, lihat [`docs/tarik-riwayat.md`](docs/tarik-riwayat.md)) lalu diunggah dengan `scripts/kirim_riwayat.py` ke `POST /api/import`.
+Sumbernya adalah endpoint OpenAPI resmi TWSE (`t187ap04_L`) dan TPEx (`mopsfin_t187ap04_O`). Keduanya memuat teks lengkap pengumuman material hari ini dan bisa diakses dari luar Taiwan. Keduanya tidak menyimpan riwayat, jadi setiap tarikan digabung ke `data/parsed/details.json` tanpa duplikat. Riwayat lebih lama hanya bisa ditarik dari MOPS di jaringan Taiwan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, lihat [`docs/pulling-mops-history.md`](docs/pulling-mops-history.md)) lalu diunggah dengan `scripts/kirim_riwayat.py` ke `POST /api/import`.
 
 ### 8.4 Deploy (Docker / Dokploy)
 
@@ -561,7 +561,7 @@ python3 scripts/evaluasi.py --chat-percakapan --simpan  # set Tanya FEAF berting
 python3 scripts/uji_serangan.py --simpan                # set serangan
 ```
 
-Laporan ditulis ke `eval/hasil/` (di dalam image Docker, tempat `/app` hanya-baca, ke `/data/eval-hasil/`). 46 pengumuman gold disertakan di `eval/gold_dokumen.json` (butir bernama dibuang, kapitalisasi pasar per jalan resmi), sehingga evaluasi bisa diulang di mesin mana pun tanpa menarik data. Tambahkan `--tanpa-cache` untuk mengukur latensi dan biaya model sungguhan. Gold set dan panduan pelabelan: [`docs/hasil-gold-set.md`](docs/hasil-gold-set.md), [`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
+Laporan ditulis ke `eval/hasil/` (di dalam image Docker, tempat `/app` hanya-baca, ke `/data/eval-hasil/`). 46 pengumuman gold disertakan di `eval/gold_dokumen.json` (butir bernama dibuang, kapitalisasi pasar per jalan resmi), sehingga evaluasi bisa diulang di mesin mana pun tanpa menarik data. Tambahkan `--tanpa-cache` untuk mengukur latensi dan biaya model sungguhan. Gold set dan panduan pelabelan: [`docs/gold-set-results.md`](docs/gold-set-results.md), [`docs/gold-set-guide.md`](docs/gold-set-guide.md).
 
 ### 9.1 Gold Set
 46 pengumuman asli dari 9 Nov 2026, sekitar 7 per jalur, dilabeli terbit / tahan / arsip dan tingkat sinyal oleh anggota tim keuangan. Berhasil = agent mengambil keputusan yang sama dan tidak menerbitkan angka salah. Baseline ("tanpa pemeriksa"): penyaring pasal dan ekstraktor yang sama tanpa pemeriksa dan tanpa aturan tahan, sehingga apa pun yang diekstrak langsung terbit, seperti pipeline LLM biasa.
@@ -576,7 +576,7 @@ Laporan ditulis ke `eval/hasil/` (di dalam image Docker, tempat `/app` hanya-bac
 Angka ini diukur **sebelum** kalibrasi. Ketidakcocokannya membuka dua bug pengurai (rugi dalam kurung terbaca laba; jumlah saham dalam 仟股 tidak terbaca) dan tiga ambang; semuanya diperbaiki sesudahnya. Pada 46 pengumuman yang sama, agent setelah kalibrasi mendapat 43/46 dan 29/29, tetapi itu dalam-sampel dan tidak dilaporkan sebagai akurasi.
 
 ### 9.2 Jalur Model di Server
-Gemini 3.6 Flash, panggilan baru, 11 Nov: 0/46 angka salah terbit (tanpa pemeriksa: 5/46), latensi rata-rata 0,7 detik per pengumuman (maks 9,9 detik), 5 panggilan model, 7.212 token masuk / 392 token keluar, sekitar **USD 0,007 untuk seluruh 46 pengumuman** dengan tarif berbayar. Hanya pengumuman pasal 20 yang memanggil model. Laporan lengkap dengan kategori galat, tingkat intervensi di server langsung (12% ditahan), dan contoh jejak beranotasi: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md).
+Gemini 3.6 Flash, panggilan baru, 11 Nov: 0/46 angka salah terbit (tanpa pemeriksa: 5/46), latensi rata-rata 0,7 detik per pengumuman (maks 9,9 detik), 5 panggilan model, 7.212 token masuk / 392 token keluar, sekitar **USD 0,007 untuk seluruh 46 pengumuman** dengan tarif berbayar. Hanya pengumuman pasal 20 yang memanggil model. Laporan lengkap dengan kategori galat, tingkat intervensi di server langsung (12% ditahan), dan contoh jejak beranotasi: [`docs/evaluation-report.md`](docs/evaluation-report.md).
 
 ### 9.3 Set Serangan
 12 jenis serangan pada pengumuman asli (instruksi sisipan, angka dan kutipan karangan, label palsu, tukar satuan, mata uang asing, besaran ekstrem), 72 kasus, diserang oleh penalar aturan dan model tiruan yang menuruti setiap injeksi: **0 angka salah terbit** ([laporan](eval/hasil/serangan-2026-11-10.md)).
@@ -602,11 +602,11 @@ Appendix 2 meminta metrik operasional di samping akurasi. Setiap nilai di bawah 
 
 | Metrik | Nilai | Sumber |
 |---|---|---|
-| **Tingkat keberhasilan panggilan alat** (Tanya FEAF) | **57/57 (100%)** di jalur aturan: 26/26 pada set satu giliran (52 pertanyaan) dan 31/31 pada set bertingkat (36 giliran). Panggilan dihitung berhasil bila alat mengembalikan hasil tanpa galat; satu dari 57 dengan benar menjawab bahwa emiten belum punya model valuasi. **Jalur model: tidak diukur.** Run server 11 Nov melakukan 54 panggilan alat (69 panggilan model), tetapi laporannya tidak mencatat galat alat | Dijalankan ulang 14 Nov 2026 (perintah di bawah). Jumlah panggilan cocok dengan [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 4 dan [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
-| **Jumlah retry** (panggilan model) | **0** di jalur model (46 pengumuman gold, 5 panggilan model, 11 Nov 09:39 UTC) dan **0** pada run operasional jalur aturan atas 581 pengumuman. Jalur aturan tidak memanggil model, jadi tidak ada yang bisa di-retry. Pengaturan: `SENTINEL_RETRY=2` | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **Tingkat terminasi** | **0 terminasi paksa** pada dua sampel: server langsung 11 Nov 09:22 UTC (1.106 pengumuman, "tanpa galat model, tanpa fallback") dan run gold jalur model (0 fallback ke aturan dari 46 pengumuman). Sebuah jalan berhenti lebih awal bila salah satu dari empat batas tercapai: 40 panggilan model, 90 detik, 3 kegagalan beruntun, atau saldo prabayar habis (HTTP 402); sisa pengumuman lalu memakai penalar aturan. Batas-batas itu dicakup oleh `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py`, dan `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **Tingkat dari waktu ke waktu tidak diukur**: `GET /health` (`agent.sebab_cadangan`) menghitung sebab fallback, tetapi belum ada rasio yang dihitung darinya | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.2, 5, dan 7 |
-| **Tingkat intervensi manusia** | **28%** (13/46) pada gold set, jalur aturan, sebelum kalibrasi; **12%** (132/1.106) di server langsung, 11 Nov; **10%** (58/581) pada run operasional jalur aturan, 11 Nov | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.1 dan 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **Latensi dan biaya** | Jalur model: rata-rata 0,7 detik per pengumuman (maks 9,9 detik), USD 0,0069 untuk 46 pengumuman (batas bawah: token berpikir belum dihitung saat itu). Jalur aturan: rata-rata 1 ms per pengumuman (581 pengumuman) | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Tingkat keberhasilan panggilan alat** (Tanya FEAF) | **57/57 (100%)** di jalur aturan: 26/26 pada set satu giliran (52 pertanyaan) dan 31/31 pada set bertingkat (36 giliran). Panggilan dihitung berhasil bila alat mengembalikan hasil tanpa galat; satu dari 57 dengan benar menjawab bahwa emiten belum punya model valuasi. **Jalur model: tidak diukur.** Run server 11 Nov melakukan 54 panggilan alat (69 panggilan model), tetapi laporannya tidak mencatat galat alat | Dijalankan ulang 14 Nov 2026 (perintah di bawah). Jumlah panggilan cocok dengan [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 4 dan [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
+| **Jumlah retry** (panggilan model) | **0** di jalur model (46 pengumuman gold, 5 panggilan model, 11 Nov 09:39 UTC) dan **0** pada run operasional jalur aturan atas 581 pengumuman. Jalur aturan tidak memanggil model, jadi tidak ada yang bisa di-retry. Pengaturan: `SENTINEL_RETRY=2` | [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Tingkat terminasi** | **0 terminasi paksa** pada dua sampel: server langsung 11 Nov 09:22 UTC (1.106 pengumuman, "tanpa galat model, tanpa fallback") dan run gold jalur model (0 fallback ke aturan dari 46 pengumuman). Sebuah jalan berhenti lebih awal bila salah satu dari empat batas tercapai: 40 panggilan model, 90 detik, 3 kegagalan beruntun, atau saldo prabayar habis (HTTP 402); sisa pengumuman lalu memakai penalar aturan. Batas-batas itu dicakup oleh `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py`, dan `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **Tingkat dari waktu ke waktu tidak diukur**: `GET /health` (`agent.sebab_cadangan`) menghitung sebab fallback, tetapi belum ada rasio yang dihitung darinya | [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 2.2, 5, dan 7 |
+| **Tingkat intervensi manusia** | **28%** (13/46) pada gold set, jalur aturan, sebelum kalibrasi; **12%** (132/1.106) di server langsung, 11 Nov; **10%** (58/581) pada run operasional jalur aturan, 11 Nov | [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 2.1 dan 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Latensi dan biaya** | Jalur model: rata-rata 0,7 detik per pengumuman (maks 9,9 detik), USD 0,0069 untuk 46 pengumuman (batas bawah: token berpikir belum dihitung saat itu). Jalur aturan: rata-rata 1 ms per pengumuman (581 pengumuman) | [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
 
 Mengulang hitungan panggilan alat (tanpa API key). Set bertingkat juga butuh `SENTINEL_SERTAKAN_CONTOH=1` dan `--chat-percakapan`:
 
@@ -626,9 +626,9 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # tanpa keluaran = t
 | Pemeriksaan label, satuan, atau mata uang gagal | 4 | Dua di antaranya celah pengurai, sudah diperbaiki; jumlah USD tetap ditahan sesuai rancangan |
 | Pasal berat (1, 3, 40) | 3 | Selalu ditahan, atas keputusan tim |
 
-Sumber: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 5.
+Sumber: [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 5.
 
-**Contoh jejak operasi.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) adalah jejak tersimpan dari persetujuan direksi TSMC atas anggaran belanja modal (pasal 20). Di server yang berjalan, jejak sejenis terbuka di `/jejak/{id}` (di sini `/jejak/2330-2026-11-10-211853`) dan sebagai JSON di `GET /api/traces/{id}`. Langkah-langkahnya ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 6):
+**Contoh jejak operasi.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) adalah jejak tersimpan dari persetujuan direksi TSMC atas anggaran belanja modal (pasal 20). Di server yang berjalan, jejak sejenis terbuka di `/jejak/{id}` (di sini `/jejak/2330-2026-11-10-211853`) dan sebagai JSON di `GET /api/traces/{id}`. Langkah-langkahnya ([`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 6):
 
 | Langkah | Yang terjadi |
 |---|---|
@@ -650,10 +650,10 @@ Setiap baris menyebut tes yang mencakup satu risiko. Seluruh rangkaian tes lulus
 | Nama orang sampai ke sinyal, jawaban alat, atau ekspor | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (tidak ada nama anggota tim di `app/`, `eval/`, atau `README.md`) | Lulus |
 | API key di berkas, halaman, atau jejak | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (tidak ada `GEMINI_API_KEY` atau awalan `AIza` di jejak mana pun). Kunci hanya dibaca dari environment dan `key=` disamarkan pada galat model yang dicatat (`app/agent/llm.py`) | Lulus untuk jejak. Log server dan halaman yang dirender tidak punya tes khusus |
 | Prompt injection | `tests/test_agent.py`: `TestPrompInjection` (3 tes: percobaan dicatat di jejak; angka suntikan tidak pernah terbit; injeksi yang dituruti tetap gagal di pemeriksa pada label dan besaran); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` dan `python3 scripts/uji_serangan.py` (12 jenis serangan, 72 kasus); chat: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` dan `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Lulus. **0/72** angka penyerang terbit (dijalankan ulang 14 Nov 2026, [laporan](eval/hasil/serangan-2026-11-10.md)); 1 giliran riwayat sisipan dibuang pada set chat 36 giliran |
-| Angka karangan | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; gold set (`python3 scripts/evaluasi.py`) | Lulus. **0/46** angka salah terbit, dibanding 5/46 tanpa pemeriksa ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.1) |
+| Angka karangan | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; gold set (`python3 scripts/evaluasi.py`) | Lulus. **0/46** angka salah terbit, dibanding 5/46 tanpa pemeriksa ([`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 2.1) |
 | Pemanggilan alat tanpa izin | `tests/test_chat.py`: `TestJalurModel.test_kode_tidak_sah_dari_model_ditolak_alat` (kode `../../etc` dari model ditolak lapisan alat), `TestJalurModel.test_berhenti_setelah_lima_langkah` (paling banyak 5 putaran alat); `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir` (alat menu tidak mengubah folder data); `tests/test_agent.py`: `TestDeploy.test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka` (aksi yang mengubah data butuh kode akses) | Lulus. Model dapat memanggil 13 alat, semuanya hanya-baca (`ALAT` di `app/chat.py`): tidak ada yang mengubah watchlist, keputusan review, ambang, atau pengumuman |
 | Izin dan kode akses | `tests/test_putaran2.py`: `TestR3KunciBaca.test_r3_terkunci_tanpa_kode`, `test_r3_terbuka_dengan_kode`; `tests/test_qa_perbaikan.py`: `TestKunciBacaKeamanan.test_401_mandiri_tanpa_bocor_dan_post_akses_bertanda_hmac` (halaman 401 tidak membocorkan data watchlist; cookie berupa digest HMAC, bukan kodenya); `tests/test_agent.py`: `TestDeploy.test_kode_salah_tidak_membuka`, `TestCacheModelDanImpor.test_impor_butuh_kode_akses` (impor tertutup tanpa kode) | Lulus |
-| Keluaran tidak pantas (saran, prediksi, order) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (tidak ada label beli/jual di luar penafian, tiga bahasa); `python3 scripts/evaluasi.py --chat` | Lulus. **27/27** pertanyaan saran, di luar cakupan, dan injeksi ditolak serta **0** kata rekomendasi sampai ke pengguna (Gemini 3.6 Flash di server, 11 Nov, [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 4); jalur aturan 27/27 (dijalankan ulang 14 Nov 2026) |
+| Keluaran tidak pantas (saran, prediksi, order) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (tidak ada label beli/jual di luar penafian, tiga bahasa); `python3 scripts/evaluasi.py --chat` | Lulus. **27/27** pertanyaan saran, di luar cakupan, dan injeksi ditolak serta **0** kata rekomendasi sampai ke pengguna (Gemini 3.6 Flash di server, 11 Nov, [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 4); jalur aturan 27/27 (dijalankan ulang 14 Nov 2026) |
 | Input berbahaya | `tests/test_c1a_tautan.py`: `TestC1aTautan.test_kode_tidak_sah_tidak_dipantulkan` (kode saham berisi `<script>` tidak dipantulkan ke halaman) | Lulus |
 
 ---
@@ -714,13 +714,13 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 Penilaian Risiko
 
-Aturan lomba, Pasal 14.3. Celah terbuka per kategori: [`docs/laporan-keamanan.md`](docs/laporan-keamanan.md). Bukti tes: [9.7](#97-hasil-uji-keselamatan).
+Aturan lomba, Pasal 14.3. Celah terbuka per kategori: [`docs/security-report.md`](docs/security-report.md). Bukti tes: [9.7](#97-hasil-uji-keselamatan).
 
 | Risiko | Proteksi | Monitoring | Pemulihan |
 |---|---|---|---|
 | **Prompt injection** | Teks pengumuman masuk ke prompt di dalam pembatas dan diperlakukan sebagai data; pola injeksi ditandai (`deteksi_injeksi`); angka diterima hanya bila labelnya sah, kutipan dan digit-nya ada di pengumuman, dan besarannya wajar. Tanya FEAF menolak frasa injeksi sebelum panggilan alat atau model apa pun dan menandatangani setiap jawaban (HMAC), sehingga riwayat palsu dibuang | Setiap penanda injeksi menjadi satu langkah di jejak; `python3 scripts/uji_serangan.py` (72 kasus, 0 angka salah) | Pengumuman ditahan untuk manusia; chat jatuh ke jawaban template. Celah terbuka: frasa baru yang samar bisa lolos dari filter pola, lalu hanya dihentikan oleh pemeriksaan angka |
 | **Pemanggilan alat tanpa izin** | Daftar tertutup 13 alat hanya-baca; tidak ada alat shell, berkas, order, atau pengaturan; argumen divalidasi (pola kode saham); paling banyak 5 putaran alat per jawaban; jawaban model dibatasi 60 per jam; rute yang mengubah data butuh kode akses | Setiap panggilan alat, argumen, dan hasilnya tersimpan di `traces_chat/` | Alat yang tidak dikenal mengembalikan hasil galat; ganti `SENTINEL_KODE_AKSES` lalu restart untuk mencabut akses. Celah terbuka: satu kode akses bersama, tanpa peran per pengguna |
-| **Kebocoran data atau kredensial** | Daftar izin kolom profil emiten; field juru bicara dibuang saat penarikan dan impor; nama pejabat dan auditor tidak pernah diekstrak; API key hanya dari environment dan disamarkan di galat yang dicatat; `.env` dan berkas kunci diabaikan git; hanya teks pengumuman publik dan teks pertanyaan yang dikirim ke Gemini | Tes di [9.7](#97-hasil-uji-keselamatan), termasuk pemindaian `app/`, `eval/`, dan `README.md` untuk nama anggota tim | Hentikan operasi (Pasal 14.4 di bawah), ganti kunci, hapus berkas yang terdampak ([10.3](#103-retensi-dan-penghapusan-data)). Insiden 10 Nov, saat cache profil menyimpan field pejabat, diperbaiki dengan daftar izin ([`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) bagian 3) |
+| **Kebocoran data atau kredensial** | Daftar izin kolom profil emiten; field juru bicara dibuang saat penarikan dan impor; nama pejabat dan auditor tidak pernah diekstrak; API key hanya dari environment dan disamarkan di galat yang dicatat; `.env` dan berkas kunci diabaikan git; hanya teks pengumuman publik dan teks pertanyaan yang dikirim ke Gemini | Tes di [9.7](#97-hasil-uji-keselamatan), termasuk pemindaian `app/`, `eval/`, dan `README.md` untuk nama anggota tim | Hentikan operasi (Pasal 14.4 di bawah), ganti kunci, hapus berkas yang terdampak ([10.3](#103-retensi-dan-penghapusan-data)). Insiden 10 Nov, saat cache profil menyimpan field pejabat, diperbaiki dengan daftar izin ([`docs/security-report.md`](docs/security-report.md) bagian 3) |
 | **Halusinasi** | Model tidak pernah menghitung; DCF adalah kode; pemeriksa gagal-tertutup; setiap angka dalam jawaban chat harus ada di hasil alat | Gold set (0/46 angka salah), set serangan (0/72), `python3 scripts/evaluasi.py` | Pengumuman ditahan dengan cek yang gagal disebut di jejak; chat menampilkan jawaban template |
 | **Bias** | Ambang berasal dari satu tim keuangan (profil moderat adalah jawaban tim; konservatif dan agresif masih usulan); suhu 0; jalur dipilih berdasarkan nomor pasal, bukan oleh model; hanya pengumuman perusahaan dan data pasar yang dipakai, tanpa atribut demografis atau pribadi; Tanya FEAF menolak saran beli/jual. Cakupan terbatas pada emiten TWSE/TPEx yang punya data FinMind atau bursa, perusahaan keuangan tidak mendapat DCF, dan di luar Taiwan hanya pengumuman hari ini yang tersedia | Sebaran keputusan dan tingkat intervensi manusia di laporan `scripts/evaluasi.py`; riwayat ambang di `/ambang` | Ubah profil risiko atau ambang di `/ambang`; reset suara satu pasal. Set uji di luar sampel adalah langkah berikutnya (tidak diukur) |
 | **Input berbahaya** | Autoescape Jinja2; pola kode saham `^[0-9A-Z]{4,6}$`; pertanyaan chat dipotong 500 karakter; impor dibatasi 25 MB, divalidasi sebagai JSON, dan tertutup tanpa kode akses; halaman blokir MOPS dideteksi | Catatan HTTP 4xx di log server; `/health` | Galat diisolasi per pengumuman, sehingga satu rekaman rusak tidak menghentikan sisanya. Celah terbuka: tidak ada pembatasan laju per IP (hanya batas jawaban model) |
@@ -787,7 +787,7 @@ FEAF mengikuti [semantic versioning](https://semver.org/). Versi yang berjalan t
 
 ### 13.1 Sumber Daya Pihak Ketiga
 
-Aturan lomba, Pasal 13. Ringkasan [`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md), yang juga mencatat status verifikasi setiap butir.
+Aturan lomba, Pasal 13. Ringkasan [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md), yang juga mencatat status verifikasi setiap butir.
 
 | Nama | Jenis | Untuk apa | Lingkup data | Lisensi atau syarat pakai |
 |---|---|---|---|---|
@@ -813,7 +813,7 @@ Aturan lomba, Pasal 13. Ringkasan [`docs/pengungkapan-pihak-ketiga.md`](docs/pen
 
 ### 13.2 Lisensi
 
-Hak cipta dilindungi; lihat [`LICENSE`](LICENSE). Panitia dan juri AAIC 2026 boleh menjalankan dan memeriksa repositori ini untuk penilaian. Komponen dan data pihak ketiga tetap memakai lisensinya masing-masing ([`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)).
+Hak cipta dilindungi; lihat [`LICENSE`](LICENSE). Panitia dan juri AAIC 2026 boleh menjalankan dan memeriksa repositori ini untuk penilaian. Komponen dan data pihak ketiga tetap memakai lisensinya masing-masing ([`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)).
 
 ---
 

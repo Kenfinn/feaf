@@ -1,6 +1,6 @@
 """Pemuat data — satu jalur kode untuk data asli maupun fixture.
 
-Data asli MOPS hanya bisa ditarik dari jaringan Taiwan (lihat docs/akses-data.md),
+Data asli MOPS hanya bisa ditarik dari jaringan Taiwan (lihat docs/data-access.md),
 jadi aplikasi ini harus tetap jalan di mesin mana pun: di laptop juri, di CI, dan di
 komputer anggota tim yang belum sempat menjalankan penarikan.
 

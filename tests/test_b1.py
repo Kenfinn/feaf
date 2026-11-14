@@ -1,4 +1,4 @@
-"""B1: pemetaan pasal dari keputusan tim 11 Nov (docs/pemetaan-pasal.md). Data asli 10 Nov, tanpa jaringan."""
+"""B1: pemetaan pasal dari keputusan tim 11 Nov (docs/clause-mapping.md). Data asli 10 Nov, tanpa jaringan."""
 
 from __future__ import annotations
 

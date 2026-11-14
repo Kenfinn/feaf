@@ -1,6 +1,6 @@
 """Paket gold set untuk tim keuangan: Excel kandidat + isi lengkap pengumuman, tanpa nama orang.
 
-    SENTINEL_DATA_DIR=<folder data> python3 scripts/buat_paket_gold.py --keluar docs/untuk-tim/gold-set-FEAF.xlsx
+    SENTINEL_DATA_DIR=<folder data> python3 scripts/buat_paket_gold.py --keluar docs/gold-set/gold-set-labelling-sheet.xlsx
 
 Lembar "Label" berisi satu baris per pengumuman dengan kolom isian berpilihan (dropdown).
 Lembar "Isi pengumuman" memuat semua butir tiap pengumuman, supaya pelabel tidak perlu

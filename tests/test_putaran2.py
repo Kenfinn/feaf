@@ -716,8 +716,8 @@ class TestR4PengungkapanPihakKetiga(unittest.TestCase):
     """Pemeriksa untuk item R4: pengungkapan pihak ketiga dan alat AI."""
 
     def test_r4_semua_pustaka_tercantum(self):
-        """Setiap nama paket di requirements.txt muncul di docs/pengungkapan-pihak-ketiga.md."""
-        doc = (ROOT / "docs" / "pengungkapan-pihak-ketiga.md").read_text(encoding="utf-8")
+        """Setiap nama paket di requirements.txt muncul di docs/third-party-disclosure.md."""
+        doc = (ROOT / "docs" / "third-party-disclosure.md").read_text(encoding="utf-8")
         reqs = (ROOT / "requirements.txt").read_text(encoding="utf-8")
 
         for line in reqs.splitlines():
@@ -728,12 +728,12 @@ class TestR4PengungkapanPihakKetiga(unittest.TestCase):
             self.assertIn(
                 pkg,
                 doc,
-                f"Paket '{pkg}' dari requirements.txt belum tercantum di docs/pengungkapan-pihak-ketiga.md",
+                f"Paket '{pkg}' dari requirements.txt belum tercantum di docs/third-party-disclosure.md",
             )
 
     def test_r4_tabel_tim_kosong(self):
         """Bagian 'Pembagian kerja tim' ada dan baris isinya kosong."""
-        doc = (ROOT / "docs" / "pengungkapan-pihak-ketiga.md").read_text(encoding="utf-8")
+        doc = (ROOT / "docs" / "third-party-disclosure.md").read_text(encoding="utf-8")
         self.assertIn("pembagian kerja tim", doc.lower())
 
         bagian_tim = doc.lower().split("pembagian kerja tim")[1]

@@ -1,4 +1,4 @@
-"""Ambang sinyal per profil risiko (keputusan tim 11 Nov, docs/pemetaan-pasal.md).
+"""Ambang sinyal per profil risiko (keputusan tim 11 Nov, docs/clause-mapping.md).
 
 Satu tempat untuk semua ambang B1. Ubah angka di sini tanpa menyentuh kode lain.
 

@@ -1,7 +1,7 @@
 # Panduan gold set
 
 Versi untuk tim keuangan ada di [`untuk-tim/Panduan-Gold-Set-FEAF.pdf`](./untuk-tim/Panduan-Gold-Set-FEAF.pdf)
-(sumbernya `untuk-tim/gold-set.html`), dikirim bersama [`untuk-tim/gold-set-FEAF.xlsx`](./untuk-tim/gold-set-FEAF.xlsx).
+(sumbernya `untuk-tim/gold-set.html`), dikirim bersama [`gold-set/gold-set-labelling-sheet.xlsx`](./gold-set/gold-set-labelling-sheet.xlsx).
 Isinya: kolom yang diisi, aturan per jenis pengumuman yang sudah disepakati, konversi satuan,
 contoh, dan kolom `menit` untuk baseline kerja manual.
 
@@ -15,7 +15,7 @@ dibuang, dan untuk pasal 1/6/7/8 hanya butir dari daftar izin (`app/gold.py`,
 `LABEL_AMAN_ORANG`) yang diambil.
 
 ```bash
-SENTINEL_DATA_DIR=<folder data> python3 scripts/buat_paket_gold.py --keluar docs/untuk-tim/gold-set-FEAF.xlsx
+SENTINEL_DATA_DIR=<folder data> python3 scripts/buat_paket_gold.py --keluar docs/gold-set/gold-set-labelling-sheet.xlsx
 ```
 
 ## Setelah Excel kembali

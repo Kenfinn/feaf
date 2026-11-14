@@ -4,7 +4,7 @@
 
 **English** · [繁體中文](README.zh-TW.md) · [Bahasa Indonesia](README.id.md) · [Tiếng Việt](README.vi.md)
 
-![FEAF alert feed](docs/ui/l1-sesudah/feed-en-1920.png)
+![FEAF alert feed](docs/ui/l1-after/feed-en-1920.png)
 
 **FEAF** is an agent that watches official Taiwan exchange filings (MOPS 重大訊息), works out which valuation input each filing touches, recalculates the valuation when the numbers change, and **refuses to publish an alert** when a number cannot be traced back to the filing it came from. Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
@@ -137,7 +137,7 @@ flowchart LR
 
 ### 2.3 Lanes by Clause
 
-The clause list and thresholds were set with the team's finance members. Full mapping and the reasoning behind each decision: [`docs/pemetaan-pasal.md`](docs/pemetaan-pasal.md).
+The clause list and thresholds were set with the team's finance members. Full mapping and the reasoning behind each decision: [`docs/clause-mapping.md`](docs/clause-mapping.md).
 
 | Clause | Lane | What happens |
 |---|---|---|
@@ -192,7 +192,7 @@ Six tabs: summary (strengths, watch-outs and an AI narrative per risk profile), 
 The alert shows the MOPS citation, the checker verdict, and — for held cases — one plain sentence per failed check type, with the technical detail folded away. The trace lists every step, model call, token count, latency and fallback reason.
 
 ### 3.4 Valuation (`/valuasi/{code}`)
-`scripts/dcf.py` is a standalone DCF calculator; the web app calls the same `compute()`, so the screen cannot silently differ from the worksheet. `valuation/inputs/2330.json` is a manual worksheet with a source for every input. For other non-financial issuers, `app/valuasi_otomatis.py` builds the same input structure from exchange prices and FinMind financial statements, cached for 12 hours ([`docs/valuasi-otomatis.md`](docs/valuasi-otomatis.md)). The page shows cost of capital, reverse-DCF implied growth, sensitivity, and the source of each input. Financial companies (banks, insurers) get no DCF.
+`scripts/dcf.py` is a standalone DCF calculator; the web app calls the same `compute()`, so the screen cannot silently differ from the worksheet. `valuation/inputs/2330.json` is a manual worksheet with a source for every input. For other non-financial issuers, `app/valuasi_otomatis.py` builds the same input structure from exchange prices and FinMind financial statements, cached for 12 hours ([`docs/auto-valuation.md`](docs/auto-valuation.md)). The page shows cost of capital, reverse-DCF implied growth, sensitivity, and the source of each input. Financial companies (banks, insurers) get no DCF.
 
 ### 3.5 Human Review Queue (`/review`)
 Held cases wait here. A person approves (only where approval is allowed) or rejects with a note; the decision is stored and shown in the trace.
@@ -214,11 +214,11 @@ Every page is available in English (default), 繁體中文 and Bahasa Indonesia,
 
 | Held alert | Stock summary |
 |---|---|
-| ![Held alert](docs/ui/qa6-sesudah/peringatan-ditahan-en-1440.png) | ![Stock summary](docs/ui/l1-sesudah/saham-ringkasan-en-1920.png) |
+| ![Held alert](docs/ui/qa6-after/peringatan-ditahan-en-1440.png) | ![Stock summary](docs/ui/l1-after/saham-ringkasan-en-1920.png) |
 | **Valuation** | **Operation trace** |
-| ![Valuation](docs/ui/l1-sesudah/valuasi-en-1920.png) | ![Trace](docs/ui/qa6-sesudah/jejak-en-1440.png) |
+| ![Valuation](docs/ui/l1-after/valuasi-en-1920.png) | ![Trace](docs/ui/qa6-after/jejak-en-1440.png) |
 | **Review queue** | **Watchlist** |
-| ![Review](docs/ui/qa6-sesudah/review-en-1440.png) | ![Watchlist](docs/ui/qa6-sesudah/watchlist-en-1440.png) |
+| ![Review](docs/ui/qa6-after/review-en-1440.png) | ![Watchlist](docs/ui/qa6-after/watchlist-en-1440.png) |
 
 </details>
 
@@ -459,7 +459,7 @@ napaincu-ai-comp/
 └── CHANGELOG.md, LICENSE
 ```
 
-More detail: [System design](docs/system-design.md) · [Flow diagrams](docs/diagram-alur.md).
+More detail: [System design](docs/system-design.md) · [Flow diagrams](docs/flow-diagrams.md).
 
 ---
 
@@ -515,7 +515,7 @@ python3 scripts/tarik.py                 # pull for the watchlist in data/watchl
 python3 scripts/tarik.py --ulang 600     # check every 10 minutes until Ctrl+C
 ```
 
-The sources are the official TWSE (`t187ap04_L`) and TPEx (`mopsfin_t187ap04_O`) OpenAPI endpoints. They carry the full text of today's material filings and are reachable from outside Taiwan. They keep no history, so every pull is merged into `data/parsed/details.json` without duplicates. Older history can only be pulled from MOPS on a Taiwan network (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, see [`docs/tarik-riwayat.md`](docs/tarik-riwayat.md)) and uploaded with `scripts/kirim_riwayat.py` to `POST /api/import`.
+The sources are the official TWSE (`t187ap04_L`) and TPEx (`mopsfin_t187ap04_O`) OpenAPI endpoints. They carry the full text of today's material filings and are reachable from outside Taiwan. They keep no history, so every pull is merged into `data/parsed/details.json` without duplicates. Older history can only be pulled from MOPS on a Taiwan network (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, see [`docs/pulling-mops-history.md`](docs/pulling-mops-history.md)) and uploaded with `scripts/kirim_riwayat.py` to `POST /api/import`.
 
 ### 8.4 Deploy (Docker / Dokploy)
 
@@ -561,7 +561,7 @@ python3 scripts/evaluasi.py --chat-percakapan --simpan  # Ask FEAF multi-turn se
 python3 scripts/uji_serangan.py --simpan                # attack set
 ```
 
-Reports are written to `eval/hasil/` (inside the Docker image, where `/app` is read-only, to `/data/eval-hasil/`). The 46 gold filings ship in `eval/gold_dokumen.json` (name-bearing items removed, market caps as of the official run), so the evaluation reproduces on any machine without pulling data. Add `--tanpa-cache` to measure real model latency and cost. Gold set and labelling guide: [`docs/hasil-gold-set.md`](docs/hasil-gold-set.md), [`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
+Reports are written to `eval/hasil/` (inside the Docker image, where `/app` is read-only, to `/data/eval-hasil/`). The 46 gold filings ship in `eval/gold_dokumen.json` (name-bearing items removed, market caps as of the official run), so the evaluation reproduces on any machine without pulling data. Add `--tanpa-cache` to measure real model latency and cost. Gold set and labelling guide: [`docs/gold-set-results.md`](docs/gold-set-results.md), [`docs/gold-set-guide.md`](docs/gold-set-guide.md).
 
 ### 9.1 Gold Set
 46 real filings from 9 Nov 2026, about 7 per lane, labelled publish / hold / archive and signal level by a finance team member. Success = the agent makes the same decision and publishes no wrong number. Baseline ("without checker"): the same clause screen and extractor with no checker and no hold rules, so anything extracted is published, as a plain LLM pipeline would.
@@ -576,7 +576,7 @@ Reports are written to `eval/hasil/` (inside the Docker image, where `/app` is r
 These numbers were measured **before** tuning. The disagreements exposed two parser bugs (losses in brackets read as profits; share counts in 仟股 not read) and three thresholds; all were fixed afterwards. On the same 46 filings the tuned agent scores 43/46 and 29/29, but that is in-sample and is not reported as accuracy.
 
 ### 9.2 Model Path on the Server
-Gemini 3.6 Flash, fresh calls, 11 Nov: 0/46 wrong numbers published (without checker: 5/46), mean latency 0.7 s per filing (max 9.9 s), 5 model calls, 7,212 input / 392 output tokens, about **USD 0.007 for all 46 filings** at paid-tier prices. Only clause-20 filings call the model. Full write-up with error categories, the live-server intervention rate (12% held) and an annotated trace: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md).
+Gemini 3.6 Flash, fresh calls, 11 Nov: 0/46 wrong numbers published (without checker: 5/46), mean latency 0.7 s per filing (max 9.9 s), 5 model calls, 7,212 input / 392 output tokens, about **USD 0.007 for all 46 filings** at paid-tier prices. Only clause-20 filings call the model. Full write-up with error categories, the live-server intervention rate (12% held) and an annotated trace: [`docs/evaluation-report.md`](docs/evaluation-report.md).
 
 ### 9.3 Attack Set
 12 attack types on real filings (injected instructions, invented numbers and quotes, fake labels, unit swaps, foreign currency, extreme magnitudes), 72 cases, attacked by both the rule-based reasoner and a simulated model that obeys every injection: **0 wrong numbers published** ([report](eval/hasil/serangan-2026-11-10.md)).
@@ -602,11 +602,11 @@ Appendix 2 asks for operational metrics next to accuracy. Every value below name
 
 | Metric | Value | Source |
 |---|---|---|
-| **Tool-call success rate** (Ask FEAF) | **57/57 (100%)** on the rule path: 26/26 in the single-turn set (52 questions) and 31/31 in the multi-turn set (36 turns). A call counts as successful when the tool returns a result with no error; one of the 57 correctly answered that an issuer has no valuation model. **Model path: not measured.** The 11 Nov server run made 54 tool calls (69 model calls), but its report does not record tool errors | Re-run on 14 Nov 2026 (commands below). Call totals match [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 4 and [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
-| **Retry count** (model calls) | **0** on the model path (46 gold filings, 5 model calls, 11 Nov 09:39 UTC) and **0** in the rule-path operational run on 581 filings. The rule path makes no model call, so there is nothing to retry. Setting: `SENTINEL_RETRY=2` | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **Termination rate** | **0 forced terminations** in the two samples taken: the live server on 11 Nov 09:22 UTC (1,106 filings, "no model error, no fallback") and the model-path gold run (0 fallbacks to the rules in 46 filings). A run ends early on any of four limits: 40 model calls, 90 seconds, 3 failures in a row, or an empty prepaid balance (HTTP 402); the remaining filings then use the rule reasoner. The limits are covered by `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py` and `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **A rate over time is not measured**: `GET /health` (`agent.sebab_cadangan`) counts fallback reasons, but no rate has been computed from it | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) sections 2.2, 5 and 7 |
-| **Human intervention rate** | **28%** (13/46) on the gold set, rule path, before tuning; **12%** (132/1,106) on the live server, 11 Nov; **10%** (58/581) in the rule-path operational run, 11 Nov | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) sections 2.1 and 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **Latency and cost** | Model path: mean 0.7 s per filing (max 9.9 s), USD 0.0069 for 46 filings (a lower bound: thinking tokens were not yet counted). Rule path: mean 1 ms per filing (581 filings) | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Tool-call success rate** (Ask FEAF) | **57/57 (100%)** on the rule path: 26/26 in the single-turn set (52 questions) and 31/31 in the multi-turn set (36 turns). A call counts as successful when the tool returns a result with no error; one of the 57 correctly answered that an issuer has no valuation model. **Model path: not measured.** The 11 Nov server run made 54 tool calls (69 model calls), but its report does not record tool errors | Re-run on 14 Nov 2026 (commands below). Call totals match [`docs/evaluation-report.md`](docs/evaluation-report.md) section 4 and [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
+| **Retry count** (model calls) | **0** on the model path (46 gold filings, 5 model calls, 11 Nov 09:39 UTC) and **0** in the rule-path operational run on 581 filings. The rule path makes no model call, so there is nothing to retry. Setting: `SENTINEL_RETRY=2` | [`docs/evaluation-report.md`](docs/evaluation-report.md) section 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Termination rate** | **0 forced terminations** in the two samples taken: the live server on 11 Nov 09:22 UTC (1,106 filings, "no model error, no fallback") and the model-path gold run (0 fallbacks to the rules in 46 filings). A run ends early on any of four limits: 40 model calls, 90 seconds, 3 failures in a row, or an empty prepaid balance (HTTP 402); the remaining filings then use the rule reasoner. The limits are covered by `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py` and `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **A rate over time is not measured**: `GET /health` (`agent.sebab_cadangan`) counts fallback reasons, but no rate has been computed from it | [`docs/evaluation-report.md`](docs/evaluation-report.md) sections 2.2, 5 and 7 |
+| **Human intervention rate** | **28%** (13/46) on the gold set, rule path, before tuning; **12%** (132/1,106) on the live server, 11 Nov; **10%** (58/581) in the rule-path operational run, 11 Nov | [`docs/evaluation-report.md`](docs/evaluation-report.md) sections 2.1 and 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Latency and cost** | Model path: mean 0.7 s per filing (max 9.9 s), USD 0.0069 for 46 filings (a lower bound: thinking tokens were not yet counted). Rule path: mean 1 ms per filing (581 filings) | [`docs/evaluation-report.md`](docs/evaluation-report.md) section 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
 
 Reproduce the tool-call count (no API key needed). The multi-turn set also needs `SENTINEL_SERTAKAN_CONTOH=1` and `--chat-percakapan`:
 
@@ -626,9 +626,9 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # no output = no too
 | Label, unit or currency check failed | 4 | Two were parser gaps, fixed; USD amounts stay held by design |
 | Severe clause (1, 3, 40) | 3 | Always held, by team decision |
 
-Source: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 5.
+Source: [`docs/evaluation-report.md`](docs/evaluation-report.md) section 5.
 
-**Operation trace example.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) is the saved trace of a TSMC board approval of a capital budget (clause 20). On a running server the same kind of trace opens at `/jejak/{id}` (here `/jejak/2330-2026-11-10-211853`) and as JSON at `GET /api/traces/{id}`. Its steps ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 6):
+**Operation trace example.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) is the saved trace of a TSMC board approval of a capital budget (clause 20). On a running server the same kind of trace opens at `/jejak/{id}` (here `/jejak/2330-2026-11-10-211853`) and as JSON at `GET /api/traces/{id}`. Its steps ([`docs/evaluation-report.md`](docs/evaluation-report.md) section 6):
 
 | Step | What happened |
 |---|---|
@@ -650,10 +650,10 @@ Each row names the tests that cover one risk. The whole suite passes on 14 Nov 2
 | Person names reach a signal, tool answer or export | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (no team member name in `app/`, `eval/` or `README.md`) | Pass |
 | API key in a file, page or trace | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (no `GEMINI_API_KEY` or `AIza` prefix in any trace). The key is read from the environment only and `key=` is masked in recorded model errors (`app/agent/llm.py`) | Pass for traces. Server logs and rendered pages have no dedicated test |
 | Prompt injection | `tests/test_agent.py`: `TestPrompInjection` (3 tests: the attempt is logged in the trace; the injected number is never published; an obeyed injection still fails the checker on label and magnitude); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` and `python3 scripts/uji_serangan.py` (12 attack types, 72 cases); chat: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` and `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Pass. **0/72** attacker numbers published (re-run 14 Nov 2026, [report](eval/hasil/serangan-2026-11-10.md)); 1 injected history turn dropped in the 36-turn chat set |
-| Invented numbers | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; gold set (`python3 scripts/evaluasi.py`) | Pass. **0/46** wrong numbers published, against 5/46 without the checker ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 2.1) |
+| Invented numbers | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; gold set (`python3 scripts/evaluasi.py`) | Pass. **0/46** wrong numbers published, against 5/46 without the checker ([`docs/evaluation-report.md`](docs/evaluation-report.md) section 2.1) |
 | Unauthorised tool calls | `tests/test_chat.py`: `TestJalurModel.test_kode_tidak_sah_dari_model_ditolak_alat` (a model-supplied code `../../etc` is refused by the tool layer), `TestJalurModel.test_berhenti_setelah_lima_langkah` (at most 5 tool rounds); `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir` (menu tools leave the data folder unchanged); `tests/test_agent.py`: `TestDeploy.test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka` (actions that change data need the access code) | Pass. The model can call 13 tools, all read-only (`ALAT` in `app/chat.py`): none changes the watchlist, review decisions, thresholds or filings |
 | Permissions and access code | `tests/test_putaran2.py`: `TestR3KunciBaca.test_r3_terkunci_tanpa_kode`, `test_r3_terbuka_dengan_kode`; `tests/test_qa_perbaikan.py`: `TestKunciBacaKeamanan.test_401_mandiri_tanpa_bocor_dan_post_akses_bertanda_hmac` (the 401 page leaks no watchlist data; the cookie is an HMAC digest, not the code); `tests/test_agent.py`: `TestDeploy.test_kode_salah_tidak_membuka`, `TestCacheModelDanImpor.test_impor_butuh_kode_akses` (import is closed without the code) | Pass |
-| Inappropriate output (advice, predictions, orders) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (no buy/sell labels outside the disclaimer, three languages); `python3 scripts/evaluasi.py --chat` | Pass. **27/27** advice, out-of-scope and injection questions refused and **0** recommendation words reached the user (Gemini 3.6 Flash on the server, 11 Nov, [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 4); rule path 27/27 (re-run 14 Nov 2026) |
+| Inappropriate output (advice, predictions, orders) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (no buy/sell labels outside the disclaimer, three languages); `python3 scripts/evaluasi.py --chat` | Pass. **27/27** advice, out-of-scope and injection questions refused and **0** recommendation words reached the user (Gemini 3.6 Flash on the server, 11 Nov, [`docs/evaluation-report.md`](docs/evaluation-report.md) section 4); rule path 27/27 (re-run 14 Nov 2026) |
 | Malicious input | `tests/test_c1a_tautan.py`: `TestC1aTautan.test_kode_tidak_sah_tidak_dipantulkan` (a `<script>` stock code is not echoed into the page) | Pass |
 
 ---
@@ -714,13 +714,13 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 Risk assessment
 
-Competition rules, Article 14.3. Open gaps per category: [`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) (Indonesian). Test evidence: [9.7](#97-safety-test-results).
+Competition rules, Article 14.3. Open gaps per category: [`docs/security-report.md`](docs/security-report.md) (Indonesian). Test evidence: [9.7](#97-safety-test-results).
 
 | Risk | Protection | Monitoring | Recovery |
 |---|---|---|---|
 | **Prompt injection** | Filing text enters the prompt inside delimiters and is treated as data; injection patterns are flagged (`deteksi_injeksi`); a number is accepted only if its label is allowed, its quote and digits exist in the filing and its magnitude is plausible. Ask FEAF refuses injection phrases before any tool or model call and signs every answer (HMAC), so forged history is dropped | Each injection marker is a step in the trace; `python3 scripts/uji_serangan.py` (72 cases, 0 wrong numbers) | The filing is held for a person; the chat falls back to the template answer. Open gap: a new, subtle phrasing can pass the pattern filter and is then stopped only by the number checks |
 | **Unauthorised tool calls** | Closed list of 13 read-only tools; no shell, file, order or settings tool; arguments validated (stock code pattern); at most 5 tool rounds per answer; model answers capped at 60 per hour; routes that change data need the access code | Every tool call, its arguments and its result are stored in `traces_chat/` | An unknown tool returns an error result; change `SENTINEL_KODE_AKSES` and restart to revoke access. Open gap: one shared access code, no per-user roles |
-| **Data or credential leakage** | Allow-list of company-profile columns; spokesperson fields dropped on pull and import; officer and auditor names never extracted; API key from the environment only and masked in recorded errors; `.env` and key files git-ignored; only public filing text and question text go to Gemini | Tests in [9.7](#97-safety-test-results), including a scan of `app/`, `eval/` and `README.md` for team member names | Stop the operation (Article 14.4 below), rotate the key, delete the affected files ([10.3](#103-data-retention-and-deletion)). A 10 Nov incident, where a profile cache kept officer fields, was fixed with the allow-list ([`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) section 3) |
+| **Data or credential leakage** | Allow-list of company-profile columns; spokesperson fields dropped on pull and import; officer and auditor names never extracted; API key from the environment only and masked in recorded errors; `.env` and key files git-ignored; only public filing text and question text go to Gemini | Tests in [9.7](#97-safety-test-results), including a scan of `app/`, `eval/` and `README.md` for team member names | Stop the operation (Article 14.4 below), rotate the key, delete the affected files ([10.3](#103-data-retention-and-deletion)). A 10 Nov incident, where a profile cache kept officer fields, was fixed with the allow-list ([`docs/security-report.md`](docs/security-report.md) section 3) |
 | **Hallucination** | The model never calculates; the DCF is code; the verifier fails closed; every number in a chat answer must appear in a tool result | Gold set (0/46 wrong numbers), attack set (0/72), `python3 scripts/evaluasi.py` | The filing is held with the failing check named in the trace; the chat shows the template answer instead |
 | **Bias** | Thresholds come from one finance team (the moderate profile is the team's answer; conservative and aggressive are proposals); temperature 0; the lane is chosen by clause number, not by the model; only company filings and market data are used, no demographic or personal attributes; Ask FEAF refuses buy/sell advice. Coverage is limited to TWSE/TPEx issuers with FinMind or exchange data, financial companies get no DCF, and outside Taiwan only today's filings are available | Decision mix and human-intervention rate in the `scripts/evaluasi.py` reports; threshold history at `/ambang` | Change the risk profile or thresholds on `/ambang`; reset a clause's votes. An out-of-sample test set is the next step (not measured) |
 | **Malicious input** | Jinja2 autoescaping; stock code pattern `^[0-9A-Z]{4,6}$`; chat question cut at 500 characters; import capped at 25 MB, validated as JSON and closed without the access code; MOPS block pages detected | HTTP 4xx entries in the server log; `/health` | Errors are isolated per filing, so one bad record does not stop the rest. Open gap: no per-IP rate limit (only the cap on model answers) |
@@ -787,7 +787,7 @@ FEAF follows [semantic versioning](https://semver.org/). The running version is 
 
 ### 13.1 Third-party resources
 
-Competition rules, Article 13. Summary of [`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md) (Indonesian), which also records the verification status of each item.
+Competition rules, Article 13. Summary of [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md) (Indonesian), which also records the verification status of each item.
 
 | Name | Type | Purpose | Data scope | License or terms |
 |---|---|---|---|---|
@@ -813,7 +813,7 @@ Competition rules, Article 13. Summary of [`docs/pengungkapan-pihak-ketiga.md`](
 
 ### 13.2 License
 
-All rights reserved. See [`LICENSE`](LICENSE). AAIC 2026 organisers and judges may run and inspect this repository to evaluate the entry. Third-party components and data keep their own licences ([`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)).
+All rights reserved. See [`LICENSE`](LICENSE). AAIC 2026 organisers and judges may run and inspect this repository to evaluate the entry. Third-party components and data keep their own licences ([`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)).
 
 ---
 

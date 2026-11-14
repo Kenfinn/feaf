@@ -4,7 +4,7 @@
 
 [English](README.md) · **繁體中文** · [Bahasa Indonesia](README.id.md) · [Tiếng Việt](README.vi.md)
 
-![FEAF 警示動態](docs/ui/l1-sesudah/feed-zh-1920.png)
+![FEAF 警示動態](docs/ui/l1-after/feed-zh-1920.png)
 
 **FEAF** 是一個監看臺灣證交所官方重大訊息（MOPS）的代理：判斷每則公告影響哪一項估值輸入、數字變動時重新計算估值，並且在數字**無法追溯回原始公告時拒絕發布警示**。本專案為 NAPAI 2026 代理式 AI 創新競賽（AAIC 2026）SYSTEX 賽道作品：*Investment Intelligence & AI-Powered Stock Selection Agent*。
 
@@ -137,7 +137,7 @@ flowchart LR
 
 ### 2.3 依條款分流
 
-條款清單與門檻由團隊財務成員共同訂定。完整對照與每項決定的理由：[`docs/pemetaan-pasal.md`](docs/pemetaan-pasal.md)。
+條款清單與門檻由團隊財務成員共同訂定。完整對照與每項決定的理由：[`docs/clause-mapping.md`](docs/clause-mapping.md)。
 
 | 條款 | 分流 | 處理方式 |
 |---|---|---|
@@ -192,7 +192,7 @@ flowchart LR
 警示頁顯示 MOPS 引用與驗證結果；待審查案件會針對每種未通過的檢查給一句白話說明，技術細節則收合起來。軌跡頁列出每個步驟、模型呼叫、token 數、延遲與備援原因。
 
 ### 3.4 估值（`/valuasi/{code}`）
-`scripts/dcf.py` 是獨立的 DCF 計算器；網頁呼叫同一個 `compute()`，畫面不可能與工作表不一致。`valuation/inputs/2330.json` 是每項輸入都附來源的人工工作表。其他非金融業發行公司由 `app/valuasi_otomatis.py` 以交易所價格與 FinMind 財報建立相同的輸入結構，並快取 12 小時（[`docs/valuasi-otomatis.md`](docs/valuasi-otomatis.md)）。頁面顯示資金成本、反向 DCF 隱含成長率、敏感度分析與每項輸入的來源。金融業（銀行、保險）不提供 DCF。
+`scripts/dcf.py` 是獨立的 DCF 計算器；網頁呼叫同一個 `compute()`，畫面不可能與工作表不一致。`valuation/inputs/2330.json` 是每項輸入都附來源的人工工作表。其他非金融業發行公司由 `app/valuasi_otomatis.py` 以交易所價格與 FinMind 財報建立相同的輸入結構，並快取 12 小時（[`docs/auto-valuation.md`](docs/auto-valuation.md)）。頁面顯示資金成本、反向 DCF 隱含成長率、敏感度分析與每項輸入的來源。金融業（銀行、保險）不提供 DCF。
 
 ### 3.5 人工審查佇列（`/review`）
 待審查案件在此等候。審查者可核准（僅限允許核准的案件）或附註駁回；決定會被保存並顯示在軌跡中。
@@ -214,11 +214,11 @@ flowchart LR
 
 | 待審查警示 | 個股摘要 |
 |---|---|
-| ![待審查警示](docs/ui/qa6-sesudah/peringatan-ditahan-zh-1440.png) | ![個股摘要](docs/ui/l1-sesudah/saham-ringkasan-zh-1920.png) |
+| ![待審查警示](docs/ui/qa6-after/peringatan-ditahan-zh-1440.png) | ![個股摘要](docs/ui/l1-after/saham-ringkasan-zh-1920.png) |
 | **估值** | **操作軌跡** |
-| ![估值](docs/ui/l1-sesudah/valuasi-zh-1920.png) | ![軌跡](docs/ui/qa6-sesudah/jejak-zh-1440.png) |
+| ![估值](docs/ui/l1-after/valuasi-zh-1920.png) | ![軌跡](docs/ui/qa6-after/jejak-zh-1440.png) |
 | **審查佇列** | **自選股** |
-| ![審查](docs/ui/qa6-sesudah/review-zh-1440.png) | ![自選股](docs/ui/qa6-sesudah/watchlist-zh-1440.png) |
+| ![審查](docs/ui/qa6-after/review-zh-1440.png) | ![自選股](docs/ui/qa6-after/watchlist-zh-1440.png) |
 
 </details>
 
@@ -459,7 +459,7 @@ napaincu-ai-comp/
 └── CHANGELOG.md, LICENSE
 ```
 
-更多細節：[系統設計](docs/system-design.md) · [流程圖](docs/diagram-alur.md)（印尼文）。
+更多細節：[系統設計](docs/system-design.md) · [流程圖](docs/flow-diagrams.md)（印尼文）。
 
 ---
 
@@ -515,7 +515,7 @@ python3 scripts/tarik.py                 # 依 data/watchlist.json 的自選股�
 python3 scripts/tarik.py --ulang 600     # 每 10 分鐘檢查一次，直到 Ctrl+C
 ```
 
-資料來源為官方證交所（`t187ap04_L`）與櫃買中心（`mopsfin_t187ap04_O`）OpenAPI 端點，提供當日重大訊息全文，且可從臺灣以外地區存取。這些端點不保留歷史，因此每次抓取都會去重合併到 `data/parsed/details.json`。較早的歷史資料只能在臺灣網路從 MOPS 抓取（`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`，見 [`docs/tarik-riwayat.md`](docs/tarik-riwayat.md)），再以 `scripts/kirim_riwayat.py` 上傳到 `POST /api/import`。
+資料來源為官方證交所（`t187ap04_L`）與櫃買中心（`mopsfin_t187ap04_O`）OpenAPI 端點，提供當日重大訊息全文，且可從臺灣以外地區存取。這些端點不保留歷史，因此每次抓取都會去重合併到 `data/parsed/details.json`。較早的歷史資料只能在臺灣網路從 MOPS 抓取（`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`，見 [`docs/pulling-mops-history.md`](docs/pulling-mops-history.md)），再以 `scripts/kirim_riwayat.py` 上傳到 `POST /api/import`。
 
 ### 8.4 部署（Docker / Dokploy）
 
@@ -561,7 +561,7 @@ python3 scripts/evaluasi.py --chat-percakapan --simpan  # Ask FEAF 多輪測試�
 python3 scripts/uji_serangan.py --simpan                # 攻擊測試集
 ```
 
-報告寫入 `eval/hasil/`（在 `/app` 為唯讀的 Docker 映像中，寫入 `/data/eval-hasil/`）。46 則黃金公告隨附於 `eval/gold_dokumen.json`（已移除含人名的項目，市值為官方執行時的數值），因此任何機器都能重現評估而不必抓取資料。加上 `--tanpa-cache` 可量測實際的模型延遲與成本。黃金資料集與標註指南：[`docs/hasil-gold-set.md`](docs/hasil-gold-set.md)、[`docs/panduan-gold-set.md`](docs/panduan-gold-set.md)。
+報告寫入 `eval/hasil/`（在 `/app` 為唯讀的 Docker 映像中，寫入 `/data/eval-hasil/`）。46 則黃金公告隨附於 `eval/gold_dokumen.json`（已移除含人名的項目，市值為官方執行時的數值），因此任何機器都能重現評估而不必抓取資料。加上 `--tanpa-cache` 可量測實際的模型延遲與成本。黃金資料集與標註指南：[`docs/gold-set-results.md`](docs/gold-set-results.md)、[`docs/gold-set-guide.md`](docs/gold-set-guide.md)。
 
 ### 9.1 黃金資料集
 2026 年 11 月 9 日的 46 則真實公告，每條分流約 7 則，由財務團隊成員標註發布／保留／歸檔及訊號等級。成功的定義是代理做出相同決定，且沒有發布任何錯誤數字。基準（「無驗證器」）：相同的條款篩選與擷取器，但沒有驗證器與保留規則，凡擷取到的都會發布，就像一般 LLM 流程。
@@ -576,7 +576,7 @@ python3 scripts/uji_serangan.py --simpan                # 攻擊測試集
 以上數字是在調整**之前**測得。不一致之處揭露了兩個解析器錯誤（括號中的虧損被讀成獲利；仟股的股數未被讀取）與三個門檻問題，之後皆已修正。調整後的代理在同樣 46 則上得到 43/46 與 29/29，但那屬於樣本內結果，不作為準確率報告。
 
 ### 9.2 伺服器上的模型路徑
-Gemini 3.6 Flash、未使用快取，11 月 11 日：發布錯誤數字 0/46（無驗證器：5/46），每則平均延遲 0.7 秒（最大 9.9 秒），5 次模型呼叫，輸入 7,212 / 輸出 392 token，以付費方案計算**全部 46 則約 0.007 美元**。只有第 20 條的公告會呼叫模型。完整報告（含錯誤分類、線上伺服器人工介入率 12%，以及附註解的軌跡）：[`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md)。
+Gemini 3.6 Flash、未使用快取，11 月 11 日：發布錯誤數字 0/46（無驗證器：5/46），每則平均延遲 0.7 秒（最大 9.9 秒），5 次模型呼叫，輸入 7,212 / 輸出 392 token，以付費方案計算**全部 46 則約 0.007 美元**。只有第 20 條的公告會呼叫模型。完整報告（含錯誤分類、線上伺服器人工介入率 12%，以及附註解的軌跡）：[`docs/evaluation-report.md`](docs/evaluation-report.md)。
 
 ### 9.3 攻擊測試集
 在真實公告上進行 12 種攻擊（注入指令、捏造數字與引文、假標籤、單位調換、外幣、極端量級），共 72 個案例，由規則推理器與一個會服從所有注入的模擬模型同時攻擊：**發布錯誤數字 0 則**（[報告](eval/hasil/serangan-2026-11-10.md)）。
@@ -602,11 +602,11 @@ Appendix 2 除了準確率之外，還要求營運指標。以下每個數值都
 
 | 指標 | 數值 | 來源 |
 |---|---|---|
-| **工具呼叫成功率**（Ask FEAF） | 規則路徑 **57/57（100%）**：單輪測試集（52 題）26/26，多輪測試集（36 輪）31/31。工具回傳結果且沒有錯誤即算成功；57 次中有一次正確回答「該發行公司尚無估值模型」。**模型路徑：未量測。** 11 月 11 日的伺服器執行共 54 次工具呼叫（69 次模型呼叫），但其報告沒有記錄工具錯誤 | 2026 年 11 月 14 日重新執行（指令見下方）。呼叫總數與 [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 4 節及 [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) 一致 |
-| **重試次數**（模型呼叫） | 模型路徑 **0**（46 則黃金公告、5 次模型呼叫，11 月 11 日 09:39 UTC），581 則公告的規則路徑營運執行也是 **0**。規則路徑不呼叫模型，因此沒有東西可重試。設定：`SENTINEL_RETRY=2` | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 2.2 節；[`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **終止率** | 兩次取樣中 **0 次被迫終止**：11 月 11 日 09:22 UTC 的線上伺服器（1,106 則公告，「無模型錯誤、無備援」）與模型路徑黃金資料集執行（46 則公告中 0 次退回規則）。執行會因四項上限之一而提前結束：40 次模型呼叫、90 秒、連續 3 次失敗，或預付餘額用盡（HTTP 402）；其餘公告改用規則推理器。這些上限由 `tests/test_pemutus_thread.py`、`tests/test_saldo_402.py` 與 `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun` 涵蓋。**長期的終止率未量測**：`GET /health`（`agent.sebab_cadangan`）會統計備援原因，但尚未據此計算比率 | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 2.2、5、7 節 |
-| **人工介入率** | 黃金資料集（規則路徑，調整前）**28%**（13/46）；線上伺服器 11 月 11 日 **12%**（132/1,106）；規則路徑營運執行 11 月 11 日 **10%**（58/581） | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 2.1、5 節；[`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
-| **延遲與成本** | 模型路徑：每則平均 0.7 秒（最大 9.9 秒），46 則共 0.0069 美元（下限值：當時尚未計入思考 token）。規則路徑：每則平均 1 毫秒（581 則公告） | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 2.2 節；[`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **工具呼叫成功率**（Ask FEAF） | 規則路徑 **57/57（100%）**：單輪測試集（52 題）26/26，多輪測試集（36 輪）31/31。工具回傳結果且沒有錯誤即算成功；57 次中有一次正確回答「該發行公司尚無估值模型」。**模型路徑：未量測。** 11 月 11 日的伺服器執行共 54 次工具呼叫（69 次模型呼叫），但其報告沒有記錄工具錯誤 | 2026 年 11 月 14 日重新執行（指令見下方）。呼叫總數與 [`docs/evaluation-report.md`](docs/evaluation-report.md) 第 4 節及 [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) 一致 |
+| **重試次數**（模型呼叫） | 模型路徑 **0**（46 則黃金公告、5 次模型呼叫，11 月 11 日 09:39 UTC），581 則公告的規則路徑營運執行也是 **0**。規則路徑不呼叫模型，因此沒有東西可重試。設定：`SENTINEL_RETRY=2` | [`docs/evaluation-report.md`](docs/evaluation-report.md) 第 2.2 節；[`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **終止率** | 兩次取樣中 **0 次被迫終止**：11 月 11 日 09:22 UTC 的線上伺服器（1,106 則公告，「無模型錯誤、無備援」）與模型路徑黃金資料集執行（46 則公告中 0 次退回規則）。執行會因四項上限之一而提前結束：40 次模型呼叫、90 秒、連續 3 次失敗，或預付餘額用盡（HTTP 402）；其餘公告改用規則推理器。這些上限由 `tests/test_pemutus_thread.py`、`tests/test_saldo_402.py` 與 `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun` 涵蓋。**長期的終止率未量測**：`GET /health`（`agent.sebab_cadangan`）會統計備援原因，但尚未據此計算比率 | [`docs/evaluation-report.md`](docs/evaluation-report.md) 第 2.2、5、7 節 |
+| **人工介入率** | 黃金資料集（規則路徑，調整前）**28%**（13/46）；線上伺服器 11 月 11 日 **12%**（132/1,106）；規則路徑營運執行 11 月 11 日 **10%**（58/581） | [`docs/evaluation-report.md`](docs/evaluation-report.md) 第 2.1、5 節；[`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **延遲與成本** | 模型路徑：每則平均 0.7 秒（最大 9.9 秒），46 則共 0.0069 美元（下限值：當時尚未計入思考 token）。規則路徑：每則平均 1 毫秒（581 則公告） | [`docs/evaluation-report.md`](docs/evaluation-report.md) 第 2.2 節；[`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
 
 重現工具呼叫次數（不需要 API 金鑰）。多輪測試集另需 `SENTINEL_SERTAKAN_CONTOH=1` 與 `--chat-percakapan`：
 
@@ -626,9 +626,9 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # 沒有輸出 = 沒
 | 標籤、單位或幣別檢查失敗 | 4 | 其中兩件是解析器缺口，已修正；美元金額依設計維持保留 |
 | 嚴重條款（第 1、3、40 條） | 3 | 依團隊決定，一律保留 |
 
-來源：[`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 5 節。
+來源：[`docs/evaluation-report.md`](docs/evaluation-report.md) 第 5 節。
 
-**營運軌跡範例。** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) 是台積電董事會通過資本支出預算（第 20 條）的已儲存軌跡。在執行中的伺服器上，同類軌跡可於 `/jejak/{id}`（此例為 `/jejak/2330-2026-11-10-211853`）開啟，JSON 格式為 `GET /api/traces/{id}`。其步驟（[`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 6 節）：
+**營運軌跡範例。** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) 是台積電董事會通過資本支出預算（第 20 條）的已儲存軌跡。在執行中的伺服器上，同類軌跡可於 `/jejak/{id}`（此例為 `/jejak/2330-2026-11-10-211853`）開啟，JSON 格式為 `GET /api/traces/{id}`。其步驟（[`docs/evaluation-report.md`](docs/evaluation-report.md) 第 6 節）：
 
 | 步驟 | 發生的事 |
 |---|---|
@@ -650,10 +650,10 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # 沒有輸出 = 沒
 | 人名進入訊號、工具回答或匯出 | `tests/test_tata_kelola.py`：`TestAuditor.test_tanpa_nama`；`tests/test_b1.py`：`TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`；`tests/test_chat_percakapan.py`：`TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`、`TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`；`tests/test_gold_b1.py`：`TestGoldB1.test_ekspor_tanpa_nama_orang`；`tests/test_paket_gold.py`：`TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`；`tests/test_deidentifikasi.py`：`TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme`（`app/`、`eval/` 與 `README.md` 中沒有團隊成員姓名） | 通過 |
 | API 金鑰出現在檔案、頁面或軌跡 | `tests/test_agent.py`：`TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak`（任何軌跡中都沒有 `GEMINI_API_KEY` 或 `AIza` 開頭字串）。金鑰只從環境變數讀取，記錄的模型錯誤中 `key=` 會被遮蔽（`app/agent/llm.py`） | 軌跡部分通過。伺服器日誌與渲染後的頁面沒有專門測試 |
 | 提示注入 | `tests/test_agent.py`：`TestPrompInjection`（3 項測試：嘗試被記錄在軌跡中；被注入的數字絕不發布；即使模型服從注入，驗證器仍會在標籤與量級上攔下）；`tests/test_serangan.py`：`TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` 與 `python3 scripts/uji_serangan.py`（12 種攻擊、72 個案例）；對話：`tests/test_chat_b1.py`：`TestChatB1.test_injeksi_ditolak_tiga_bahasa`，`tests/test_chat_percakapan.py`：`TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` 與 `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | 通過。攻擊者數字發布 **0/72**（2026 年 11 月 14 日重新執行，[報告](eval/hasil/serangan-2026-11-10.md)）；36 輪對話測試集中有 1 輪被注入的歷史訊息遭丟棄 |
-| 捏造數字 | `tests/test_agent.py`：`TestPemeriksaMenangkapHalusinasi`；`tests/test_chat.py`：`TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`；黃金資料集（`python3 scripts/evaluasi.py`） | 通過。發布錯誤數字 **0/46**，無驗證器為 5/46（[`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 2.1 節） |
+| 捏造數字 | `tests/test_agent.py`：`TestPemeriksaMenangkapHalusinasi`；`tests/test_chat.py`：`TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`；黃金資料集（`python3 scripts/evaluasi.py`） | 通過。發布錯誤數字 **0/46**，無驗證器為 5/46（[`docs/evaluation-report.md`](docs/evaluation-report.md) 第 2.1 節） |
 | 未經授權的工具呼叫 | `tests/test_chat.py`：`TestJalurModel.test_kode_tidak_sah_dari_model_ditolak_alat`（模型提供的代號 `../../etc` 被工具層拒絕）、`TestJalurModel.test_berhenti_setelah_lima_langkah`（最多 5 輪工具呼叫）；`tests/test_chat_percakapan.py`：`TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir`（選單工具不會改動資料夾）；`tests/test_agent.py`：`TestDeploy.test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka`（會改變資料的操作需要存取碼） | 通過。模型可呼叫 13 個工具，全部唯讀（`app/chat.py` 的 `ALAT`）：沒有任何工具會改動自選股、審查決定、門檻或公告 |
 | 權限與存取碼 | `tests/test_putaran2.py`：`TestR3KunciBaca.test_r3_terkunci_tanpa_kode`、`test_r3_terbuka_dengan_kode`；`tests/test_qa_perbaikan.py`：`TestKunciBacaKeamanan.test_401_mandiri_tanpa_bocor_dan_post_akses_bertanda_hmac`（401 頁面不洩漏自選股資料；cookie 是 HMAC 摘要而非存取碼）；`tests/test_agent.py`：`TestDeploy.test_kode_salah_tidak_membuka`、`TestCacheModelDanImpor.test_impor_butuh_kode_akses`（沒有存取碼時匯入關閉） | 通過 |
-| 不當輸出（建議、預測、下單） | `tests/test_chat.py`：`TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`、`TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`；`tests/test_chat_percakapan.py`：`TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`；`tests/test_ui.py`：`TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian`（免責聲明之外沒有買進／賣出標籤，三種語言）；`python3 scripts/evaluasi.py --chat` | 通過。**27/27** 則建議、超出範圍與注入問題被拒答，**0** 個推薦用語傳到使用者（伺服器上的 Gemini 3.6 Flash，11 月 11 日，[`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) 第 4 節）；規則路徑 27/27（2026 年 11 月 14 日重新執行） |
+| 不當輸出（建議、預測、下單） | `tests/test_chat.py`：`TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`、`TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`；`tests/test_chat_percakapan.py`：`TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`；`tests/test_ui.py`：`TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian`（免責聲明之外沒有買進／賣出標籤，三種語言）；`python3 scripts/evaluasi.py --chat` | 通過。**27/27** 則建議、超出範圍與注入問題被拒答，**0** 個推薦用語傳到使用者（伺服器上的 Gemini 3.6 Flash，11 月 11 日，[`docs/evaluation-report.md`](docs/evaluation-report.md) 第 4 節）；規則路徑 27/27（2026 年 11 月 14 日重新執行） |
 | 惡意輸入 | `tests/test_c1a_tautan.py`：`TestC1aTautan.test_kode_tidak_sah_tidak_dipantulkan`（含 `<script>` 的股票代號不會被回顯到頁面） | 通過 |
 
 ---
@@ -714,13 +714,13 @@ docker stop <container> && docker rm <container> && docker volume rm feaf-data  
 
 ### 10.4 風險評估
 
-競賽規則第 14.3 條。各類別尚待補強之處：[`docs/laporan-keamanan.md`](docs/laporan-keamanan.md)（印尼文）。測試佐證：[9.7](#97-安全測試結果)。
+競賽規則第 14.3 條。各類別尚待補強之處：[`docs/security-report.md`](docs/security-report.md)（印尼文）。測試佐證：[9.7](#97-安全測試結果)。
 
 | 風險 | 防護 | 監控 | 復原 |
 |---|---|---|---|
 | **提示注入** | 公告文字置於分隔符內進入提示，並被視為資料；注入樣式會被標記（`deteksi_injeksi`）；數字只有在標籤合法、引文與數位都存在於公告、且量級合理時才會被接受。Ask FEAF 在任何工具或模型呼叫之前就拒絕注入用語，並為每則回答簽署 HMAC，因此偽造的歷史訊息會被丟棄 | 每個注入標記都是軌跡中的一個步驟；`python3 scripts/uji_serangan.py`（72 個案例，0 個錯誤數字） | 該公告保留給人工；對話退回範本回答。尚待補強：新的、隱晦的措辭可能通過樣式過濾，之後只靠數字檢查攔下 |
 | **未經授權的工具呼叫** | 封閉的 13 個唯讀工具清單；沒有 shell、檔案、下單或設定工具；參數會驗證（股票代號格式）；每則回答最多 5 輪工具呼叫；模型回答每小時上限 60 次；會改變資料的路由需要存取碼 | 每次工具呼叫、其參數與結果都存於 `traces_chat/` | 未知的工具回傳錯誤結果；更換 `SENTINEL_KODE_AKSES` 並重新啟動即可撤銷存取。尚待補強：只有一組共用存取碼，沒有個別使用者角色 |
-| **資料或憑證外洩** | 公司概況欄位採允許清單；發言人欄位在抓取與匯入時移除；經理人與會計師姓名從不擷取；API 金鑰只從環境變數讀取，並在記錄的錯誤中遮蔽；`.env` 與金鑰檔已加入 git 忽略；只有公開公告文字與問題文字會送往 Gemini | [9.7](#97-安全測試結果) 的測試，包括掃描 `app/`、`eval/` 與 `README.md` 是否含團隊成員姓名 | 停止相關運作（見下方第 14.4 條），更換金鑰，刪除受影響的檔案（[10.3](#103-資料保存與刪除)）。11 月 10 日曾有概況快取保留經理人欄位的事件，已改用允許清單修正（[`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) 第 3 節） |
+| **資料或憑證外洩** | 公司概況欄位採允許清單；發言人欄位在抓取與匯入時移除；經理人與會計師姓名從不擷取；API 金鑰只從環境變數讀取，並在記錄的錯誤中遮蔽；`.env` 與金鑰檔已加入 git 忽略；只有公開公告文字與問題文字會送往 Gemini | [9.7](#97-安全測試結果) 的測試，包括掃描 `app/`、`eval/` 與 `README.md` 是否含團隊成員姓名 | 停止相關運作（見下方第 14.4 條），更換金鑰，刪除受影響的檔案（[10.3](#103-資料保存與刪除)）。11 月 10 日曾有概況快取保留經理人欄位的事件，已改用允許清單修正（[`docs/security-report.md`](docs/security-report.md) 第 3 節） |
 | **幻覺** | 模型從不計算；DCF 是程式碼；驗證器採失敗即關閉；對話回答中的每個數字都必須出現在工具結果中 | 黃金資料集（0/46 個錯誤數字）、攻擊測試集（0/72）、`python3 scripts/evaluasi.py` | 該公告被保留，並在軌跡中指出未通過的檢查；對話改為顯示範本回答 |
 | **偏誤** | 門檻來自單一財務團隊（穩健屬性是團隊的答案；保守與積極屬性為提案）；溫度 0；分流由條款編號決定，而非模型；只使用公司公告與市場資料，不使用人口統計或個人屬性；Ask FEAF 拒絕買賣建議。涵蓋範圍限於有 FinMind 或交易所資料的證交所／櫃買中心發行公司，金融業不提供 DCF，臺灣以外只能取得當日公告 | `scripts/evaluasi.py` 報告中的決策分布與人工介入率；`/ambang` 的門檻歷史 | 在 `/ambang` 變更風險屬性或門檻；重設某一條款的票數。樣本外測試集是下一步（未量測） |
 | **惡意輸入** | Jinja2 自動跳脫；股票代號格式 `^[0-9A-Z]{4,6}$`；對話問題截斷為 500 字元；匯入上限 25 MB、驗證為 JSON，且沒有存取碼時關閉；偵測 MOPS 封鎖頁面 | 伺服器日誌中的 HTTP 4xx 紀錄；`/health` | 錯誤以單則公告為單位隔離，一筆壞資料不會中斷其餘處理。尚待補強：沒有依 IP 的速率限制（只有模型回答的上限） |
@@ -787,7 +787,7 @@ FEAF 遵循[語意化版本](https://semver.org/)。執行中的版本顯示於 
 
 ### 13.1 第三方資源
 
-競賽規則第 13 條。摘要自 [`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)（印尼文），該文件也記錄了每一項的查證狀態。
+競賽規則第 13 條。摘要自 [`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)（印尼文），該文件也記錄了每一項的查證狀態。
 
 | 名稱 | 類型 | 用途 | 資料範圍 | 授權或條款 |
 |---|---|---|---|---|
@@ -813,7 +813,7 @@ FEAF 遵循[語意化版本](https://semver.org/)。執行中的版本顯示於 
 
 ### 13.2 授權
 
-版權所有，詳見 [`LICENSE`](LICENSE)。AAIC 2026 主辦單位與評審可為評選目的執行及檢視本專案。第三方元件與資料沿用其原授權（[`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)）。
+版權所有，詳見 [`LICENSE`](LICENSE)。AAIC 2026 主辦單位與評審可為評選目的執行及檢視本專案。第三方元件與資料沿用其原授權（[`docs/third-party-disclosure.md`](docs/third-party-disclosure.md)）。
 
 ---
 
