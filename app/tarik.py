@@ -69,6 +69,14 @@ BLOCK_MARKERS = ("FOR SECURITY REASONS", "因為安全性考量")
 PII_LABELS = ("發言人", "發言人職稱", "發言人電話", "代理發言人")
 
 
+def tanpa_pii(data):
+    """Salinan respons OpenAPI dengan field PII_LABELS dibuang dari setiap baris."""
+    if not isinstance(data, list):
+        return data
+    return [{k: v for k, v in r.items() if k not in PII_LABELS} if isinstance(r, dict) else r
+            for r in data]
+
+
 def _sekarang() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
@@ -428,10 +436,11 @@ def periksa_sekarang(watchlist: list[str] | None = None) -> dict:
                                       "pesan": f"{type(e).__name__}: {e}"}
             continue
 
-        # Bukti mentah disimpan apa adanya, sebelum diolah. Tidak di-commit.
+        # Bukti mentah disimpan sebelum diolah, tetapi tanpa field juru bicara
+        # (PDPA: minimisasi data). Tidak di-commit.
         os.makedirs(RAW_DIR, exist_ok=True)
         with open(os.path.join(RAW_DIR, f"{cap}-{nama}.json"), "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False)
+            json.dump(tanpa_pii(data), f, ensure_ascii=False)
 
         rec = [normalkan(r, nama, ditarik) for r in data]
         cocok = [d for d in rec if d["code"] in wl]

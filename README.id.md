@@ -8,13 +8,13 @@
 
 **FEAF** adalah agent yang memantau pengumuman resmi bursa Taiwan (MOPS 重大訊息), menentukan input valuasi mana yang disentuh tiap pengumuman, menghitung ulang valuasi saat angkanya berubah, dan **menolak menerbitkan peringatan** bila sebuah angka tidak bisa ditelusuri kembali ke pengumuman asalnya. Dibuat untuk NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), jalur SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-[![Version](https://img.shields.io/badge/Version-1.3.0-16324F)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-311%20passing-2EA44F)](#95-tes)
+[![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-tes)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-antarmuka-tiga-bahasa)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -242,7 +242,7 @@ erDiagram
 | Path (di bawah `DATA_DIR`) | Isi |
 |---|---|
 | `parsed/details.json` | Pengumuman yang sudah ditarik, digabung tanpa duplikat, data pribadi sudah dibuang |
-| `raw/openapi/` | Snapshot mentah OpenAPI harian, disimpan persis seperti diterima |
+| `raw/openapi/` | Snapshot mentah OpenAPI harian, field juru bicara dibuang sebelum disimpan (sejak v1.3.1) |
 | `traces/` | Satu jejak operasi per pengumuman: `state`, `status`, `alasan`, `muatan`, `jejak` (langkah), `ringkasan` (token, biaya, latensi) |
 | `traces_chat/` | Satu jejak per jawaban Tanya FEAF |
 | `watchlist.json`, `status_tarik.json` | Kode yang dipantau dan status tarik terakhir |
@@ -281,7 +281,7 @@ Bila `SENTINEL_KUNCI_BACA=1`, setiap panggilan `/api/*` butuh cookie akses; `/he
   ```json
   {
     "ok": true,
-    "versi": "1.3.0",
+    "versi": "1.3.1",
     "versi_kode": "13fb64cf5c",
     "sumber": "openapi",
     "pengumuman": 2437,
@@ -429,7 +429,7 @@ Dipakai `scripts/kirim_riwayat.py` dari laptop di jaringan Taiwan. Tertutup sepe
 | **Sumber data** | OpenAPI TWSE / TPEx, MOPS, FinMind | Data resmi bursa; FinMind untuk laporan keuangan |
 | **Penyimpanan** | Berkas JSON di volume | Tidak perlu menjalankan database; setiap catatan bisa dibaca manusia untuk audit |
 | **Deploy** | Docker / Dokploy | Satu container, volume `/data`, health check di `/health` |
-| **Tes** | `unittest` + FastAPI `TestClient` (httpx) | 311 tes, tanpa akses jaringan |
+| **Tes** | `unittest` + FastAPI `TestClient` (httpx) | 313 tes, tanpa akses jaringan |
 
 ---
 
@@ -590,7 +590,7 @@ Operasional pada 581 pengumuman asli: 318 lolos saringan pasal, 241 terbit, 58 d
 ### 9.5 Tes
 
 ```bash
-python3 -m unittest discover -s tests   # 311 tes, tanpa jaringan
+python3 -m unittest discover -s tests   # 313 tes, tanpa jaringan
 python3 scripts/qa_halaman.py           # semua halaman × 3 bahasa (84/84)
 ```
 
@@ -642,11 +642,11 @@ Sumber: [`docs/evaluation-report.md`](docs/evaluation-report.md) bagian 5.
 
 ### 9.7 Hasil Uji Keselamatan
 
-Setiap baris menyebut tes yang mencakup satu risiko. Seluruh rangkaian tes lulus pada 14 Nov 2026: `python3 -m unittest discover -s tests` → 311 tes, OK. Nama tes berbentuk `kelas.metode` di dalam berkas.
+Setiap baris menyebut tes yang mencakup satu risiko. Seluruh rangkaian tes lulus pada 14 Nov 2026: `python3 -m unittest discover -s tests` → 313 tes, OK. Nama tes berbentuk `kelas.metode` di dalam berkas.
 
 | Risiko | Tes (berkas dan nama, atau skrip) | Hasil |
 |---|---|---|
-| Data pribadi tersimpan atau terkirim | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (tidak ada nilai juru bicara atau nomor telepon di jejak mana pun), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (rekaman yang diimpor kehilangan field pribadi), `TestHalamanSaham.test_profil_tanpa_data_pribadi` dan `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (profil emiten hanya menyimpan kolom yang diizinkan); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Lulus |
+| Data pribadi tersimpan atau terkirim | `tests/test_agent.py`: `TestPenarikDinamis.test_snapshot_mentah_tanpa_field_pribadi`, `TestPenarikDinamis.test_skrip_pembersih_snapshot_lama`, `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (tidak ada nilai juru bicara atau nomor telepon di jejak mana pun), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (rekaman yang diimpor kehilangan field pribadi), `TestHalamanSaham.test_profil_tanpa_data_pribadi` dan `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (profil emiten hanya menyimpan kolom yang diizinkan); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Lulus |
 | Nama orang sampai ke sinyal, jawaban alat, atau ekspor | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (tidak ada nama anggota tim di `app/`, `eval/`, atau `README.md`) | Lulus |
 | API key di berkas, halaman, atau jejak | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (tidak ada `GEMINI_API_KEY` atau awalan `AIza` di jejak mana pun). Kunci hanya dibaca dari environment dan `key=` disamarkan pada galat model yang dicatat (`app/agent/llm.py`) | Lulus untuk jejak. Log server dan halaman yang dirender tidak punya tes khusus |
 | Prompt injection | `tests/test_agent.py`: `TestPrompInjection` (3 tes: percobaan dicatat di jejak; angka suntikan tidak pernah terbit; injeksi yang dituruti tetap gagal di pemeriksa pada label dan besaran); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` dan `python3 scripts/uji_serangan.py` (12 jenis serangan, 72 kasus); chat: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` dan `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Lulus. **0/72** angka penyerang terbit (dijalankan ulang 14 Nov 2026, [laporan](eval/hasil/serangan-2026-11-10.md)); 1 giliran riwayat sisipan dibuang pada set chat 36 giliran |
@@ -661,7 +661,7 @@ Setiap baris menyebut tes yang mencakup satu risiko. Seluruh rangkaian tes lulus
 ## 10. Keamanan, Privasi, dan Kontrol Akses
 
 ### 10.1 Privasi Data
-- `scripts/fetch_details.py` dan `app/tarik.py` membuang `發言人`, `發言人職稱`, dan `發言人電話` **sebelum data hasil urai, jejak, atau ekspor ditulis**. Yang dicatat hanya fakta bahwa field dibuang, tidak pernah nilainya. Satu-satunya pengecualian adalah snapshot mentah OpenAPI, yang disimpan apa adanya ([10.3](#103-retensi-dan-penghapusan-data)).
+- `scripts/fetch_details.py` dan `app/tarik.py` membuang `發言人`, `發言人職稱`, dan `發言人電話` **sebelum data hasil urai, jejak, atau ekspor ditulis**. Yang dicatat hanya fakta bahwa field dibuang, tidak pernah nilainya.
 - Nama pejabat, direktur, dan auditor (pasal 1, 6, 7, 8) tidak pernah diekstrak, ditampilkan, atau diekspor.
 - Teks pengumuman diperlakukan sebagai **data tak tepercaya**: masuk ke prompt di dalam pembatas, instruksi sistem menyatakan tidak ada isi di dalamnya yang boleh dituruti, dan upaya injeksi dicatat.
 - API key hanya dibaca dari environment, dan kode tidak pernah menuliskannya ke berkas, halaman, atau jejak; sebuah tes memeriksa jejak ([9.7](#97-hasil-uji-keselamatan)) dan `key=` disamarkan pada galat model yang dicatat.
@@ -685,7 +685,7 @@ Aturan lomba, Pasal 14.1 (minimisasi data, masa retensi, penghapusan). Semua yan
 | Jejak Tanya FEAF | `traces_chat/` | **Teks pertanyaan yang diketik pengguna** (dipotong 500 karakter), bahasa, setiap panggilan alat beserta hasilnya, jawaban, jawaban model yang ditolak bila ada, jumlah token. Tidak disimpan: nama, alamat IP, atau giliran percakapan sebelumnya (hanya berapa banyak yang dipakai atau dibuang) |
 | Jejak pengumuman | `traces/` | Langkah, panggilan model, kalimat kutipan pengumuman publik, dan hanya *label* field pribadi yang dibuang, tidak pernah nilainya |
 | Pengumuman yang ditarik | `parsed/` | Teks pengumuman publik; field juru bicara dibuang sebelum disimpan |
-| Snapshot mentah OpenAPI | `raw/openapi/` | Disimpan persis seperti dikirim bursa, **sebelum** field apa pun dibuang. Pengurai hanya membaca field kode, nama, tanggal, jam, subjek, pasal, dan uraian, dan `PII_LABELS` di `app/tarik.py` mendaftar field juru bicara yang akan dibuang bila suatu endpoint memuatnya, tetapi snapshot itu sendiri tidak disaring |
+| Snapshot mentah OpenAPI | `raw/openapi/` | Respons bursa apa adanya, kecuali field juru bicara di `PII_LABELS` (`app/tarik.py`) yang dibuang sebelum berkas ditulis (sejak v1.3.1). Snapshot dari versi lama bisa dibersihkan sekali dengan `python3 scripts/scrub_raw_snapshots.py` |
 | Keputusan review | `keputusan_review.json` | Keputusan, catatan teks bebas (maksimal 500 karakter), dan waktu UTC per kasus. Tanpa identitas pengguna |
 | Umpan balik | `umpan_balik.json` | Suara 👍/👎 per pasal dan riwayat perubahan (500 entri terakhir). Tanpa identitas pengguna |
 | Cache model | `cache_model/` | Jawaban model untuk pengumuman publik, berkunci hash SHA-256 dari penyedia, model, versi prompt, dan teks pengumuman. Pertanyaan Tanya FEAF tidak di-cache di sini |
@@ -693,7 +693,7 @@ Aturan lomba, Pasal 14.1 (minimisasi data, masa retensi, penghapusan). Semua yan
 
 Di browser: riwayat chat (maksimal 12 pesan) ada di `sessionStorage`, bukan di server; cookie-nya `bahasa` dan `risiko` (1 tahun) serta `akses` (30 hari, digest HMAC).
 
-- **Data pribadi dalam pengumuman** (nama, jabatan, dan telepon `發言人`) dibuang saat penarikan dan sekali lagi pada `POST /api/import`; yang dicatat hanya labelnya. Satu-satunya pengecualian adalah snapshot mentah di atas.
+- **Data pribadi dalam pengumuman** (nama, jabatan, dan telepon `發言人`) dibuang saat penarikan dan sekali lagi pada `POST /api/import`; yang dicatat hanya labelnya. Sejak v1.3.1 snapshot mentah juga disaring dengan cara yang sama.
 - **Apa yang diketik pengguna tidak dibersihkan.** Penjaga menolak permintaan *akan* data pribadi, tetapi pertanyaan yang memuat data pribadi disimpan di jejak dan, di jalur model, dikirim ke Gemini bersama hingga 6 giliran terverifikasi sebelumnya. Apa yang disimpan Google diatur oleh ketentuannya ([13.1](#131-sumber-daya-pihak-ketiga)), bukan oleh repositori ini.
 
 **Cara menghapus.** Jalankan di dalam folder data (`./data` di lokal, volume `/data` di Docker). Aplikasi membuat ulang yang dibutuhkan pada pemakaian berikutnya.
@@ -780,7 +780,8 @@ FEAF mengikuti [semantic versioning](https://semver.org/). Versi yang berjalan t
 
 | Versi | Tanggal | Sorotan |
 |---|---|---|
-| **1.3.0** | 14 Nov 2026 | Transisi halaman yang halus dan interaksi kecil, tata letak lebar penuh, README dengan metrik operasional, hasil uji keselamatan, retensi data, penilaian risiko, dan pengungkapan pihak ketiga |
+| **1.3.1** | 14 Nov 2026 | Perbaikan privasi: snapshot mentah OpenAPI tidak lagi menyimpan field juru bicara; `scripts/scrub_raw_snapshots.py` membersihkan snapshot lama |
+| 1.3.0 | 14 Nov 2026 | Transisi halaman yang halus dan interaksi kecil, tata letak lebar penuh, README dengan metrik operasional, hasil uji keselamatan, retensi data, penilaian risiko, dan pengungkapan pihak ketiga |
 | 1.2.0 | 14 Nov 2026 | Path API berbahasa Inggris dengan alias lama, dokumentasi OpenAPI berbahasa Inggris, README empat bahasa |
 | 1.1.0 | 13 Nov 2026 | Panel Tanya FEAF di setiap halaman, perombakan UI, penguatan QA |
 | 1.0.0 | 12 Nov 2026 | Paket finalis (AAIC 2026) |

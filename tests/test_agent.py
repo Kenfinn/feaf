@@ -307,6 +307,50 @@ class TestPenarikDinamis(unittest.TestCase):
         self.assertTrue(all(d["code"] == kode for d in tersimpan))
         self.assertEqual(self.tarik.periksa_sekarang([kode])["baru"], 0)
 
+    def test_snapshot_mentah_tanpa_field_pribadi(self):
+        """Snapshot raw/openapi disimpan TANPA field juru bicara (PDPA: minimisasi data)."""
+        import copy
+        import glob
+        sampel = copy.deepcopy(self.sampel)
+        for rows in sampel.values():
+            for r in rows:
+                r.update({"發言人": "王小明", "發言人職稱": "財務長", "發言人電話": "02-1234-5678",
+                          "代理發言人": "李小華"})
+        self.tarik.ambil = lambda s: sampel[s]
+        kode = self.tarik.normalkan(sampel["twse"][0], "twse", "x")["code"]
+        self.tarik.periksa_sekarang([kode])
+        berkas = glob.glob(os.path.join(self.tarik.RAW_DIR, "*.json"))
+        self.assertTrue(berkas, "snapshot mentah harus tetap ditulis")
+        for p in berkas:
+            with open(p, encoding="utf-8") as f:
+                isi = f.read()
+            for nilai in ("王小明", "財務長", "02-1234-5678", "李小華"):
+                self.assertNotIn(nilai, isi, f"{nilai} bocor ke {os.path.basename(p)}")
+            for baris in json.loads(isi):
+                for label in self.tarik.PII_LABELS:
+                    self.assertNotIn(label, baris)
+        # penanda field yang dibuang tetap tercatat di data hasil olahan
+        tersimpan = _baca_json(self.tarik.DETAIL_FILE)
+        self.assertTrue(all(set(self.tarik.PII_LABELS) <= set(d["dropped_pii"]) for d in tersimpan))
+
+    def test_skrip_pembersih_snapshot_lama(self):
+        """scripts/scrub_raw_snapshots.py membuang PII dari snapshot versi lama, sekali jalan."""
+        import importlib.util
+        os.makedirs(self.tarik.RAW_DIR, exist_ok=True)
+        lama = os.path.join(self.tarik.RAW_DIR, "20261101T000000Z-twse.json")
+        bersih = os.path.join(self.tarik.RAW_DIR, "20261101T000000Z-tpex.json")
+        with open(lama, "w", encoding="utf-8") as f:
+            json.dump([{"主旨": "x", "發言人": "王小明", "發言人電話": "02-1234-5678"}], f, ensure_ascii=False)
+        with open(bersih, "w", encoding="utf-8") as f:
+            json.dump([{"主旨": "y"}], f, ensure_ascii=False)
+        spec = importlib.util.spec_from_file_location(
+            "scrub_raw_snapshots", os.path.join(ROOT, "scripts", "scrub_raw_snapshots.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self.assertEqual(mod.scrub(self.tarik.RAW_DIR), (2, 1))
+        self.assertEqual(_baca_json(lama), [{"主旨": "x"}])
+        self.assertEqual(mod.scrub(self.tarik.RAW_DIR), (2, 0))
+
     def test_halaman_blokir_dicatat_bukan_meledak(self):
         def blokir(_):
             raise self.tarik.Diblokir("halaman blokir")

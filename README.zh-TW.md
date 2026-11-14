@@ -8,13 +8,13 @@
 
 **FEAF** 是一個監看臺灣證交所官方重大訊息（MOPS）的代理：判斷每則公告影響哪一項估值輸入、數字變動時重新計算估值，並且在數字**無法追溯回原始公告時拒絕發布警示**。本專案為 NAPAI 2026 代理式 AI 創新競賽（AAIC 2026）SYSTEX 賽道作品：*Investment Intelligence & AI-Powered Stock Selection Agent*。
 
-[![Version](https://img.shields.io/badge/Version-1.3.0-16324F)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-311%20passing-2EA44F)](#95-測試)
+[![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-測試)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-三語介面)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -242,7 +242,7 @@ erDiagram
 | 路徑（位於 `DATA_DIR` 下） | 內容 |
 |---|---|
 | `parsed/details.json` | 已抓取的公告，去重合併，個人欄位已移除 |
-| `raw/openapi/` | 每日 OpenAPI 原始快照，依原樣儲存 |
+| `raw/openapi/` | 每日 OpenAPI 原始快照，儲存前已移除發言人欄位（自 v1.3.1 起） |
 | `traces/` | 每則公告一份操作軌跡：`state`、`status`、`alasan`、`muatan`、`jejak`（步驟）、`ringkasan`（token、成本、延遲） |
 | `traces_chat/` | 每則 Ask FEAF 回答一份軌跡 |
 | `watchlist.json`、`status_tarik.json` | 自選股代號與最近一次抓取狀態 |
@@ -281,7 +281,7 @@ erDiagram
   ```json
   {
     "ok": true,
-    "versi": "1.3.0",
+    "versi": "1.3.1",
     "versi_kode": "13fb64cf5c",
     "sumber": "openapi",
     "pengumuman": 2437,
@@ -429,7 +429,7 @@ erDiagram
 | **資料來源** | 證交所／櫃買中心 OpenAPI、MOPS、FinMind | 官方交易所資料；財報取自 FinMind |
 | **儲存** | volume 上的 JSON 檔案 | 不需維運資料庫；每筆紀錄皆可直接閱讀以供稽核 |
 | **部署** | Docker / Dokploy | 單一容器、`/data` volume、以 `/health` 做健康檢查 |
-| **測試** | `unittest` + FastAPI `TestClient`（httpx） | 311 項測試，不需網路 |
+| **測試** | `unittest` + FastAPI `TestClient`（httpx） | 313 項測試，不需網路 |
 
 ---
 
@@ -590,7 +590,7 @@ Gemini 3.6 Flash、未使用快取，11 月 11 日：發布錯誤數字 0/46（�
 ### 9.5 測試
 
 ```bash
-python3 -m unittest discover -s tests   # 311 項測試，不需網路
+python3 -m unittest discover -s tests   # 313 項測試，不需網路
 python3 scripts/qa_halaman.py           # 所有頁面 × 3 種語言（84/84）
 ```
 
@@ -642,11 +642,11 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # 沒有輸出 = 沒
 
 ### 9.7 安全測試結果
 
-每一列列出涵蓋該風險的測試。整個測試套件於 2026 年 11 月 14 日通過：`python3 -m unittest discover -s tests` → 311 項測試，OK。測試名稱格式為檔案內的 `類別.方法`。
+每一列列出涵蓋該風險的測試。整個測試套件於 2026 年 11 月 14 日通過：`python3 -m unittest discover -s tests` → 313 項測試，OK。測試名稱格式為檔案內的 `類別.方法`。
 
 | 風險 | 測試（檔案與名稱，或腳本） | 結果 |
 |---|---|---|
-| 個人資料被儲存或送出 | `tests/test_agent.py`：`TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan`（任何軌跡中都沒有發言人的值或電話號碼）、`TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii`（匯入的紀錄會失去個人欄位）、`TestHalamanSaham.test_profil_tanpa_data_pribadi` 與 `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi`（公司概況只保留允許的欄位）；`tests/test_cari_nama.py`：`TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | 通過 |
+| 個人資料被儲存或送出 | `tests/test_agent.py`：`TestPenarikDinamis.test_snapshot_mentah_tanpa_field_pribadi`、`TestPenarikDinamis.test_skrip_pembersih_snapshot_lama`、`TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan`（任何軌跡中都沒有發言人的值或電話號碼）、`TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii`（匯入的紀錄會失去個人欄位）、`TestHalamanSaham.test_profil_tanpa_data_pribadi` 與 `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi`（公司概況只保留允許的欄位）；`tests/test_cari_nama.py`：`TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | 通過 |
 | 人名進入訊號、工具回答或匯出 | `tests/test_tata_kelola.py`：`TestAuditor.test_tanpa_nama`；`tests/test_b1.py`：`TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`；`tests/test_chat_percakapan.py`：`TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`、`TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`；`tests/test_gold_b1.py`：`TestGoldB1.test_ekspor_tanpa_nama_orang`；`tests/test_paket_gold.py`：`TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`；`tests/test_deidentifikasi.py`：`TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme`（`app/`、`eval/` 與 `README.md` 中沒有團隊成員姓名） | 通過 |
 | API 金鑰出現在檔案、頁面或軌跡 | `tests/test_agent.py`：`TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak`（任何軌跡中都沒有 `GEMINI_API_KEY` 或 `AIza` 開頭字串）。金鑰只從環境變數讀取，記錄的模型錯誤中 `key=` 會被遮蔽（`app/agent/llm.py`） | 軌跡部分通過。伺服器日誌與渲染後的頁面沒有專門測試 |
 | 提示注入 | `tests/test_agent.py`：`TestPrompInjection`（3 項測試：嘗試被記錄在軌跡中；被注入的數字絕不發布；即使模型服從注入，驗證器仍會在標籤與量級上攔下）；`tests/test_serangan.py`：`TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` 與 `python3 scripts/uji_serangan.py`（12 種攻擊、72 個案例）；對話：`tests/test_chat_b1.py`：`TestChatB1.test_injeksi_ditolak_tiga_bahasa`，`tests/test_chat_percakapan.py`：`TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` 與 `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | 通過。攻擊者數字發布 **0/72**（2026 年 11 月 14 日重新執行，[報告](eval/hasil/serangan-2026-11-10.md)）；36 輪對話測試集中有 1 輪被注入的歷史訊息遭丟棄 |
@@ -661,7 +661,7 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # 沒有輸出 = 沒
 ## 10. 安全 隱私與存取控制
 
 ### 10.1 資料隱私
-- `scripts/fetch_details.py` 與 `app/tarik.py` 會在**解析後資料、軌跡或匯出被寫入之前**移除 `發言人`、`發言人職稱` 與 `發言人電話`。只記錄「某欄位已移除」這件事，從不記錄其值。唯一的例外是 OpenAPI 原始快照，它依原樣儲存（[10.3](#103-資料保存與刪除)）。
+- `scripts/fetch_details.py` 與 `app/tarik.py` 會在**解析後資料、軌跡或匯出被寫入之前**移除 `發言人`、`發言人職稱` 與 `發言人電話`。只記錄「某欄位已移除」這件事，從不記錄其值。
 - 經理人、董事與會計師的姓名（第 1、6、7、8 條）從不擷取、顯示或匯出。
 - 公告文字被視為**不可信資料**：它置於分隔符內進入提示，系統指令明示其中任何內容都不得遵從，注入嘗試會被記錄。
 - API 金鑰只從環境變數讀取，程式碼從不將其寫入檔案、頁面或軌跡；有測試檢查軌跡（[9.7](#97-安全測試結果)），且記錄的模型錯誤中 `key=` 會被遮蔽。
@@ -685,7 +685,7 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # 沒有輸出 = 沒
 | Ask FEAF 軌跡 | `traces_chat/` | **使用者輸入的問題文字**（截斷為 500 字元）、語言、每次工具呼叫與其結果、回答、被拒絕的模型回答（若有）、token 數。不儲存：姓名、IP 位址，或對話中先前的輪次（只記錄使用或丟棄了幾輪） |
 | 公告軌跡 | `traces/` | 步驟、模型呼叫、公開公告的引用句，以及被移除個人欄位的*標籤*（從不記錄其值） |
 | 已抓取公告 | `parsed/` | 公開公告文字；發言人欄位在儲存前已移除 |
-| OpenAPI 原始快照 | `raw/openapi/` | 與交易所傳來的內容完全相同，**在任何欄位被移除之前**儲存。解析器只讀取代號、名稱、日期、時間、主旨、條款與說明欄位，`app/tarik.py` 的 `PII_LABELS` 列出若端點出現就會移除的發言人欄位，但快照本身並未過濾 |
+| OpenAPI 原始快照 | `raw/openapi/` | 交易所回傳的原始內容，但 `PII_LABELS`（`app/tarik.py`）列出的發言人欄位會在寫入檔案前移除（自 v1.3.1 起）。舊版本儲存的快照可執行一次 `python3 scripts/scrub_raw_snapshots.py` 清除 |
 | 審查決定 | `keputusan_review.json` | 每個案件的決定、自由文字備註（最多 500 字元）與 UTC 時間。不含使用者身分 |
 | 回饋 | `umpan_balik.json` | 每條款的 👍/👎 票數與變更歷史（最近 500 筆）。不含使用者身分 |
 | 模型快取 | `cache_model/` | 公開公告的模型回答，以提供者、模型、提示版本與公告文字的 SHA-256 雜湊為鍵。Ask FEAF 的問題不會快取在此 |
@@ -693,7 +693,7 @@ grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # 沒有輸出 = 沒
 
 在瀏覽器端：對話歷史（最多 12 則訊息）存放於 `sessionStorage`，不在伺服器上；cookie 有 `bahasa` 與 `risiko`（1 年）以及 `akses`（30 天，HMAC 摘要）。
 
-- **公告中的個人資料**（`發言人` 的姓名、職稱與電話）在抓取時移除，並在 `POST /api/import` 時再移除一次；只記錄標籤。唯一的例外是上述原始快照。
+- **公告中的個人資料**（`發言人` 的姓名、職稱與電話）在抓取時移除，並在 `POST /api/import` 時再移除一次；只記錄標籤。自 v1.3.1 起，原始快照也以相同方式過濾。
 - **使用者輸入的內容不會被清除。** 防護只會拒絕*索取*個人資料的請求；若問題中含有個人資料，它會被儲存在軌跡中，並且在模型路徑上連同最多 6 輪已驗證的先前對話一起送往 Gemini。Google 保留什麼由其條款規範（[13.1](#131-第三方資源)），而非本儲存庫。
 
 **如何刪除。** 在資料資料夾內執行（本機為 `./data`，Docker 為 `/data` 磁碟區）。應用程式會在下次使用時重新建立所需的檔案。
@@ -780,7 +780,8 @@ FEAF 遵循[語意化版本](https://semver.org/)。執行中的版本顯示於 
 
 | 版本 | 日期 | 重點 |
 |---|---|---|
-| **1.3.0** | 2026-11-14 | 流暢的頁面轉場與細部互動、全寬版面、README 新增營運指標、安全測試結果、資料保存、風險評估與第三方揭露 |
+| **1.3.1** | 2026-11-14 | 隱私修正：OpenAPI 原始快照不再儲存發言人欄位；`scripts/scrub_raw_snapshots.py` 可清除舊快照 |
+| 1.3.0 | 2026-11-14 | 流暢的頁面轉場與細部互動、全寬版面、README 新增營運指標、安全測試結果、資料保存、風險評估與第三方揭露 |
 | 1.2.0 | 2026-11-14 | 英文 API 路徑與舊路徑別名、英文 OpenAPI 文件、四語 README |
 | 1.1.0 | 2026-11-13 | 每頁皆有 Ask FEAF 面板、介面全面改版、QA 強化 |
 | 1.0.0 | 2026-11-12 | 決賽繳交版本（AAIC 2026） |

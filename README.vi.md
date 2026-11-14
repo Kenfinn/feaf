@@ -8,13 +8,13 @@
 
 **FEAF** là một tác tử (agent) theo dõi các công bố thông tin chính thức của sàn giao dịch Đài Loan (MOPS 重大訊息), xác định mỗi công bố tác động đến đầu vào định giá nào, tính lại định giá khi số liệu thay đổi, và **từ chối phát hành cảnh báo** khi một con số không thể truy ngược về công bố gốc. Dự án được xây dựng cho cuộc thi NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), nhánh SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-[![Version](https://img.shields.io/badge/Version-1.3.0-16324F)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-311%20passing-2EA44F)](#95-kiểm-thử)
+[![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-kiểm-thử)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-giao-diện-ba-ngôn-ngữ)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -242,7 +242,7 @@ erDiagram
 | Đường dẫn (trong `DATA_DIR`) | Nội dung |
 |---|---|
 | `parsed/details.json` | Các công bố đã kéo về, hợp nhất không trùng lặp, đã xóa trường cá nhân |
-| `raw/openapi/` | Ảnh chụp thô OpenAPI hằng ngày, lưu nguyên như nhận được |
+| `raw/openapi/` | Ảnh chụp thô OpenAPI hằng ngày, đã xóa các trường người phát ngôn trước khi lưu (từ v1.3.1) |
 | `traces/` | Mỗi công bố một dấu vết vận hành: `state`, `status`, `alasan`, `muatan`, `jejak` (các bước), `ringkasan` (token, chi phí, độ trễ) |
 | `traces_chat/` | Mỗi câu trả lời Ask FEAF một dấu vết |
 | `watchlist.json`, `status_tarik.json` | Mã đang theo dõi và trạng thái lần kéo gần nhất |
@@ -281,7 +281,7 @@ Khi `SENTINEL_KUNCI_BACA=1`, mọi lời gọi `/api/*` cần cookie truy cập;
   ```json
   {
     "ok": true,
-    "versi": "1.3.0",
+    "versi": "1.3.1",
     "versi_kode": "13fb64cf5c",
     "sumber": "openapi",
     "pengumuman": 2437,
@@ -429,7 +429,7 @@ Kết quả DCF từ cùng hàm `compute()` mà trang web sử dụng.
 | **Nguồn dữ liệu** | OpenAPI TWSE / TPEx, MOPS, FinMind | Dữ liệu chính thức của sàn; FinMind cho báo cáo tài chính |
 | **Lưu trữ** | Tệp JSON trên volume | Không cần vận hành cơ sở dữ liệu; mọi bản ghi đều đọc được để kiểm toán |
 | **Triển khai** | Docker / Dokploy | Một container, volume `/data`, kiểm tra tình trạng tại `/health` |
-| **Kiểm thử** | `unittest` + FastAPI `TestClient` (httpx) | 311 bài kiểm thử, không cần mạng |
+| **Kiểm thử** | `unittest` + FastAPI `TestClient` (httpx) | 313 bài kiểm thử, không cần mạng |
 
 ---
 
@@ -590,7 +590,7 @@ Vận hành trên 581 công bố thật: 318 qua bộ sàng lọc điều khoả
 ### 9.5 Kiểm thử
 
 ```bash
-python3 -m unittest discover -s tests   # 311 bài kiểm thử, không cần mạng
+python3 -m unittest discover -s tests   # 313 bài kiểm thử, không cần mạng
 python3 scripts/qa_halaman.py           # mọi trang × 3 ngôn ngữ (84/84)
 ```
 
@@ -642,11 +642,11 @@ Nguồn: [`docs/evaluation-report.md`](docs/evaluation-report.md) mục 5.
 
 ### 9.7 Kết quả kiểm thử an toàn
 
-Mỗi dòng nêu các bài kiểm thử bao phủ một rủi ro. Toàn bộ bộ kiểm thử đạt ngày 14/11/2026: `python3 -m unittest discover -s tests` → 311 bài kiểm thử, OK. Tên kiểm thử có dạng `lớp.phương_thức` trong tệp.
+Mỗi dòng nêu các bài kiểm thử bao phủ một rủi ro. Toàn bộ bộ kiểm thử đạt ngày 14/11/2026: `python3 -m unittest discover -s tests` → 313 bài kiểm thử, OK. Tên kiểm thử có dạng `lớp.phương_thức` trong tệp.
 
 | Rủi ro | Kiểm thử (tệp và tên, hoặc script) | Kết quả |
 |---|---|---|
-| Dữ liệu cá nhân bị lưu hoặc bị gửi đi | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (không có giá trị người phát ngôn hay số điện thoại trong bất kỳ dấu vết nào), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (bản ghi nhập vào mất các trường cá nhân), `TestHalamanSaham.test_profil_tanpa_data_pribadi` và `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (hồ sơ doanh nghiệp chỉ giữ các cột được phép); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Đạt |
+| Dữ liệu cá nhân bị lưu hoặc bị gửi đi | `tests/test_agent.py`: `TestPenarikDinamis.test_snapshot_mentah_tanpa_field_pribadi`, `TestPenarikDinamis.test_skrip_pembersih_snapshot_lama`, `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (không có giá trị người phát ngôn hay số điện thoại trong bất kỳ dấu vết nào), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (bản ghi nhập vào mất các trường cá nhân), `TestHalamanSaham.test_profil_tanpa_data_pribadi` và `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (hồ sơ doanh nghiệp chỉ giữ các cột được phép); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Đạt |
 | Tên người lọt vào tín hiệu, câu trả lời của công cụ hoặc tệp xuất | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (không có tên thành viên nhóm trong `app/`, `eval/`, `README.md`) | Đạt |
 | Khóa API nằm trong tệp, trang hoặc dấu vết | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (không có `GEMINI_API_KEY` hay tiền tố `AIza` trong bất kỳ dấu vết nào). Khóa chỉ được đọc từ biến môi trường và `key=` được che trong các lỗi mô hình được ghi lại (`app/agent/llm.py`) | Đạt với dấu vết. Nhật ký máy chủ và trang đã render chưa có kiểm thử riêng |
 | Chèn lệnh (prompt injection) | `tests/test_agent.py`: `TestPrompInjection` (3 bài: nỗ lực được ghi vào dấu vết; số bị chèn không bao giờ được phát hành; chèn lệnh được mô hình làm theo vẫn bị bộ kiểm chứng chặn ở nhãn và độ lớn); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` và `python3 scripts/uji_serangan.py` (12 kiểu tấn công, 72 trường hợp); trò chuyện: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` và `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Đạt. **0/72** con số của kẻ tấn công được phát hành (chạy lại 14/11/2026, [báo cáo](eval/hasil/serangan-2026-11-10.md)); 1 lượt lịch sử bị chèn đã bị loại bỏ trong bộ trò chuyện 36 lượt |
@@ -661,7 +661,7 @@ Mỗi dòng nêu các bài kiểm thử bao phủ một rủi ro. Toàn bộ b�
 ## 10. Bảo mật quyền riêng tư và kiểm soát truy cập
 
 ### 10.1 Quyền riêng tư dữ liệu
-- `scripts/fetch_details.py` và `app/tarik.py` xóa `發言人`, `發言人職稱` và `發言人電話` **trước khi dữ liệu đã phân tích, dấu vết hay tệp xuất được ghi**. Chỉ ghi lại việc một trường đã bị xóa, không bao giờ ghi giá trị. Ngoại lệ duy nhất là ảnh chụp thô OpenAPI, được lưu nguyên như nhận được ([10.3](#103-lưu-giữ-và-xóa-dữ-liệu)).
+- `scripts/fetch_details.py` và `app/tarik.py` xóa `發言人`, `發言人職稱` và `發言人電話` **trước khi dữ liệu đã phân tích, dấu vết hay tệp xuất được ghi**. Chỉ ghi lại việc một trường đã bị xóa, không bao giờ ghi giá trị.
 - Tên của nhân sự quản lý, thành viên HĐQT và kiểm toán viên (điều 1, 6, 7, 8) không bao giờ được trích xuất, hiển thị hay xuất ra.
 - Văn bản công bố được coi là **dữ liệu không tin cậy**: nó vào prompt bên trong dấu phân cách, chỉ thị hệ thống nói rõ không được làm theo bất cứ nội dung nào bên trong, và các nỗ lực chèn lệnh được ghi lại.
 - Khóa API chỉ được đọc từ biến môi trường, và mã không bao giờ ghi khóa vào tệp, trang hay dấu vết; một bài kiểm thử kiểm tra các dấu vết ([9.7](#97-kết-quả-kiểm-thử-an-toàn)) và `key=` được che trong các lỗi mô hình được ghi lại.
@@ -685,7 +685,7 @@ Quy chế cuộc thi, Điều 14.1 (tối thiểu hóa dữ liệu, thời hạn
 | Dấu vết Ask FEAF | `traces_chat/` | **Nội dung câu hỏi người dùng gõ** (cắt ở 500 ký tự), ngôn ngữ, mọi lời gọi công cụ kèm kết quả, câu trả lời, câu trả lời mô hình bị từ chối (nếu có), số token. Không lưu: tên, địa chỉ IP, hay các lượt hội thoại trước đó (chỉ ghi số lượt đã dùng hoặc bị loại) |
 | Dấu vết công bố | `traces/` | Các bước, lời gọi mô hình, câu trích dẫn từ công bố công khai, và chỉ *nhãn* của trường cá nhân đã bị xóa, không bao giờ là giá trị |
 | Công bố đã kéo | `parsed/` | Văn bản công bố công khai; các trường người phát ngôn bị xóa trước khi lưu |
-| Ảnh chụp thô OpenAPI | `raw/openapi/` | Lưu đúng như sàn gửi, **trước khi** bất kỳ trường nào bị xóa. Bộ phân tích chỉ đọc các trường mã, tên, ngày, giờ, tiêu đề, điều khoản và phần mô tả, và `PII_LABELS` trong `app/tarik.py` liệt kê các trường người phát ngôn sẽ bị xóa nếu endpoint nào đó có chúng, nhưng bản thân ảnh chụp không được lọc |
+| Ảnh chụp thô OpenAPI | `raw/openapi/` | Phản hồi của sàn như nhận được, trừ các trường người phát ngôn trong `PII_LABELS` (`app/tarik.py`) bị xóa trước khi ghi tệp (từ v1.3.1). Ảnh chụp do phiên bản cũ lưu có thể làm sạch một lần bằng `python3 scripts/scrub_raw_snapshots.py` |
 | Quyết định duyệt | `keputusan_review.json` | Quyết định, ghi chú văn bản tự do (tối đa 500 ký tự) và giờ UTC cho mỗi trường hợp. Không có danh tính người dùng |
 | Phản hồi | `umpan_balik.json` | Phiếu 👍/👎 theo điều khoản và lịch sử thay đổi (500 mục gần nhất). Không có danh tính người dùng |
 | Bộ đệm mô hình | `cache_model/` | Câu trả lời mô hình cho công bố công khai, khóa bằng mã băm SHA-256 của nhà cung cấp, mô hình, phiên bản prompt và văn bản công bố. Câu hỏi Ask FEAF không được lưu đệm ở đây |
@@ -693,7 +693,7 @@ Quy chế cuộc thi, Điều 14.1 (tối thiểu hóa dữ liệu, thời hạn
 
 Trong trình duyệt: lịch sử trò chuyện (tối đa 12 tin nhắn) nằm trong `sessionStorage`, không nằm trên máy chủ; cookie gồm `bahasa` và `risiko` (1 năm) và `akses` (30 ngày, bản tóm tắt HMAC).
 
-- **Dữ liệu cá nhân trong công bố** (tên, chức danh và điện thoại của `發言人`) bị xóa khi kéo dữ liệu và xóa lại ở `POST /api/import`; chỉ ghi nhãn. Ngoại lệ duy nhất là ảnh chụp thô ở trên.
+- **Dữ liệu cá nhân trong công bố** (tên, chức danh và điện thoại của `發言人`) bị xóa khi kéo dữ liệu và xóa lại ở `POST /api/import`; chỉ ghi nhãn. Từ v1.3.1, ảnh chụp thô cũng được lọc theo cùng cách.
 - **Những gì người dùng gõ không được làm sạch.** Lớp bảo vệ từ chối các yêu cầu *xin* dữ liệu cá nhân, nhưng một câu hỏi chứa dữ liệu cá nhân vẫn được lưu trong dấu vết và, trên đường mô hình, được gửi tới Gemini cùng tối đa 6 lượt trước đã xác minh. Google lưu giữ những gì là do điều khoản của họ quy định ([13.1](#131-tài-nguyên-của-bên-thứ-ba)), không phải kho mã này.
 
 **Cách xóa.** Chạy trong thư mục dữ liệu (`./data` khi chạy cục bộ, volume `/data` trong Docker). Ứng dụng tạo lại những gì cần ở lần dùng sau.
@@ -780,7 +780,8 @@ FEAF tuân theo [semantic versioning](https://semver.org/). Phiên bản đang c
 
 | Phiên bản | Ngày | Điểm nổi bật |
 |---|---|---|
-| **1.3.0** | 14/11/2026 | Chuyển trang mượt và tương tác nhỏ, bố cục toàn chiều rộng, README bổ sung chỉ số vận hành, kết quả kiểm thử an toàn, lưu giữ dữ liệu, đánh giá rủi ro và công bố bên thứ ba |
+| **1.3.1** | 14/11/2026 | Sửa lỗi quyền riêng tư: ảnh chụp thô OpenAPI không còn lưu các trường người phát ngôn; `scripts/scrub_raw_snapshots.py` làm sạch ảnh chụp cũ |
+| 1.3.0 | 14/11/2026 | Chuyển trang mượt và tương tác nhỏ, bố cục toàn chiều rộng, README bổ sung chỉ số vận hành, kết quả kiểm thử an toàn, lưu giữ dữ liệu, đánh giá rủi ro và công bố bên thứ ba |
 | 1.2.0 | 14/11/2026 | Đường dẫn API tiếng Anh kèm bí danh cũ, tài liệu OpenAPI tiếng Anh, README bốn ngôn ngữ |
 | 1.1.0 | 13/11/2026 | Bảng Ask FEAF trên mọi trang, làm mới giao diện, tăng cường QA |
 | 1.0.0 | 12/11/2026 | Gói chung kết (AAIC 2026) |

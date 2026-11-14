@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.1 · 14 Nov 2026
+
+- Privacy (PDPA data minimisation): raw OpenAPI snapshots in `DATA_DIR/raw/openapi/` are now
+  written without the spokesperson fields listed in `PII_LABELS` (`tarik.tanpa_pii`), like the
+  parsed data, traces and exports. Snapshots saved by older versions can be cleaned once with
+  `python3 scripts/scrub_raw_snapshots.py` (also inside the Docker image).
+- Tests: two new tests in `tests/test_agent.py` (raw snapshot without personal fields; the
+  scrub script cleans old snapshots and is idempotent); 313 tests.
+
 ## 1.3.0 · 14 Nov 2026
 
 - Page transitions (View Transitions API): the content area fades and slides between pages while

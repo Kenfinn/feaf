@@ -8,13 +8,13 @@
 
 **FEAF** is an agent that watches official Taiwan exchange filings (MOPS 重大訊息), works out which valuation input each filing touches, recalculates the valuation when the numbers change, and **refuses to publish an alert** when a number cannot be traced back to the filing it came from. Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-[![Version](https://img.shields.io/badge/Version-1.3.0-16324F)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.1-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-311%20passing-2EA44F)](#95-tests)
+[![Tests](https://img.shields.io/badge/Tests-313%20passing-2EA44F)](#95-tests)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-three-language-interface)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -242,7 +242,7 @@ erDiagram
 | Path (under `DATA_DIR`) | Content |
 |---|---|
 | `parsed/details.json` | Pulled filings, merged without duplicates, personal fields already removed |
-| `raw/openapi/` | Raw daily OpenAPI snapshots, stored exactly as received |
+| `raw/openapi/` | Raw daily OpenAPI snapshots, with spokesperson fields removed before saving (since v1.3.1) |
 | `traces/` | One operation trace per filing: `state`, `status`, `alasan`, `muatan`, `jejak` (steps), `ringkasan` (tokens, cost, latency) |
 | `traces_chat/` | One trace per Ask FEAF answer |
 | `watchlist.json`, `status_tarik.json` | Watched codes and the last pull status |
@@ -281,7 +281,7 @@ When `SENTINEL_KUNCI_BACA=1`, every `/api/*` call needs the access cookie; `/hea
   ```json
   {
     "ok": true,
-    "versi": "1.3.0",
+    "versi": "1.3.1",
     "versi_kode": "13fb64cf5c",
     "sumber": "openapi",
     "pengumuman": 2437,
@@ -429,7 +429,7 @@ Used by `scripts/kirim_riwayat.py` from a laptop on a Taiwan network. Closed ent
 | **Data sources** | TWSE / TPEx OpenAPI, MOPS, FinMind | Official exchange data; FinMind for financial statements |
 | **Storage** | JSON files on a volume | No database to run; every record is human-readable for audit |
 | **Deploy** | Docker / Dokploy | Single container, `/data` volume, health check on `/health` |
-| **Tests** | `unittest` + FastAPI `TestClient` (httpx) | 311 tests, no network access |
+| **Tests** | `unittest` + FastAPI `TestClient` (httpx) | 313 tests, no network access |
 
 ---
 
@@ -590,7 +590,7 @@ Operations on 581 real filings: 318 passed the clause screen, 241 published, 58 
 ### 9.5 Tests
 
 ```bash
-python3 -m unittest discover -s tests   # 311 tests, no network
+python3 -m unittest discover -s tests   # 313 tests, no network
 python3 scripts/qa_halaman.py           # every page × 3 languages (84/84)
 ```
 
@@ -642,11 +642,11 @@ Source: [`docs/evaluation-report.md`](docs/evaluation-report.md) section 5.
 
 ### 9.7 Safety test results
 
-Each row names the tests that cover one risk. The whole suite passes on 14 Nov 2026: `python3 -m unittest discover -s tests` → 311 tests, OK. Test names are `class.method` inside the file.
+Each row names the tests that cover one risk. The whole suite passes on 14 Nov 2026: `python3 -m unittest discover -s tests` → 313 tests, OK. Test names are `class.method` inside the file.
 
 | Risk | Test (file and name, or script) | Result |
 |---|---|---|
-| Personal data stored or sent | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (no spokesperson value or phone number in any trace), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (imported records lose personal fields), `TestHalamanSaham.test_profil_tanpa_data_pribadi` and `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (company profiles keep only allowed columns); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Pass |
+| Personal data stored or sent | `tests/test_agent.py`: `TestPenarikDinamis.test_snapshot_mentah_tanpa_field_pribadi`, `TestPenarikDinamis.test_skrip_pembersih_snapshot_lama`, `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (no spokesperson value or phone number in any trace), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (imported records lose personal fields), `TestHalamanSaham.test_profil_tanpa_data_pribadi` and `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (company profiles keep only allowed columns); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Pass |
 | Person names reach a signal, tool answer or export | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (no team member name in `app/`, `eval/` or `README.md`) | Pass |
 | API key in a file, page or trace | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (no `GEMINI_API_KEY` or `AIza` prefix in any trace). The key is read from the environment only and `key=` is masked in recorded model errors (`app/agent/llm.py`) | Pass for traces. Server logs and rendered pages have no dedicated test |
 | Prompt injection | `tests/test_agent.py`: `TestPrompInjection` (3 tests: the attempt is logged in the trace; the injected number is never published; an obeyed injection still fails the checker on label and magnitude); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` and `python3 scripts/uji_serangan.py` (12 attack types, 72 cases); chat: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` and `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Pass. **0/72** attacker numbers published (re-run 14 Nov 2026, [report](eval/hasil/serangan-2026-11-10.md)); 1 injected history turn dropped in the 36-turn chat set |
@@ -661,7 +661,7 @@ Each row names the tests that cover one risk. The whole suite passes on 14 Nov 2
 ## 10. Security, Privacy & Access Control
 
 ### 10.1 Data Privacy
-- `scripts/fetch_details.py` and `app/tarik.py` drop `發言人`, `發言人職稱` and `發言人電話` **before the parsed data, traces or exports are written**. Only the fact that a field was dropped is logged, never its value. The one exception is the raw OpenAPI snapshot, which is stored as received ([10.3](#103-data-retention-and-deletion)).
+- `scripts/fetch_details.py` and `app/tarik.py` drop `發言人`, `發言人職稱` and `發言人電話` **before the parsed data, traces or exports are written**. Only the fact that a field was dropped is logged, never its value.
 - Names of officers, directors and auditors (clauses 1, 6, 7, 8) are never extracted, shown or exported.
 - Filing text is treated as **untrusted data**: it enters the prompt inside delimiters, the system instruction says nothing inside may be followed, and injection attempts are logged.
 - API keys are read from the environment only, and the code never writes one to a file, page or trace; a test checks the traces ([9.7](#97-safety-test-results)) and `key=` is masked in recorded model errors.
@@ -685,7 +685,7 @@ Competition rules, Article 14.1 (data minimisation, retention period, deletion).
 | Ask FEAF traces | `traces_chat/` | **The question text typed by the user** (cut at 500 characters), language, every tool call with its result, the answer, a rejected model answer if any, token counts. Not stored: name, IP address, or the earlier turns of the conversation (only how many were used or dropped) |
 | Filing traces | `traces/` | Steps, model calls, quoted sentences of public filings, and only the *label* of a dropped personal field, never its value |
 | Pulled filings | `parsed/` | Public filing text; spokesperson fields removed before saving |
-| Raw OpenAPI snapshots | `raw/openapi/` | Saved exactly as the exchange sent them, **before** any field is removed. The parser reads only the code, name, date, time, subject, clause and description fields, and `PII_LABELS` in `app/tarik.py` lists spokesperson fields it would drop, but the snapshot itself is not filtered |
+| Raw OpenAPI snapshots | `raw/openapi/` | The exchange response as received, except that the spokesperson fields in `PII_LABELS` (`app/tarik.py`) are removed before the file is written (since v1.3.1). Snapshots saved by older versions can be cleaned once with `python3 scripts/scrub_raw_snapshots.py` |
 | Review decisions | `keputusan_review.json` | Decision, free-text note (up to 500 characters) and UTC time per case. No user identity |
 | Feedback | `umpan_balik.json` | 👍/👎 votes per clause and a change history (last 500 entries). No user identity |
 | Model cache | `cache_model/` | Model answers for public filings, keyed by a SHA-256 hash of provider, model, prompt version and filing text. Ask FEAF questions are not cached here |
@@ -693,7 +693,7 @@ Competition rules, Article 14.1 (data minimisation, retention period, deletion).
 
 In the browser: the chat history (up to 12 messages) lives in `sessionStorage`, not on the server; cookies are `bahasa` and `risiko` (1 year) and `akses` (30 days, an HMAC digest).
 
-- **Personal data in filings** (`發言人` spokesperson name, title and phone) is removed on pull and again on `POST /api/import`; only the label is logged. The one exception is the raw snapshot above.
+- **Personal data in filings** (`發言人` spokesperson name, title and phone) is removed on pull and again on `POST /api/import`; only the label is logged. Raw snapshots are filtered the same way since v1.3.1.
 - **What a user types is not scrubbed.** The guard refuses requests *for* personal data, but a question containing personal data is stored in the trace and, on the model path, sent to Gemini together with up to 6 verified earlier turns. What Google keeps is governed by its terms ([13.1](#131-third-party-resources)), not by this repository.
 
 **How to delete.** Run these inside the data folder (`./data` locally, `/data` in the Docker volume). The app recreates what it needs on next use.
@@ -780,7 +780,8 @@ FEAF follows [semantic versioning](https://semver.org/). The running version is 
 
 | Version | Date | Highlights |
 |---|---|---|
-| **1.3.0** | 14 Nov 2026 | Smooth page transitions and small interactions, full-width layout, README with operational metrics, safety test results, data retention, risk assessment and third-party disclosure |
+| **1.3.1** | 14 Nov 2026 | Privacy fix: raw OpenAPI snapshots no longer store spokesperson fields; `scripts/scrub_raw_snapshots.py` cleans older snapshots |
+| 1.3.0 | 14 Nov 2026 | Smooth page transitions and small interactions, full-width layout, README with operational metrics, safety test results, data retention, risk assessment and third-party disclosure |
 | 1.2.0 | 14 Nov 2026 | English API paths with legacy aliases, English OpenAPI docs, four-language README |
 | 1.1.0 | 13 Nov 2026 | Ask FEAF panel on every page, UI overhaul, QA hardening |
 | 1.0.0 | 12 Nov 2026 | Finalist package (AAIC 2026) |

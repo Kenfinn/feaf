@@ -106,7 +106,7 @@ The production image ([`Dockerfile`](../Dockerfile)) builds on `python:3.12-slim
 
 ### 3.1 Ingestion, De-duplication, and PII Stripping
 
-[`app/tarik.py`](../app/tarik.py) fetches `t187ap04_L` (TWSE) and `mopsfin_t187ap04_O` (TPEx) via HTTP and inspects responses against `BLOCK_MARKERS` to detect HTTP 200 geo-block or HTML error pages before parsing. Raw snapshots are saved under `DATA_DIR/raw/openapi/<YYYYMMDDTHHMMSSZ>-{twse,tpex}.json`.
+[`app/tarik.py`](../app/tarik.py) fetches `t187ap04_L` (TWSE) and `mopsfin_t187ap04_O` (TPEx) via HTTP and inspects responses against `BLOCK_MARKERS` to detect HTTP 200 geo-block or HTML error pages before parsing. Raw snapshots are saved under `DATA_DIR/raw/openapi/<YYYYMMDDTHHMMSSZ>-{twse,tpex}.json`, with the spokesperson fields in `PII_LABELS` removed first (`tanpa_pii`, since v1.3.1).
 
 Before writing `PARSED_DIR/details.json` and `PARSED_DIR/announcements.json`:
 1. Fields listed in `PII_LABELS` are stripped from each disclosure body.
@@ -292,7 +292,7 @@ All mutable application state resides under `SENTINEL_DATA_DIR` (`/data` in Dock
 | Path under `DATA_DIR` | Owner Module | Schema / Keying | Retention / TTL |
 |---|---|---|---|
 | `parsed/details.json`, `parsed/announcements.json` | `tarik.py`, `store.py` | Deduplicated disclosures (`id_pengumuman`, stripped PII) | Overwritten on each pull; falls back to `data/fixtures/` |
-| `raw/openapi/<UTC>-{twse,tpex}.json` | `tarik.py` | Raw exchange OpenAPI JSON payloads | Append-only audit snapshots |
+| `raw/openapi/<UTC>-{twse,tpex}.json` | `tarik.py` | Raw exchange OpenAPI JSON payloads, spokesperson fields removed | Append-only audit snapshots |
 | `watchlist.json`, `status_tarik.json` | `tarik.py` | Tracked tickers and last pull/status telemetry | Updated per pull |
 | `traces/<id>.json` | `agent/pipeline.py` | `Jejak` stage sequence, checks, deltas, outcome state | Per filing trace |
 | `traces_chat/<TS>-<6hex>.json` | `chat.py` | Sanitized prompt, tool calls, raw/verified reply, fallback flags | Per chat turn |
