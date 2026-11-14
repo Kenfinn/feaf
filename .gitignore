@@ -15,3 +15,16 @@ scripts/result.json
 # hasil seed canvas — 2,5 MB kode editor, dibuat ulang dari *.dc.html
 design/sentinel-saham-aaic-2026.html
 wireframe/sentinel-saham-wireframe.html
+
+# Berkas kerja tim yang tidak ikut repositori publik: prompt dan laporan untuk
+# asisten pemrograman, catatan rencana, serta bahan rapat dan gold set mentah.
+docs/_internal/
+docs/prompt-*.md
+docs/laporan-antigravity-*.md
+docs/feaf_snapshot/
+.claude/
+.agents/
+skills-lock.json
+/*.pdf
+/*.pptx
+/*.xlsx
