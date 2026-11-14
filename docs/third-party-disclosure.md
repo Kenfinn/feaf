@@ -26,6 +26,9 @@ artificial-intelligence development tools.
 | httpx | HTTP client library | Local test HTTP client for `fastapi.testclient.TestClient`. | Local test dependency in requirements.txt (only for automated tests without a network). | [BSD 3-Clause License](https://github.com/encode/httpx/blob/master/LICENSE.md): "Redistribution and use in source and binary forms, with or without modification..." | Yes |
 | Swagger UI (`swagger-ui-dist`) | Library, loaded in the browser | Interactive API page at `/docs`. The script is loaded from `cdn.jsdelivr.net` by FastAPI, only on the `/docs` page. | None sent; the browser fetches the script. | [Apache License 2.0](https://github.com/swagger-api/swagger-ui/blob/master/LICENSE) | Yes |
 | Google Fonts (Instrument Sans, IBM Plex Mono) | Typefaces, loaded in the browser | Fonts of every page, loaded from `fonts.googleapis.com` by `app/templates/base.html` and `app/templates/kunci.html`. | None sent by the app; the browser requests the stylesheet. | [SIL Open Font License](https://fonts.google.com/) | Yes |
+| openpyxl | Spreadsheet library | Writing the gold-set labelling sheet (`scripts/buat_paket_gold.py`); not part of the server application. | Public filing text and empty label columns. | [MIT License](https://foss.heptapod.net/openpyxl/openpyxl/-/blob/branch/default/LICENCE.rst) | Yes |
+| python-pptx, lxml | Slide-building libraries | Building the presentation decks (`slides/*.py`); not part of the server application. | Slide text and screenshots of the prototype. | python-pptx: [MIT License](https://github.com/scanny/python-pptx/blob/master/LICENSE); lxml: [BSD 3-Clause License](https://github.com/lxml/lxml/blob/master/LICENSE.txt) | Yes |
+| pptxgenjs, React, react-icons, sharp | Slide-building libraries (Node.js) | Building the final deck (`slides/build_final_deck.js`); not part of the server application. | Slide text, icons and screenshots of the prototype. | pptxgenjs, React, react-icons: MIT License; sharp: Apache License 2.0 | Yes |
 | Playwright (Microsoft) | Screenshot tool | Headless browser automation for taking screenshots of web pages; not included in the server application package. | Local browser interface. | [Apache License 2.0](https://github.com/microsoft/playwright/blob/main/LICENSE): "Licensed under the Apache License, Version 2.0." | Yes |
 | Mermaid | Diagram tool | Rendering data flow and system architecture diagrams in the documentation markdown files. | Local markdown diagram text syntax, not imported into the application runtime. | [MIT License](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE): "Permission is hereby granted, free of charge..." | Yes |
 | Humanizer skill | AI skill | Editing the writing style of the documentation to be plain, natural, and free of clichéd AI sentence constructions. | Documentation markdown text files. | [MIT License](https://github.com/blader/humanizer/blob/main/LICENSE): "Permission is hereby granted, free of charge..." | Yes |
@@ -45,6 +48,6 @@ This table is intentionally left empty to be filled in directly by the FEAF team
 ## 3. Personal Data Note
 
 The TPEx issuer profile cache on the server once stored the names of officers and the contact
-email addresses of companies until the fix on 10 November 2026 (commit `e4572d6`). That data
+email addresses of companies until the fix on 10 November 2026. That data
 was never shown to public users. Allow-list filtering (`PROFIL_DISIMPAN`)
 automatically removes those personal fields when the file is read after a deploy.
