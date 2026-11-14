@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.3.0 · 14 Nov 2026
+
+- Page transitions (View Transitions API): the content area fades and slides between pages while
+  the side menu and top bar stay in place. Browsers without the API navigate as before.
+- Loading state: buttons that submit an action or refresh the data show a spinner in place of
+  their icon and are locked until the page answers, so a double click cannot send twice.
+- Ask FEAF panel slides in and out, and shows a typing indicator while an answer is prepared.
+- Small interactions on cards, buttons, tabs, filters, folding sections, dropdowns and tooltips.
+- Reduced motion: animations and transitions are switched off for visitors who ask for it
+  (`prefers-reduced-motion`).
+- Full-width layout: page content uses the whole window up to 1600 px on large screens, and the
+  warning band follows the content width.
+- README (four languages) now covers the AAIC 2026 Appendix 2 and safety rules in five new
+  subsections: 9.6 operational metrics (tool-call success rate, retry count, termination rate,
+  human intervention rate, error categories, an annotated operation trace), 9.7 safety test
+  results, 10.3 data retention and deletion, 10.4 risk assessment, and 13.1 third-party
+  resources. Known limitation 8 notes that data retention is manual.
+- README: access-code guide (section 8.5); the Ask FEAF tool count is corrected to 13 (the
+  `cari` name-search tool was missing from the list); the banner and two gallery pictures use
+  the wide-screen screenshots.
+- Internal working files, prompts and meeting material are git-ignored.
+- Tests: 311.
+
 ## 1.2.0 · 14 Nov 2026
 
 - English API paths: `/health`, `/check`, `/api/alerts`, `/api/traces/{id}`,
