@@ -4,17 +4,17 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · **Bahasa Indonesia** · [Tiếng Việt](README.vi.md)
 
-![Feed peringatan FEAF](docs/ui/qa6-sesudah/feed-id-1440.png)
+![Feed peringatan FEAF](docs/ui/l1-sesudah/feed-id-1920.png)
 
 **FEAF** adalah agent yang memantau pengumuman resmi bursa Taiwan (MOPS 重大訊息), menentukan input valuasi mana yang disentuh tiap pengumuman, menghitung ulang valuasi saat angkanya berubah, dan **menolak menerbitkan peringatan** bila sebuah angka tidak bisa ditelusuri kembali ke pengumuman asalnya. Dibuat untuk NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), jalur SYSTEX: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-[![Version](https://img.shields.io/badge/Version-1.2.0-16324F)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.0-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-307%20passing-2EA44F)](#95-tes)
+[![Tests](https://img.shields.io/badge/Tests-311%20passing-2EA44F)](#95-tes)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-antarmuka-tiga-bahasa)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -40,10 +40,23 @@
 - [7. Struktur Direktori dan Kode](#7-struktur-direktori-dan-kode)
 - [8. Panduan Instalasi dan Pengaturan](#8-panduan-instalasi-dan-pengaturan)
 - [9. Evaluasi dan Pengujian](#9-evaluasi-dan-pengujian)
+  - [9.1 Gold Set](#91-gold-set)
+  - [9.2 Jalur Model di Server](#92-jalur-model-di-server)
+  - [9.3 Set Serangan](#93-set-serangan)
+  - [9.4 Tanya FEAF](#94-tanya-feaf)
+  - [9.5 Tes](#95-tes)
+  - [9.6 Metrik Operasional](#96-metrik-operasional)
+  - [9.7 Hasil Uji Keselamatan](#97-hasil-uji-keselamatan)
 - [10. Keamanan, Privasi, dan Kontrol Akses](#10-keamanan-privasi-dan-kontrol-akses)
+  - [10.1 Privasi Data](#101-privasi-data)
+  - [10.2 Tingkat Akses](#102-tingkat-akses)
+  - [10.3 Retensi dan Penghapusan Data](#103-retensi-dan-penghapusan-data)
+  - [10.4 Penilaian Risiko](#104-penilaian-risiko)
 - [11. Keterbatasan yang Diketahui](#11-keterbatasan-yang-diketahui)
 - [12. Pemecahan Masalah dan FAQ](#12-pemecahan-masalah-dan-faq)
 - [13. Versi dan Lisensi](#13-versi-dan-lisensi)
+  - [13.1 Sumber Daya Pihak Ketiga](#131-sumber-daya-pihak-ketiga)
+  - [13.2 Lisensi](#132-lisensi)
 
 ---
 
@@ -93,7 +106,7 @@ graph TD
 
     subgraph Web ["Aplikasi web (FastAPI + Jinja2)"]
         Pages["Feed · Saham · Peringatan · Jejak<br/>Valuasi · Review · Ambang · Watchlist"]
-        Chat["Panel Tanya FEAF<br/>12 alat hanya-baca"]
+        Chat["Panel Tanya FEAF<br/>13 alat hanya-baca"]
         API["JSON API /api/*"]
     end
 
@@ -188,7 +201,7 @@ Kasus yang ditahan menunggu di sini. Reviewer menyetujui (hanya bila persetujuan
 Ambang keyakinan triase per pasal, disesuaikan oleh umpan balik 👍/👎 pada peringatan, dengan riwayat perubahan lengkap.
 
 ### 3.7 Chat Tanya FEAF (panel di setiap halaman, `/tanya`)
-- **12 alat hanya-baca**: 6 alat saham (`harga`, `statistik`, `laporan`, `pengumuman`, `valuasi`, `ringkasan`) dan 6 alat menu (`feed`, `peringatan`, `jejak`, `review`, `ambang`, `watchlist`). Tidak ada alat yang mengubah data, dan tidak ada yang mengembalikan butir mentah atau nama pejabat/juru bicara.
+- **13 alat hanya-baca**: 7 alat saham (`harga`, `statistik`, `laporan`, `pengumuman`, `valuasi`, `ringkasan`, `cari`) dan 6 alat menu (`feed`, `peringatan`, `jejak`, `review`, `ambang`, `watchlist`). Tidak ada alat yang mengubah data, dan tidak ada yang mengembalikan butir mentah atau nama pejabat/juru bicara.
 - **Percakapan bertingkat dengan riwayat bertanda tangan**: browser menyimpan hingga 12 pesan di `sessionStorage`; server menerima paling banyak 6 giliran terakhir yang terverifikasi. Setiap jawaban asisten membawa tanda HMAC-SHA256 (`SENTINEL_CHAT_RAHASIA`); giliran tanpa tanda atau yang diubah dan upaya injeksi dibuang lalu dicatat.
 - **Pertanyaan lanjutan dan Recap**: kode saham aktif ditentukan dari pertanyaan, halaman, atau giliran terverifikasi terakhir. **Recap** merangkum giliran terverifikasi dalam paling banyak 5 poin, setiap angka diperiksa ulang.
 - **Verifikasi dan penolakan**: setiap angka dalam jawaban harus ada di keluaran alat saat itu, di pertanyaan, atau di giliran bertanda tangan. Saran beli/jual, prediksi harga, order, data pribadi, dan injeksi prompt ditolak sebelum alat atau model dipanggil. Panggilan model dibatasi 60 per jam.
@@ -201,9 +214,9 @@ Setiap halaman tersedia dalam bahasa Inggris (bawaan), 繁體中文, dan Bahasa 
 
 | Peringatan ditahan | Ringkasan saham |
 |---|---|
-| ![Peringatan ditahan](docs/ui/qa6-sesudah/peringatan-ditahan-id-1440.png) | ![Ringkasan saham](docs/ui/qa6-sesudah/saham-ringkasan-id-1440.png) |
+| ![Peringatan ditahan](docs/ui/qa6-sesudah/peringatan-ditahan-id-1440.png) | ![Ringkasan saham](docs/ui/l1-sesudah/saham-ringkasan-id-1920.png) |
 | **Valuasi** | **Jejak operasi** |
-| ![Valuasi](docs/ui/qa6-sesudah/valuasi-id-1440.png) | ![Jejak](docs/ui/qa6-sesudah/jejak-id-1440.png) |
+| ![Valuasi](docs/ui/l1-sesudah/valuasi-id-1920.png) | ![Jejak](docs/ui/qa6-sesudah/jejak-id-1440.png) |
 | **Antrean review** | **Watchlist** |
 | ![Review](docs/ui/qa6-sesudah/review-id-1440.png) | ![Watchlist](docs/ui/qa6-sesudah/watchlist-id-1440.png) |
 
@@ -229,7 +242,7 @@ erDiagram
 | Path (di bawah `DATA_DIR`) | Isi |
 |---|---|
 | `parsed/details.json` | Pengumuman yang sudah ditarik, digabung tanpa duplikat, data pribadi sudah dibuang |
-| `raw/openapi/` | Snapshot mentah OpenAPI harian |
+| `raw/openapi/` | Snapshot mentah OpenAPI harian, disimpan persis seperti diterima |
 | `traces/` | Satu jejak operasi per pengumuman: `state`, `status`, `alasan`, `muatan`, `jejak` (langkah), `ringkasan` (token, biaya, latensi) |
 | `traces_chat/` | Satu jejak per jawaban Tanya FEAF |
 | `watchlist.json`, `status_tarik.json` | Kode yang dipantau dan status tarik terakhir |
@@ -268,7 +281,7 @@ Bila `SENTINEL_KUNCI_BACA=1`, setiap panggilan `/api/*` butuh cookie akses; `/he
   ```json
   {
     "ok": true,
-    "versi": "1.2.0",
+    "versi": "1.3.0",
     "versi_kode": "13fb64cf5c",
     "sumber": "openapi",
     "pengumuman": 2437,
@@ -416,7 +429,7 @@ Dipakai `scripts/kirim_riwayat.py` dari laptop di jaringan Taiwan. Tertutup sepe
 | **Sumber data** | OpenAPI TWSE / TPEx, MOPS, FinMind | Data resmi bursa; FinMind untuk laporan keuangan |
 | **Penyimpanan** | Berkas JSON di volume | Tidak perlu menjalankan database; setiap catatan bisa dibaca manusia untuk audit |
 | **Deploy** | Docker / Dokploy | Satu container, volume `/data`, health check di `/health` |
-| **Tes** | `unittest` + FastAPI `TestClient` (httpx) | 307 tes, tanpa akses jaringan |
+| **Tes** | `unittest` + FastAPI `TestClient` (httpx) | 311 tes, tanpa akses jaringan |
 
 ---
 
@@ -577,21 +590,81 @@ Operasional pada 581 pengumuman asli: 318 lolos saringan pasal, 241 terbit, 58 d
 ### 9.5 Tes
 
 ```bash
-python3 -m unittest discover -s tests   # 307 tes, tanpa jaringan
+python3 -m unittest discover -s tests   # 311 tes, tanpa jaringan
 python3 scripts/qa_halaman.py           # semua halaman × 3 bahasa (84/84)
 ```
 
 Tes mencakup set serangan, keamanan chat bertingkat, path API Inggris beserta alias lamanya, aturan bahwa API key tidak pernah sampai ke berkas, halaman, atau jejak, dan aturan bahwa nama orang tidak pernah sampai ke model atau ekspor gold set. Tes lulus dengan data lokal maupun `SENTINEL_DATA_DIR` kosong.
+
+### 9.6 Metrik Operasional
+
+Appendix 2 meminta metrik operasional di samping akurasi. Setiap nilai di bawah menyebut sumber dan tanggalnya; metrik yang tidak diukur ditulis demikian beserta alasannya. *Jalur aturan* berarti tidak ada panggilan model (tanpa API key); *jalur model* berarti Gemini 3.6 Flash.
+
+| Metrik | Nilai | Sumber |
+|---|---|---|
+| **Tingkat keberhasilan panggilan alat** (Tanya FEAF) | **57/57 (100%)** di jalur aturan: 26/26 pada set satu giliran (52 pertanyaan) dan 31/31 pada set bertingkat (36 giliran). Panggilan dihitung berhasil bila alat mengembalikan hasil tanpa galat; satu dari 57 dengan benar menjawab bahwa emiten belum punya model valuasi. **Jalur model: tidak diukur.** Run server 11 Nov melakukan 54 panggilan alat (69 panggilan model), tetapi laporannya tidak mencatat galat alat | Dijalankan ulang 14 Nov 2026 (perintah di bawah). Jumlah panggilan cocok dengan [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 4 dan [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
+| **Jumlah retry** (panggilan model) | **0** di jalur model (46 pengumuman gold, 5 panggilan model, 11 Nov 09:39 UTC) dan **0** pada run operasional jalur aturan atas 581 pengumuman. Jalur aturan tidak memanggil model, jadi tidak ada yang bisa di-retry. Pengaturan: `SENTINEL_RETRY=2` | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Tingkat terminasi** | **0 terminasi paksa** pada dua sampel: server langsung 11 Nov 09:22 UTC (1.106 pengumuman, "tanpa galat model, tanpa fallback") dan run gold jalur model (0 fallback ke aturan dari 46 pengumuman). Sebuah jalan berhenti lebih awal bila salah satu dari empat batas tercapai: 40 panggilan model, 90 detik, 3 kegagalan beruntun, atau saldo prabayar habis (HTTP 402); sisa pengumuman lalu memakai penalar aturan. Batas-batas itu dicakup oleh `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py`, dan `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **Tingkat dari waktu ke waktu tidak diukur**: `GET /health` (`agent.sebab_cadangan`) menghitung sebab fallback, tetapi belum ada rasio yang dihitung darinya | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.2, 5, dan 7 |
+| **Tingkat intervensi manusia** | **28%** (13/46) pada gold set, jalur aturan, sebelum kalibrasi; **12%** (132/1.106) di server langsung, 11 Nov; **10%** (58/581) pada run operasional jalur aturan, 11 Nov | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.1 dan 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Latensi dan biaya** | Jalur model: rata-rata 0,7 detik per pengumuman (maks 9,9 detik), USD 0,0069 untuk 46 pengumuman (batas bawah: token berpikir belum dihitung saat itu). Jalur aturan: rata-rata 1 ms per pengumuman (581 pengumuman) | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+
+Mengulang hitungan panggilan alat (tanpa API key). Set bertingkat juga butuh `SENTINEL_SERTAKAN_CONTOH=1` dan `--chat-percakapan`:
+
+```bash
+export SENTINEL_DATA_DIR=$(mktemp -d)
+python3 scripts/evaluasi.py --chat
+grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # tanpa keluaran = tidak ada alat yang mengembalikan galat
+```
+
+**Kategori galat.** Hasil 1.106 pengumuman asli di server langsung, 11 Nov 09:22 UTC: terbit 587 (53%), diarsipkan 387 (35%), ditahan untuk manusia 132 (12%). Pengumuman yang ditahan menurut sebab:
+
+| Sebab | Pengumuman | Tindakan |
+|---|---|---|
+| Emiten belum punya model valuasi | 59 | Sejak 11 Nov server membangun valuasi otomatis untuk emiten ini, 5 per siklus 10 menit (kuota FinMind) |
+| Tidak ada angka dengan kalimat sumber yang bisa ditelusuri | 35 | Perilaku benar: tidak ada yang aman diterbitkan |
+| Sinyal risiko di atas ambang "serius" | 31 | Sesuai rancangan: manusia mengonfirmasi sinyal serius |
+| Pemeriksaan label, satuan, atau mata uang gagal | 4 | Dua di antaranya celah pengurai, sudah diperbaiki; jumlah USD tetap ditahan sesuai rancangan |
+| Pasal berat (1, 3, 40) | 3 | Selalu ditahan, atas keputusan tim |
+
+Sumber: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 5.
+
+**Contoh jejak operasi.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) adalah jejak tersimpan dari persetujuan direksi TSMC atas anggaran belanja modal (pasal 20). Di server yang berjalan, jejak sejenis terbuka di `/jejak/{id}` (di sini `/jejak/2330-2026-11-10-211853`) dan sebagai JSON di `GET /api/traces/{id}`. Langkah-langkahnya ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 6):
+
+| Langkah | Yang terjadi |
+|---|---|
+| Ambil | Ditarik dari OpenAPI TWSE pada 11 Nov 02:35 UTC; tidak ada field pribadi |
+| Cek bentuk | 31 butir, pasal 20 |
+| 0 · Saringan pasal | Pasal 20 → jalur valuasi, kemungkinan input capex dan kas |
+| 1–2 · Pemilah dan penyari | `gemini-3.6-flash`, prompt `2026-11-10.1`, jawaban dari cache (panggilan asli 4.203 token masuk, 778 keluar); 4 jumlah ditemukan, semuanya US$, satuan 佰萬元 |
+| Keyakinan triase | 0,55: tidak ada jumlah yang bisa dikonversi ke NTD |
+| 4a · Pemeriksa | Cek mata uang gagal: jumlah USD tanpa kurs tidak dikonversi diam-diam |
+| Akhir | HELD FOR REVIEW dengan alasan di atas |
+
+### 9.7 Hasil Uji Keselamatan
+
+Setiap baris menyebut tes yang mencakup satu risiko. Seluruh rangkaian tes lulus pada 14 Nov 2026: `python3 -m unittest discover -s tests` → 311 tes, OK. Nama tes berbentuk `kelas.metode` di dalam berkas.
+
+| Risiko | Tes (berkas dan nama, atau skrip) | Hasil |
+|---|---|---|
+| Data pribadi tersimpan atau terkirim | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (tidak ada nilai juru bicara atau nomor telepon di jejak mana pun), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (rekaman yang diimpor kehilangan field pribadi), `TestHalamanSaham.test_profil_tanpa_data_pribadi` dan `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (profil emiten hanya menyimpan kolom yang diizinkan); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Lulus |
+| Nama orang sampai ke sinyal, jawaban alat, atau ekspor | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (tidak ada nama anggota tim di `app/`, `eval/`, atau `README.md`) | Lulus |
+| API key di berkas, halaman, atau jejak | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (tidak ada `GEMINI_API_KEY` atau awalan `AIza` di jejak mana pun). Kunci hanya dibaca dari environment dan `key=` disamarkan pada galat model yang dicatat (`app/agent/llm.py`) | Lulus untuk jejak. Log server dan halaman yang dirender tidak punya tes khusus |
+| Prompt injection | `tests/test_agent.py`: `TestPrompInjection` (3 tes: percobaan dicatat di jejak; angka suntikan tidak pernah terbit; injeksi yang dituruti tetap gagal di pemeriksa pada label dan besaran); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` dan `python3 scripts/uji_serangan.py` (12 jenis serangan, 72 kasus); chat: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` dan `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Lulus. **0/72** angka penyerang terbit (dijalankan ulang 14 Nov 2026, [laporan](eval/hasil/serangan-2026-11-10.md)); 1 giliran riwayat sisipan dibuang pada set chat 36 giliran |
+| Angka karangan | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; gold set (`python3 scripts/evaluasi.py`) | Lulus. **0/46** angka salah terbit, dibanding 5/46 tanpa pemeriksa ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 2.1) |
+| Pemanggilan alat tanpa izin | `tests/test_chat.py`: `TestJalurModel.test_kode_tidak_sah_dari_model_ditolak_alat` (kode `../../etc` dari model ditolak lapisan alat), `TestJalurModel.test_berhenti_setelah_lima_langkah` (paling banyak 5 putaran alat); `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir` (alat menu tidak mengubah folder data); `tests/test_agent.py`: `TestDeploy.test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka` (aksi yang mengubah data butuh kode akses) | Lulus. Model dapat memanggil 13 alat, semuanya hanya-baca (`ALAT` di `app/chat.py`): tidak ada yang mengubah watchlist, keputusan review, ambang, atau pengumuman |
+| Izin dan kode akses | `tests/test_putaran2.py`: `TestR3KunciBaca.test_r3_terkunci_tanpa_kode`, `test_r3_terbuka_dengan_kode`; `tests/test_qa_perbaikan.py`: `TestKunciBacaKeamanan.test_401_mandiri_tanpa_bocor_dan_post_akses_bertanda_hmac` (halaman 401 tidak membocorkan data watchlist; cookie berupa digest HMAC, bukan kodenya); `tests/test_agent.py`: `TestDeploy.test_kode_salah_tidak_membuka`, `TestCacheModelDanImpor.test_impor_butuh_kode_akses` (impor tertutup tanpa kode) | Lulus |
+| Keluaran tidak pantas (saran, prediksi, order) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (tidak ada label beli/jual di luar penafian, tiga bahasa); `python3 scripts/evaluasi.py --chat` | Lulus. **27/27** pertanyaan saran, di luar cakupan, dan injeksi ditolak serta **0** kata rekomendasi sampai ke pengguna (Gemini 3.6 Flash di server, 11 Nov, [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) bagian 4); jalur aturan 27/27 (dijalankan ulang 14 Nov 2026) |
+| Input berbahaya | `tests/test_c1a_tautan.py`: `TestC1aTautan.test_kode_tidak_sah_tidak_dipantulkan` (kode saham berisi `<script>` tidak dipantulkan ke halaman) | Lulus |
 
 ---
 
 ## 10. Keamanan, Privasi, dan Kontrol Akses
 
 ### 10.1 Privasi Data
-- `scripts/fetch_details.py` dan `app/tarik.py` membuang `發言人`, `發言人職稱`, dan `發言人電話` **sebelum apa pun disimpan**. Yang dicatat hanya fakta bahwa field dibuang, tidak pernah nilainya.
+- `scripts/fetch_details.py` dan `app/tarik.py` membuang `發言人`, `發言人職稱`, dan `發言人電話` **sebelum data hasil urai, jejak, atau ekspor ditulis**. Yang dicatat hanya fakta bahwa field dibuang, tidak pernah nilainya. Satu-satunya pengecualian adalah snapshot mentah OpenAPI, yang disimpan apa adanya ([10.3](#103-retensi-dan-penghapusan-data)).
 - Nama pejabat, direktur, dan auditor (pasal 1, 6, 7, 8) tidak pernah diekstrak, ditampilkan, atau diekspor.
 - Teks pengumuman diperlakukan sebagai **data tak tepercaya**: masuk ke prompt di dalam pembatas, instruksi sistem menyatakan tidak ada isi di dalamnya yang boleh dituruti, dan upaya injeksi dicatat.
-- API key hanya dibaca dari environment dan tidak pernah ditulis ke berkas, halaman, log, atau jejak (dites).
+- API key hanya dibaca dari environment, dan kode tidak pernah menuliskannya ke berkas, halaman, atau jejak; sebuah tes memeriksa jejak ([9.7](#97-hasil-uji-keselamatan)) dan `key=` disamarkan pada galat model yang dicatat.
 
 ### 10.2 Tingkat Akses
 
@@ -602,6 +675,59 @@ Tes mencakup set serangan, keamanan chat bertingkat, path API Inggris beserta al
 | ditambah `SENTINEL_KUNCI_BACA=1` | Semua halaman dan `/api/*` butuh kode; `/health` dan berkas statis tetap terbuka. Halaman `401` berdiri sendiri dan tidak membocorkan data watchlist; cookie akses berupa digest HMAC, bukan kode mentah |
 
 Kode akses untuk lingkungan juri diberikan lewat formulir lomba, tidak di repositori ini.
+
+### 10.3 Retensi dan Penghapusan Data
+
+Aturan lomba, Pasal 14.1 (minimisasi data, masa retensi, penghapusan). Semua yang disimpan FEAF adalah berkas di bawah `SENTINEL_DATA_DIR` (bagian 4), dan **tidak ada yang dihapus otomatis**: setiap berkas di bawah bertahan sampai seseorang menghapusnya. Masa hidup cache di kode (data pasar 30 menit sampai 24 jam, valuasi otomatis 12 jam, deret harga mingguan dan indeks nama 7 hari) hanya menentukan kapan berkas diperbarui, tidak pernah kapan berkas dibuang. Satu-satunya batas ukuran adalah riwayat umpan balik, yang hanya menyimpan 500 entri terbaru (`app/umpan_balik.py`). Batas retensi otomatis adalah pekerjaan berikutnya; sampai saat itu penghapusan dilakukan manual, seperti di bawah.
+
+| Apa | Di mana (di bawah `DATA_DIR`) | Isi |
+|---|---|---|
+| Jejak Tanya FEAF | `traces_chat/` | **Teks pertanyaan yang diketik pengguna** (dipotong 500 karakter), bahasa, setiap panggilan alat beserta hasilnya, jawaban, jawaban model yang ditolak bila ada, jumlah token. Tidak disimpan: nama, alamat IP, atau giliran percakapan sebelumnya (hanya berapa banyak yang dipakai atau dibuang) |
+| Jejak pengumuman | `traces/` | Langkah, panggilan model, kalimat kutipan pengumuman publik, dan hanya *label* field pribadi yang dibuang, tidak pernah nilainya |
+| Pengumuman yang ditarik | `parsed/` | Teks pengumuman publik; field juru bicara dibuang sebelum disimpan |
+| Snapshot mentah OpenAPI | `raw/openapi/` | Disimpan persis seperti dikirim bursa, **sebelum** field apa pun dibuang. Pengurai hanya membaca field kode, nama, tanggal, jam, subjek, pasal, dan uraian, dan `PII_LABELS` di `app/tarik.py` mendaftar field juru bicara yang akan dibuang bila suatu endpoint memuatnya, tetapi snapshot itu sendiri tidak disaring |
+| Keputusan review | `keputusan_review.json` | Keputusan, catatan teks bebas (maksimal 500 karakter), dan waktu UTC per kasus. Tanpa identitas pengguna |
+| Umpan balik | `umpan_balik.json` | Suara 👍/👎 per pasal dan riwayat perubahan (500 entri terakhir). Tanpa identitas pengguna |
+| Cache model | `cache_model/` | Jawaban model untuk pengumuman publik, berkunci hash SHA-256 dari penyedia, model, versi prompt, dan teks pengumuman. Pertanyaan Tanya FEAF tidak di-cache di sini |
+| Data pasar dan watchlist | `pasar/`, `valuasi_otomatis/`, `harga_harian/`, `indeks_nama.json`, `watchlist.json`, `status_tarik.json` | Data pasar publik, kode saham, dan nama emiten |
+
+Di browser: riwayat chat (maksimal 12 pesan) ada di `sessionStorage`, bukan di server; cookie-nya `bahasa` dan `risiko` (1 tahun) serta `akses` (30 hari, digest HMAC).
+
+- **Data pribadi dalam pengumuman** (nama, jabatan, dan telepon `發言人`) dibuang saat penarikan dan sekali lagi pada `POST /api/import`; yang dicatat hanya labelnya. Satu-satunya pengecualian adalah snapshot mentah di atas.
+- **Apa yang diketik pengguna tidak dibersihkan.** Penjaga menolak permintaan *akan* data pribadi, tetapi pertanyaan yang memuat data pribadi disimpan di jejak dan, di jalur model, dikirim ke Gemini bersama hingga 6 giliran terverifikasi sebelumnya. Apa yang disimpan Google diatur oleh ketentuannya ([13.1](#131-sumber-daya-pihak-ketiga)), bukan oleh repositori ini.
+
+**Cara menghapus.** Jalankan di dalam folder data (`./data` di lokal, volume `/data` di Docker). Aplikasi membuat ulang yang dibutuhkan pada pemakaian berikutnya.
+
+```bash
+D="${SENTINEL_DATA_DIR:-./data}"
+rm -f  "$D"/traces_chat/<id>.json     # satu jawaban Tanya FEAF; <id> ada di tautan jejaknya
+rm -rf "$D"/traces_chat               # semua pertanyaan dan jawaban Tanya FEAF
+rm -f  "$D"/keputusan_review.json     # keputusan review (pengumuman ditahan kembali ke antrean)
+rm -f  "$D"/umpan_balik.json          # umpan balik (ambang kembali ke bawaan)
+rm -rf "$D"/cache_model               # cache model (jalan berikutnya memanggil model lagi)
+rm -rf "$D"/raw/openapi               # snapshot mentah
+
+# Docker
+docker exec <container> rm -rf /data/traces_chat
+docker stop <container> && docker rm <container> && docker volume rm feaf-data   # semuanya
+```
+
+### 10.4 Penilaian Risiko
+
+Aturan lomba, Pasal 14.3. Celah terbuka per kategori: [`docs/laporan-keamanan.md`](docs/laporan-keamanan.md). Bukti tes: [9.7](#97-hasil-uji-keselamatan).
+
+| Risiko | Proteksi | Monitoring | Pemulihan |
+|---|---|---|---|
+| **Prompt injection** | Teks pengumuman masuk ke prompt di dalam pembatas dan diperlakukan sebagai data; pola injeksi ditandai (`deteksi_injeksi`); angka diterima hanya bila labelnya sah, kutipan dan digit-nya ada di pengumuman, dan besarannya wajar. Tanya FEAF menolak frasa injeksi sebelum panggilan alat atau model apa pun dan menandatangani setiap jawaban (HMAC), sehingga riwayat palsu dibuang | Setiap penanda injeksi menjadi satu langkah di jejak; `python3 scripts/uji_serangan.py` (72 kasus, 0 angka salah) | Pengumuman ditahan untuk manusia; chat jatuh ke jawaban template. Celah terbuka: frasa baru yang samar bisa lolos dari filter pola, lalu hanya dihentikan oleh pemeriksaan angka |
+| **Pemanggilan alat tanpa izin** | Daftar tertutup 13 alat hanya-baca; tidak ada alat shell, berkas, order, atau pengaturan; argumen divalidasi (pola kode saham); paling banyak 5 putaran alat per jawaban; jawaban model dibatasi 60 per jam; rute yang mengubah data butuh kode akses | Setiap panggilan alat, argumen, dan hasilnya tersimpan di `traces_chat/` | Alat yang tidak dikenal mengembalikan hasil galat; ganti `SENTINEL_KODE_AKSES` lalu restart untuk mencabut akses. Celah terbuka: satu kode akses bersama, tanpa peran per pengguna |
+| **Kebocoran data atau kredensial** | Daftar izin kolom profil emiten; field juru bicara dibuang saat penarikan dan impor; nama pejabat dan auditor tidak pernah diekstrak; API key hanya dari environment dan disamarkan di galat yang dicatat; `.env` dan berkas kunci diabaikan git; hanya teks pengumuman publik dan teks pertanyaan yang dikirim ke Gemini | Tes di [9.7](#97-hasil-uji-keselamatan), termasuk pemindaian `app/`, `eval/`, dan `README.md` untuk nama anggota tim | Hentikan operasi (Pasal 14.4 di bawah), ganti kunci, hapus berkas yang terdampak ([10.3](#103-retensi-dan-penghapusan-data)). Insiden 10 Nov, saat cache profil menyimpan field pejabat, diperbaiki dengan daftar izin ([`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) bagian 3) |
+| **Halusinasi** | Model tidak pernah menghitung; DCF adalah kode; pemeriksa gagal-tertutup; setiap angka dalam jawaban chat harus ada di hasil alat | Gold set (0/46 angka salah), set serangan (0/72), `python3 scripts/evaluasi.py` | Pengumuman ditahan dengan cek yang gagal disebut di jejak; chat menampilkan jawaban template |
+| **Bias** | Ambang berasal dari satu tim keuangan (profil moderat adalah jawaban tim; konservatif dan agresif masih usulan); suhu 0; jalur dipilih berdasarkan nomor pasal, bukan oleh model; hanya pengumuman perusahaan dan data pasar yang dipakai, tanpa atribut demografis atau pribadi; Tanya FEAF menolak saran beli/jual. Cakupan terbatas pada emiten TWSE/TPEx yang punya data FinMind atau bursa, perusahaan keuangan tidak mendapat DCF, dan di luar Taiwan hanya pengumuman hari ini yang tersedia | Sebaran keputusan dan tingkat intervensi manusia di laporan `scripts/evaluasi.py`; riwayat ambang di `/ambang` | Ubah profil risiko atau ambang di `/ambang`; reset suara satu pasal. Set uji di luar sampel adalah langkah berikutnya (tidak diukur) |
+| **Input berbahaya** | Autoescape Jinja2; pola kode saham `^[0-9A-Z]{4,6}$`; pertanyaan chat dipotong 500 karakter; impor dibatasi 25 MB, divalidasi sebagai JSON, dan tertutup tanpa kode akses; halaman blokir MOPS dideteksi | Catatan HTTP 4xx di log server; `/health` | Galat diisolasi per pengumuman, sehingga satu rekaman rusak tidak menghentikan sisanya. Celah terbuka: tidak ada pembatasan laju per IP (hanya batas jawaban model) |
+| **Rantai pasok** | 4 dependensi langsung dipatok ke versi persis di `requirements.txt` (dipasang dari PyPI); tanpa framework JavaScript atau langkah build; image Docker dari `python:3.12-slim`. Dua pengambilan saat berjalan oleh browser: stylesheet Google Fonts di setiap halaman, dan Swagger UI dari jsDelivr di `/docs` (hanya versi mayor `@5`) | Tidak ada pemindai dependensi yang dikonfigurasi di repositori; versi ditinjau manual sebelum rilis | Bangun ulang image dari Dockerfile; patok atau ganti dependensi; host font sendiri. Celah terbuka: sub-dependensi `uvicorn[standard]` dan FastAPI tidak dikunci, image dasar tidak dipatok dengan digest |
+| **Kegagalan layanan pihak ketiga** | Gemini: retry (`SENTINEL_RETRY=2`), model cadangan saat 429/5xx, penalar aturan setelah 3 kegagalan beruntun, batas 40 panggilan dan 90 detik per jalan, 402 tidak pernah di-retry. Blokir geografis MOPS dideteksi, OpenAPI dipakai sebagai gantinya. Kuota FinMind: cache 12 jam | `GET /health`: `galat_model_terakhir`, `sebab_cadangan`, `mesin` | Jalan berlanjut dengan penalar aturan dan hal itu disebut di layar dan di jejak; siklus berikutnya mencoba model lagi; isi ulang saldo prabayar |
+
+**Prosedur insiden (Pasal 14.4).** Bila dicurigai ada kebocoran data atau kredensial, atau akses tanpa izin: hentikan segera operasi terkait (setel `SENTINEL_TARIK_OTOMATIS_DETIK=0`, cabut API key dan `SENTINEL_KODE_AKSES`, hentikan container), laporkan ke panitia, dan jangan menyelidiki insiden dengan pengujian tambahan.
 
 ---
 
@@ -614,6 +740,7 @@ Kode akses untuk lingkungan juri diberikan lewat formulir lomba, tidak di reposi
 5. **Ambang profil konservatif dan agresif** masih usulan yang menunggu tinjauan tim keuangan; profil moderat adalah jawaban tim.
 6. **Akurasi setelah kalibrasi bersifat dalam-sampel.** Perlu set uji baru yang dilabeli buta untuk angka di luar sampel.
 7. **Reverse DCF tidak memberi nilai intrinsik**; ia memberi pertumbuhan abadi yang tersirat dari pasar. Nilai wajar hanya ditampilkan sebagai skenario dengan asumsi pertumbuhan yang disebutkan.
+8. **Retensi data masih manual.** Tidak ada yang menghapus otomatis jejak Tanya FEAF (yang memuat pertanyaan yang diketik), catatan review, umpan balik, atau cache; batas retensi otomatis adalah pekerjaan berikutnya. Lihat [10.3](#103-retensi-dan-penghapusan-data).
 
 Kasus terburuk dan pemulihan: bila model tidak tersedia atau kehabisan kredit, jalan beralih ke penalar aturan dan hal itu disebut di layar dan di `/health`; bila sebuah angka tidak bisa diverifikasi, pengumumannya ditahan untuk manusia, bukan diterbitkan.
 
@@ -653,9 +780,38 @@ FEAF mengikuti [semantic versioning](https://semver.org/). Versi yang berjalan t
 
 | Versi | Tanggal | Sorotan |
 |---|---|---|
-| **1.2.0** | 14 Nov 2026 | Path API berbahasa Inggris dengan alias lama, dokumentasi OpenAPI berbahasa Inggris, README empat bahasa |
+| **1.3.0** | 14 Nov 2026 | Transisi halaman yang halus dan interaksi kecil, tata letak lebar penuh, README dengan metrik operasional, hasil uji keselamatan, retensi data, penilaian risiko, dan pengungkapan pihak ketiga |
+| 1.2.0 | 14 Nov 2026 | Path API berbahasa Inggris dengan alias lama, dokumentasi OpenAPI berbahasa Inggris, README empat bahasa |
 | 1.1.0 | 13 Nov 2026 | Panel Tanya FEAF di setiap halaman, perombakan UI, penguatan QA |
 | 1.0.0 | 12 Nov 2026 | Paket finalis (AAIC 2026) |
+
+### 13.1 Sumber Daya Pihak Ketiga
+
+Aturan lomba, Pasal 13. Ringkasan [`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md), yang juga mencatat status verifikasi setiap butir.
+
+| Nama | Jenis | Untuk apa | Lingkup data | Lisensi atau syarat pakai |
+|---|---|---|---|---|
+| Gemini API (Google) | Model di aplikasi | Mengekstrak entitas dari teks pengumuman publik dan memeriksanya silang terhadap dokumen bursa; Tanya FEAF memakainya untuk memanggil alat dan merangkum hasilnya, dengan setiap angka diperiksa. `gemini-3.6-flash`, suhu 0, tier berbayar, cadangan otomatis `gemini-3.5-flash` | Teks pengumuman MOPS publik dan angka publik, setelah field pribadi dibuang; untuk Tanya FEAF juga teks pertanyaan. Tanpa API key atau kredensial | [Ketentuan Google AI Studio](https://ai.google.dev/terms) |
+| FinMind API | Data pasar modal | Laporan keuangan kuartalan emiten Taiwan (neraca, laba rugi, arus kas) | Kode saham dan data laporan publik; cache lokal 12 jam, 300 permintaan per jam tanpa token | [FinMind open data](https://finmind.github.io/) |
+| TWSE OpenAPI | Data resmi pasar modal | Profil emiten, jumlah saham beredar (`t187ap03_L`), laporan keuangan resmi (`t187ap06_L_ci`, `t187ap07_L_ci`), dan pengumuman hari ini | Data keterbukaan informasi publik Taiwan Stock Exchange | [Taiwan Open Government Data License](https://openapi.twse.com.tw/) |
+| TPEx OpenAPI | Data resmi pasar modal | Profil dan pengumuman emiten pasar OTC (Taipei Exchange) | Data profil dan keterbukaan informasi publik | [Ketentuan data terbuka TPEx](https://www.tpex.org.tw/web/about/opendata/) |
+| Situs TWSE dan TPEx | Data pasar historis | Harga penutupan harian saham dan indeks TAIEX untuk menghitung beta mingguan | Harga penutupan publik, 2 tahun | [Ketentuan situs TWSE](https://www.twse.com.tw/zh/page/terms.html) |
+| MOPS | Sistem keterbukaan resmi | Sumber sitasi utama dan pengunduhan pengumuman | Tautan sitasi dan pengumuman asli; unduhan riwayat hanya dari jaringan Taiwan | [MOPS](https://mops.twse.com.tw/) |
+| Yahoo Finance | Data pasar | Dipakai untuk beta pada prototipe awal; **tidak dipakai lagi** (diganti harga resmi TWSE/TPEx) | Tidak ada | [Ketentuan Yahoo](https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html) |
+| Damodaran Online (NYU Stern) | Data referensi akademis | Equity risk premium Taiwan, dipakai pada input WACC | Satu konstanta negara | [Data Damodaran Online](https://pages.stern.nyu.edu/~adamodar/) |
+| Imbal hasil obligasi pemerintah Taiwan 10 tahun (Bank Sentral Republik Tiongkok) | Suku bunga acuan | Tingkat bebas risiko untuk biaya ekuitas | Satu konstanta suku bunga acuan | [Bank Sentral Taiwan](https://www.cbc.gov.tw/) |
+| fastapi | Pustaka | Backend HTTP async | Dependensi lokal (`requirements.txt`) | [MIT](https://github.com/fastapi/fastapi/blob/master/LICENSE) |
+| uvicorn | Pustaka | Server ASGI yang menjalankan aplikasi | Dependensi runtime lokal | [BSD 3-Clause](https://github.com/encode/uvicorn/blob/master/LICENSE.md) |
+| jinja2 | Pustaka | Mesin template HTML | Dependensi lokal | [BSD 3-Clause](https://github.com/pallets/jinja/blob/main/LICENSE.txt) |
+| httpx | Pustaka | Klien HTTP untuk `TestClient`, hanya untuk tes | Dependensi tes lokal | [BSD 3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) |
+| Swagger UI (`swagger-ui-dist`) | Pustaka, dimuat di browser | Halaman API interaktif di `/docs`, dimuat dari jsDelivr oleh FastAPI | Tidak ada yang dikirim; browser mengambil skrip | [Apache 2.0](https://github.com/swagger-api/swagger-ui/blob/master/LICENSE) |
+| Google Fonts (Instrument Sans, IBM Plex Mono) | Font, dimuat di browser | Font setiap halaman, diambil dari `fonts.googleapis.com` | Tidak ada yang dikirim aplikasi; browser meminta stylesheet | [SIL Open Font License](https://fonts.google.com/) |
+| Playwright (Microsoft) | Alat tangkapan layar | Browser headless untuk tangkapan layar dan QA responsif; bukan bagian paket server | Browser lokal | [Apache 2.0](https://github.com/microsoft/playwright/blob/main/LICENSE) |
+| Mermaid | Alat diagram | Diagram di dokumentasi Markdown; bukan bagian runtime aplikasi | Teks diagram lokal | [MIT](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE) |
+| Claude Code (Anthropic) dan Antigravity (Google) | Asisten pemrograman AI, **alat bantu pengembangan, bukan bagian produk** | Pemrograman berpasangan untuk arsitektur, rute, tes, DCF otomatis, dan uji ketahanan serangan | Potongan kode sumber lokal, instruksi tugas, keluaran tes, dan berkas teks sesi | [Anthropic Commercial Terms](https://www.anthropic.com/legal/commercial-terms); [Google Cloud AI Terms](https://cloud.google.com/terms/service-terms) |
+| Skill humanizer dan anti-slop | Skill AI, **alat bantu pengembangan, bukan bagian produk** | Menyunting gaya bahasa dokumentasi dan mengaudit komentar kode | Teks Markdown dan kode lokal | [MIT](https://github.com/blader/humanizer/blob/main/LICENSE); [MIT](https://github.com/miqdadbadjuber/anti-slop/blob/main/LICENSE) |
+
+### 13.2 Lisensi
 
 Hak cipta dilindungi; lihat [`LICENSE`](LICENSE). Panitia dan juri AAIC 2026 boleh menjalankan dan memeriksa repositori ini untuk penilaian. Komponen dan data pihak ketiga tetap memakai lisensinya masing-masing ([`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)).
 

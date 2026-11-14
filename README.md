@@ -4,17 +4,17 @@
 
 **English** · [繁體中文](README.zh-TW.md) · [Bahasa Indonesia](README.id.md) · [Tiếng Việt](README.vi.md)
 
-![FEAF alert feed](docs/ui/qa6-sesudah/feed-en-1440.png)
+![FEAF alert feed](docs/ui/l1-sesudah/feed-en-1920.png)
 
 **FEAF** is an agent that watches official Taiwan exchange filings (MOPS 重大訊息), works out which valuation input each filing touches, recalculates the valuation when the numbers change, and **refuses to publish an alert** when a number cannot be traced back to the filing it came from. Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track: *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-[![Version](https://img.shields.io/badge/Version-1.2.0-16324F)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.0-16324F)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-307%20passing-2EA44F)](#95-tests)
+[![Tests](https://img.shields.io/badge/Tests-311%20passing-2EA44F)](#95-tests)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-three-language-interface)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -40,10 +40,23 @@
 - [7. Directory & Codebase Structure](#7-directory--codebase-structure)
 - [8. Installation & Setup Guide](#8-installation--setup-guide)
 - [9. Evaluation & Testing](#9-evaluation--testing)
+  - [9.1 Gold Set](#91-gold-set)
+  - [9.2 Model Path on the Server](#92-model-path-on-the-server)
+  - [9.3 Attack Set](#93-attack-set)
+  - [9.4 Ask FEAF](#94-ask-feaf)
+  - [9.5 Tests](#95-tests)
+  - [9.6 Operational metrics](#96-operational-metrics)
+  - [9.7 Safety test results](#97-safety-test-results)
 - [10. Security, Privacy & Access Control](#10-security-privacy--access-control)
+  - [10.1 Data Privacy](#101-data-privacy)
+  - [10.2 Access Levels](#102-access-levels)
+  - [10.3 Data retention and deletion](#103-data-retention-and-deletion)
+  - [10.4 Risk assessment](#104-risk-assessment)
 - [11. Known Limitations](#11-known-limitations)
 - [12. Troubleshooting & Common FAQs](#12-troubleshooting--common-faqs)
 - [13. Versioning & License](#13-versioning--license)
+  - [13.1 Third-party resources](#131-third-party-resources)
+  - [13.2 License](#132-license)
 
 ---
 
@@ -93,7 +106,7 @@ graph TD
 
     subgraph Web ["Web app (FastAPI + Jinja2)"]
         Pages["Feed · Stock · Alert · Trace<br/>Valuation · Review · Thresholds · Watchlist"]
-        Chat["Ask FEAF panel<br/>12 read-only tools"]
+        Chat["Ask FEAF panel<br/>13 read-only tools"]
         API["JSON API /api/*"]
     end
 
@@ -188,7 +201,7 @@ Held cases wait here. A person approves (only where approval is allowed) or reje
 Triage confidence thresholds per clause, adjusted by 👍/👎 feedback on alerts, with full change history.
 
 ### 3.7 Ask FEAF Chat (panel on every page, `/tanya`)
-- **12 read-only tools**: 6 stock tools (`harga`, `statistik`, `laporan`, `pengumuman`, `valuasi`, `ringkasan`) and 6 menu tools (`feed`, `peringatan`, `jejak`, `review`, `ambang`, `watchlist`). No tool changes data, and none returns raw items or officer/spokesperson names.
+- **13 read-only tools**: 7 stock tools (`harga`, `statistik`, `laporan`, `pengumuman`, `valuasi`, `ringkasan`, `cari`) and 6 menu tools (`feed`, `peringatan`, `jejak`, `review`, `ambang`, `watchlist`). No tool changes data, and none returns raw items or officer/spokesperson names.
 - **Multi-turn with signed history**: the browser keeps up to 12 messages in `sessionStorage`; the server accepts at most the last 6 verified turns. Every assistant answer carries an HMAC-SHA256 tag (`SENTINEL_CHAT_RAHASIA`); unsigned or modified turns and injection attempts are dropped and logged.
 - **Follow-ups and Recap**: the active stock code is resolved from the question, the page, or the last verified turn. **Recap** summarises verified turns in at most 5 bullets, every number re-checked.
 - **Verification and refusal**: every number in an answer must exist in the current tool output, the question, or a signed turn. Buy/sell advice, price predictions, orders, personal data and prompt injections are refused before any tool or model call. Model calls are capped at 60 per hour.
@@ -201,9 +214,9 @@ Every page is available in English (default), 繁體中文 and Bahasa Indonesia,
 
 | Held alert | Stock summary |
 |---|---|
-| ![Held alert](docs/ui/qa6-sesudah/peringatan-ditahan-en-1440.png) | ![Stock summary](docs/ui/qa6-sesudah/saham-ringkasan-en-1440.png) |
+| ![Held alert](docs/ui/qa6-sesudah/peringatan-ditahan-en-1440.png) | ![Stock summary](docs/ui/l1-sesudah/saham-ringkasan-en-1920.png) |
 | **Valuation** | **Operation trace** |
-| ![Valuation](docs/ui/qa6-sesudah/valuasi-en-1440.png) | ![Trace](docs/ui/qa6-sesudah/jejak-en-1440.png) |
+| ![Valuation](docs/ui/l1-sesudah/valuasi-en-1920.png) | ![Trace](docs/ui/qa6-sesudah/jejak-en-1440.png) |
 | **Review queue** | **Watchlist** |
 | ![Review](docs/ui/qa6-sesudah/review-en-1440.png) | ![Watchlist](docs/ui/qa6-sesudah/watchlist-en-1440.png) |
 
@@ -229,7 +242,7 @@ erDiagram
 | Path (under `DATA_DIR`) | Content |
 |---|---|
 | `parsed/details.json` | Pulled filings, merged without duplicates, personal fields already removed |
-| `raw/openapi/` | Raw daily OpenAPI snapshots |
+| `raw/openapi/` | Raw daily OpenAPI snapshots, stored exactly as received |
 | `traces/` | One operation trace per filing: `state`, `status`, `alasan`, `muatan`, `jejak` (steps), `ringkasan` (tokens, cost, latency) |
 | `traces_chat/` | One trace per Ask FEAF answer |
 | `watchlist.json`, `status_tarik.json` | Watched codes and the last pull status |
@@ -268,7 +281,7 @@ When `SENTINEL_KUNCI_BACA=1`, every `/api/*` call needs the access cookie; `/hea
   ```json
   {
     "ok": true,
-    "versi": "1.2.0",
+    "versi": "1.3.0",
     "versi_kode": "13fb64cf5c",
     "sumber": "openapi",
     "pengumuman": 2437,
@@ -416,7 +429,7 @@ Used by `scripts/kirim_riwayat.py` from a laptop on a Taiwan network. Closed ent
 | **Data sources** | TWSE / TPEx OpenAPI, MOPS, FinMind | Official exchange data; FinMind for financial statements |
 | **Storage** | JSON files on a volume | No database to run; every record is human-readable for audit |
 | **Deploy** | Docker / Dokploy | Single container, `/data` volume, health check on `/health` |
-| **Tests** | `unittest` + FastAPI `TestClient` (httpx) | 307 tests, no network access |
+| **Tests** | `unittest` + FastAPI `TestClient` (httpx) | 311 tests, no network access |
 
 ---
 
@@ -577,21 +590,81 @@ Operations on 581 real filings: 318 passed the clause screen, 241 published, 58 
 ### 9.5 Tests
 
 ```bash
-python3 -m unittest discover -s tests   # 307 tests, no network
+python3 -m unittest discover -s tests   # 311 tests, no network
 python3 scripts/qa_halaman.py           # every page × 3 languages (84/84)
 ```
 
 The tests include the attack set, multi-turn chat security, the English API paths and their legacy aliases, the rule that API keys never reach a file, page or trace, and the rule that personal names never reach the model or the gold-set export. They pass on local data and on an empty `SENTINEL_DATA_DIR`.
+
+### 9.6 Operational metrics
+
+Appendix 2 asks for operational metrics next to accuracy. Every value below names its source and date; a metric that was not measured says so and gives the reason. *Rule path* means no model call is made (no API key); *model path* means Gemini 3.6 Flash.
+
+| Metric | Value | Source |
+|---|---|---|
+| **Tool-call success rate** (Ask FEAF) | **57/57 (100%)** on the rule path: 26/26 in the single-turn set (52 questions) and 31/31 in the multi-turn set (36 turns). A call counts as successful when the tool returns a result with no error; one of the 57 correctly answered that an issuer has no valuation model. **Model path: not measured.** The 11 Nov server run made 54 tool calls (69 model calls), but its report does not record tool errors | Re-run on 14 Nov 2026 (commands below). Call totals match [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 4 and [`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md) |
+| **Retry count** (model calls) | **0** on the model path (46 gold filings, 5 model calls, 11 Nov 09:39 UTC) and **0** in the rule-path operational run on 581 filings. The rule path makes no model call, so there is nothing to retry. Setting: `SENTINEL_RETRY=2` | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Termination rate** | **0 forced terminations** in the two samples taken: the live server on 11 Nov 09:22 UTC (1,106 filings, "no model error, no fallback") and the model-path gold run (0 fallbacks to the rules in 46 filings). A run ends early on any of four limits: 40 model calls, 90 seconds, 3 failures in a row, or an empty prepaid balance (HTTP 402); the remaining filings then use the rule reasoner. The limits are covered by `tests/test_pemutus_thread.py`, `tests/test_saldo_402.py` and `TestModelPengganti.test_pemutus_setelah_tiga_gagal_beruntun`. **A rate over time is not measured**: `GET /health` (`agent.sebab_cadangan`) counts fallback reasons, but no rate has been computed from it | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) sections 2.2, 5 and 7 |
+| **Human intervention rate** | **28%** (13/46) on the gold set, rule path, before tuning; **12%** (132/1,106) on the live server, 11 Nov; **10%** (58/581) in the rule-path operational run, 11 Nov | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) sections 2.1 and 5; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+| **Latency and cost** | Model path: mean 0.7 s per filing (max 9.9 s), USD 0.0069 for 46 filings (a lower bound: thinking tokens were not yet counted). Rule path: mean 1 ms per filing (581 filings) | [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 2.2; [`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md) |
+
+Reproduce the tool-call count (no API key needed). The multi-turn set also needs `SENTINEL_SERTAKAN_CONTOH=1` and `--chat-percakapan`:
+
+```bash
+export SENTINEL_DATA_DIR=$(mktemp -d)
+python3 scripts/evaluasi.py --chat
+grep -l '"galat"' "$SENTINEL_DATA_DIR"/traces_chat/*.json   # no output = no tool returned an error
+```
+
+**Error categories.** Outcome of 1,106 real filings on the live server, 11 Nov 09:22 UTC: published 587 (53%), archived 387 (35%), held for a person 132 (12%). The held filings by reason:
+
+| Reason | Filings | Action taken |
+|---|---|---|
+| Issuer has no valuation model yet | 59 | Since 11 Nov the server builds automatic valuations for these issuers, 5 per 10-minute cycle (FinMind quota) |
+| No number with a traceable source sentence | 35 | Correct behaviour: nothing to publish safely |
+| Risk signal above the "serious" threshold | 31 | By design: a person confirms serious signals |
+| Label, unit or currency check failed | 4 | Two were parser gaps, fixed; USD amounts stay held by design |
+| Severe clause (1, 3, 40) | 3 | Always held, by team decision |
+
+Source: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 5.
+
+**Operation trace example.** [`eval/hasil/jejak-contoh-2330-2026-11-10-211853.json`](eval/hasil/jejak-contoh-2330-2026-11-10-211853.json) is the saved trace of a TSMC board approval of a capital budget (clause 20). On a running server the same kind of trace opens at `/jejak/{id}` (here `/jejak/2330-2026-11-10-211853`) and as JSON at `GET /api/traces/{id}`. Its steps ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 6):
+
+| Step | What happened |
+|---|---|
+| Fetch | Pulled from TWSE OpenAPI on 11 Nov 02:35 UTC; no personal field present |
+| Shape check | 31 items, clause 20 |
+| 0 · Clause screen | Clause 20 → valuation lane, possible inputs capex and cash |
+| 1–2 · Triage and extract | `gemini-3.6-flash`, prompt `2026-11-10.1`, answer from cache (original call 4,203 tokens in, 778 out); 4 amounts found, all US$, unit 佰萬元 |
+| Triage confidence | 0.55: no amount convertible to NTD |
+| 4a · Checker | Currency check failed: a USD amount with no exchange rate is not converted silently |
+| End | HELD FOR REVIEW with the reasons above |
+
+### 9.7 Safety test results
+
+Each row names the tests that cover one risk. The whole suite passes on 14 Nov 2026: `python3 -m unittest discover -s tests` → 311 tests, OK. Test names are `class.method` inside the file.
+
+| Risk | Test (file and name, or script) | Result |
+|---|---|---|
+| Personal data stored or sent | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_nilai_pii_tidak_pernah_disimpan` (no spokesperson value or phone number in any trace), `TestCacheModelDanImpor.test_impor_menggabung_dan_membuang_pii` (imported records lose personal fields), `TestHalamanSaham.test_profil_tanpa_data_pribadi` and `TestEkstraksiPengumumanAsli.test_profil_tpex_tanpa_data_pribadi` (company profiles keep only allowed columns); `tests/test_cari_nama.py`: `TestCariNama.test_tidak_ada_data_pribadi_di_indeks` | Pass |
+| Person names reach a signal, tool answer or export | `tests/test_tata_kelola.py`: `TestAuditor.test_tanpa_nama`; `tests/test_b1.py`: `TestModalLaporanBerat.test_pasal_1_selalu_ditahan_tanpa_nama_orang`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah`, `TestChatPercakapanC5Keamanan.test_7_alat_baru_tidak_pernah_mengembalikan_items_mentah_atau_label_nama`; `tests/test_gold_b1.py`: `TestGoldB1.test_ekspor_tanpa_nama_orang`; `tests/test_paket_gold.py`: `TestPaketGold.test_xlsx_tanpa_nama_dan_bolak_balik`; `tests/test_deidentifikasi.py`: `TestDeidentifikasi.test_tanpa_nama_anggota_di_app_dan_readme` (no team member name in `app/`, `eval/` or `README.md`) | Pass |
+| API key in a file, page or trace | `tests/test_agent.py`: `TestKeamananDanPrivasi.test_tidak_ada_kunci_api_di_jejak` (no `GEMINI_API_KEY` or `AIza` prefix in any trace). The key is read from the environment only and `key=` is masked in recorded model errors (`app/agent/llm.py`) | Pass for traces. Server logs and rendered pages have no dedicated test |
+| Prompt injection | `tests/test_agent.py`: `TestPrompInjection` (3 tests: the attempt is logged in the trace; the injected number is never published; an obeyed injection still fails the checker on label and magnitude); `tests/test_serangan.py`: `TestSeranganOtomatis.test_suite_serangan_luring_ambang_040_dan_055` and `python3 scripts/uji_serangan.py` (12 attack types, 72 cases); chat: `tests/test_chat_b1.py`: `TestChatB1.test_injeksi_ditolak_tiga_bahasa`, `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_1_riwayat_palsu_tanpa_tanda_sah_dibuang_dan_angka_palsu_tidak_muncul` and `test_3_giliran_user_lama_berisi_injeksi_dibuang_giliran_lain_dipakai` | Pass. **0/72** attacker numbers published (re-run 14 Nov 2026, [report](eval/hasil/serangan-2026-11-10.md)); 1 injected history turn dropped in the 36-turn chat set |
+| Invented numbers | `tests/test_agent.py`: `TestPemeriksaMenangkapHalusinasi`; `tests/test_chat.py`: `TestJalurModel.test_jawaban_model_dengan_angka_karangan_ditolak`; gold set (`python3 scripts/evaluasi.py`) | Pass. **0/46** wrong numbers published, against 5/46 without the checker ([`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 2.1) |
+| Unauthorised tool calls | `tests/test_chat.py`: `TestJalurModel.test_kode_tidak_sah_dari_model_ditolak_alat` (a model-supplied code `../../etc` is refused by the tool layer), `TestJalurModel.test_berhenti_setelah_lima_langkah` (at most 5 tool rounds); `tests/test_chat_percakapan.py`: `TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir` (menu tools leave the data folder unchanged); `tests/test_agent.py`: `TestDeploy.test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka` (actions that change data need the access code) | Pass. The model can call 13 tools, all read-only (`ALAT` in `app/chat.py`): none changes the watchlist, review decisions, thresholds or filings |
+| Permissions and access code | `tests/test_putaran2.py`: `TestR3KunciBaca.test_r3_terkunci_tanpa_kode`, `test_r3_terbuka_dengan_kode`; `tests/test_qa_perbaikan.py`: `TestKunciBacaKeamanan.test_401_mandiri_tanpa_bocor_dan_post_akses_bertanda_hmac` (the 401 page leaks no watchlist data; the cookie is an HMAC digest, not the code); `tests/test_agent.py`: `TestDeploy.test_kode_salah_tidak_membuka`, `TestCacheModelDanImpor.test_impor_butuh_kode_akses` (import is closed without the code) | Pass |
+| Inappropriate output (advice, predictions, orders) | `tests/test_chat.py`: `TestPenjaga.test_tolak_prediksi_order_pribadi_tiga_bahasa`, `TestJalurModel.test_jawaban_model_dengan_saran_beli_ditolak`; `tests/test_chat_percakapan.py`: `TestChatPercakapanC5Keamanan.test_6_recap_model_memuat_kata_buy_ditolak_dan_diganti_recap_template`; `tests/test_ui.py`: `TestUI.test_tidak_ada_kata_beli_jual_di_luar_penafian` (no buy/sell labels outside the disclaimer, three languages); `python3 scripts/evaluasi.py --chat` | Pass. **27/27** advice, out-of-scope and injection questions refused and **0** recommendation words reached the user (Gemini 3.6 Flash on the server, 11 Nov, [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md) section 4); rule path 27/27 (re-run 14 Nov 2026) |
+| Malicious input | `tests/test_c1a_tautan.py`: `TestC1aTautan.test_kode_tidak_sah_tidak_dipantulkan` (a `<script>` stock code is not echoed into the page) | Pass |
 
 ---
 
 ## 10. Security, Privacy & Access Control
 
 ### 10.1 Data Privacy
-- `scripts/fetch_details.py` and `app/tarik.py` drop `發言人`, `發言人職稱` and `發言人電話` **before anything is saved**. Only the fact that a field was dropped is logged, never its value.
+- `scripts/fetch_details.py` and `app/tarik.py` drop `發言人`, `發言人職稱` and `發言人電話` **before the parsed data, traces or exports are written**. Only the fact that a field was dropped is logged, never its value. The one exception is the raw OpenAPI snapshot, which is stored as received ([10.3](#103-data-retention-and-deletion)).
 - Names of officers, directors and auditors (clauses 1, 6, 7, 8) are never extracted, shown or exported.
 - Filing text is treated as **untrusted data**: it enters the prompt inside delimiters, the system instruction says nothing inside may be followed, and injection attempts are logged.
-- API keys are read from the environment only and never written to a file, page, log or trace (tested).
+- API keys are read from the environment only, and the code never writes one to a file, page or trace; a test checks the traces ([9.7](#97-safety-test-results)) and `key=` is masked in recorded model errors.
 
 ### 10.2 Access Levels
 
@@ -602,6 +675,59 @@ The tests include the attack set, multi-turn chat security, the English API path
 | plus `SENTINEL_KUNCI_BACA=1` | Every page and `/api/*` need the code; `/health` and static files stay open. The `401` page is standalone and leaks no watchlist data; the access cookie is an HMAC digest, never the raw code |
 
 The access code for the judges' environment is given through the competition form, not in this repository.
+
+### 10.3 Data retention and deletion
+
+Competition rules, Article 14.1 (data minimisation, retention period, deletion). Everything FEAF stores is a file under `SENTINEL_DATA_DIR` (section 4), and **nothing is deleted automatically**: every file below stays until someone deletes it. The cache lifetimes in the code (market data 30 minutes to 24 hours, automatic valuations 12 hours, weekly price series and the name index 7 days) only decide when a file is refreshed, never when it is removed. The only size limit is the feedback history, which keeps the 500 most recent entries (`app/umpan_balik.py`). An automatic retention limit is the next piece of work; until then deletion is manual, as below.
+
+| What | Where (under `DATA_DIR`) | Content |
+|---|---|---|
+| Ask FEAF traces | `traces_chat/` | **The question text typed by the user** (cut at 500 characters), language, every tool call with its result, the answer, a rejected model answer if any, token counts. Not stored: name, IP address, or the earlier turns of the conversation (only how many were used or dropped) |
+| Filing traces | `traces/` | Steps, model calls, quoted sentences of public filings, and only the *label* of a dropped personal field, never its value |
+| Pulled filings | `parsed/` | Public filing text; spokesperson fields removed before saving |
+| Raw OpenAPI snapshots | `raw/openapi/` | Saved exactly as the exchange sent them, **before** any field is removed. The parser reads only the code, name, date, time, subject, clause and description fields, and `PII_LABELS` in `app/tarik.py` lists spokesperson fields it would drop, but the snapshot itself is not filtered |
+| Review decisions | `keputusan_review.json` | Decision, free-text note (up to 500 characters) and UTC time per case. No user identity |
+| Feedback | `umpan_balik.json` | 👍/👎 votes per clause and a change history (last 500 entries). No user identity |
+| Model cache | `cache_model/` | Model answers for public filings, keyed by a SHA-256 hash of provider, model, prompt version and filing text. Ask FEAF questions are not cached here |
+| Market data and watchlist | `pasar/`, `valuasi_otomatis/`, `harga_harian/`, `indeks_nama.json`, `watchlist.json`, `status_tarik.json` | Public market data, stock codes and issuer names |
+
+In the browser: the chat history (up to 12 messages) lives in `sessionStorage`, not on the server; cookies are `bahasa` and `risiko` (1 year) and `akses` (30 days, an HMAC digest).
+
+- **Personal data in filings** (`發言人` spokesperson name, title and phone) is removed on pull and again on `POST /api/import`; only the label is logged. The one exception is the raw snapshot above.
+- **What a user types is not scrubbed.** The guard refuses requests *for* personal data, but a question containing personal data is stored in the trace and, on the model path, sent to Gemini together with up to 6 verified earlier turns. What Google keeps is governed by its terms ([13.1](#131-third-party-resources)), not by this repository.
+
+**How to delete.** Run these inside the data folder (`./data` locally, `/data` in the Docker volume). The app recreates what it needs on next use.
+
+```bash
+D="${SENTINEL_DATA_DIR:-./data}"
+rm -f  "$D"/traces_chat/<id>.json     # one Ask FEAF answer; <id> is in its trace link
+rm -rf "$D"/traces_chat               # every Ask FEAF question and answer
+rm -f  "$D"/keputusan_review.json     # review decisions (held filings return to the queue)
+rm -f  "$D"/umpan_balik.json          # feedback (thresholds return to the default)
+rm -rf "$D"/cache_model               # model cache (the next run calls the model again)
+rm -rf "$D"/raw/openapi               # raw snapshots
+
+# Docker
+docker exec <container> rm -rf /data/traces_chat
+docker stop <container> && docker rm <container> && docker volume rm feaf-data   # everything
+```
+
+### 10.4 Risk assessment
+
+Competition rules, Article 14.3. Open gaps per category: [`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) (Indonesian). Test evidence: [9.7](#97-safety-test-results).
+
+| Risk | Protection | Monitoring | Recovery |
+|---|---|---|---|
+| **Prompt injection** | Filing text enters the prompt inside delimiters and is treated as data; injection patterns are flagged (`deteksi_injeksi`); a number is accepted only if its label is allowed, its quote and digits exist in the filing and its magnitude is plausible. Ask FEAF refuses injection phrases before any tool or model call and signs every answer (HMAC), so forged history is dropped | Each injection marker is a step in the trace; `python3 scripts/uji_serangan.py` (72 cases, 0 wrong numbers) | The filing is held for a person; the chat falls back to the template answer. Open gap: a new, subtle phrasing can pass the pattern filter and is then stopped only by the number checks |
+| **Unauthorised tool calls** | Closed list of 13 read-only tools; no shell, file, order or settings tool; arguments validated (stock code pattern); at most 5 tool rounds per answer; model answers capped at 60 per hour; routes that change data need the access code | Every tool call, its arguments and its result are stored in `traces_chat/` | An unknown tool returns an error result; change `SENTINEL_KODE_AKSES` and restart to revoke access. Open gap: one shared access code, no per-user roles |
+| **Data or credential leakage** | Allow-list of company-profile columns; spokesperson fields dropped on pull and import; officer and auditor names never extracted; API key from the environment only and masked in recorded errors; `.env` and key files git-ignored; only public filing text and question text go to Gemini | Tests in [9.7](#97-safety-test-results), including a scan of `app/`, `eval/` and `README.md` for team member names | Stop the operation (Article 14.4 below), rotate the key, delete the affected files ([10.3](#103-data-retention-and-deletion)). A 10 Nov incident, where a profile cache kept officer fields, was fixed with the allow-list ([`docs/laporan-keamanan.md`](docs/laporan-keamanan.md) section 3) |
+| **Hallucination** | The model never calculates; the DCF is code; the verifier fails closed; every number in a chat answer must appear in a tool result | Gold set (0/46 wrong numbers), attack set (0/72), `python3 scripts/evaluasi.py` | The filing is held with the failing check named in the trace; the chat shows the template answer instead |
+| **Bias** | Thresholds come from one finance team (the moderate profile is the team's answer; conservative and aggressive are proposals); temperature 0; the lane is chosen by clause number, not by the model; only company filings and market data are used, no demographic or personal attributes; Ask FEAF refuses buy/sell advice. Coverage is limited to TWSE/TPEx issuers with FinMind or exchange data, financial companies get no DCF, and outside Taiwan only today's filings are available | Decision mix and human-intervention rate in the `scripts/evaluasi.py` reports; threshold history at `/ambang` | Change the risk profile or thresholds on `/ambang`; reset a clause's votes. An out-of-sample test set is the next step (not measured) |
+| **Malicious input** | Jinja2 autoescaping; stock code pattern `^[0-9A-Z]{4,6}$`; chat question cut at 500 characters; import capped at 25 MB, validated as JSON and closed without the access code; MOPS block pages detected | HTTP 4xx entries in the server log; `/health` | Errors are isolated per filing, so one bad record does not stop the rest. Open gap: no per-IP rate limit (only the cap on model answers) |
+| **Supply chain** | 4 direct dependencies pinned to exact versions in `requirements.txt` (installed from PyPI); no JavaScript framework or build step; Docker image from `python:3.12-slim`. Two runtime fetches by the browser: a Google Fonts stylesheet on every page, and Swagger UI from jsDelivr at `/docs` (major version `@5` only) | No dependency scanner is configured in the repository; versions are reviewed by hand before a release | Rebuild the image from the Dockerfile; pin or replace a dependency; self-host the fonts. Open gaps: sub-dependencies of `uvicorn[standard]` and FastAPI are not locked, the base image is not pinned by digest |
+| **Third-party service failure** | Gemini: retries (`SENTINEL_RETRY=2`), backup model on 429/5xx, rule reasoner after 3 failures in a row, cap of 40 calls and 90 seconds per run, 402 never retried. MOPS geo-block detected, OpenAPI used instead. FinMind quota: 12-hour cache | `GET /health`: `galat_model_terakhir`, `sebab_cadangan`, `mesin` | The run continues on the rule reasoner and says so on screen and in the trace; the next cycle tries the model again; top up the prepaid balance |
+
+**Incident procedure (Article 14.4).** If a leak of data or credentials, or unauthorised access, is suspected: stop the related operation at once (set `SENTINEL_TARIK_OTOMATIS_DETIK=0`, revoke the API key and `SENTINEL_KODE_AKSES`, stop the container), report to the organisers, and do not probe the incident with further tests.
 
 ---
 
@@ -614,6 +740,7 @@ The access code for the judges' environment is given through the competition for
 5. **Conservative and aggressive profile thresholds** are proposals awaiting the finance team's review; the moderate profile is the team's answer.
 6. **The tuned accuracy is in-sample.** A fresh, blind-labelled test set is needed for an out-of-sample figure.
 7. **Reverse DCF gives no intrinsic value**; it gives the perpetual growth the market implies. Fair value is shown only as a scenario with a stated growth assumption.
+8. **Data retention is manual.** Nothing deletes Ask FEAF traces (which hold the questions typed), review notes, feedback or caches automatically; an automatic retention limit is the next piece of work. See [10.3](#103-data-retention-and-deletion).
 
 Worst case and recovery: if the model is unavailable or out of credit, the run switches to the rule-based reasoner and says so on screen and in `/health`; if a number cannot be verified, the filing is held for a person rather than published.
 
@@ -653,9 +780,38 @@ FEAF follows [semantic versioning](https://semver.org/). The running version is 
 
 | Version | Date | Highlights |
 |---|---|---|
-| **1.2.0** | 14 Nov 2026 | English API paths with legacy aliases, English OpenAPI docs, four-language README |
+| **1.3.0** | 14 Nov 2026 | Smooth page transitions and small interactions, full-width layout, README with operational metrics, safety test results, data retention, risk assessment and third-party disclosure |
+| 1.2.0 | 14 Nov 2026 | English API paths with legacy aliases, English OpenAPI docs, four-language README |
 | 1.1.0 | 13 Nov 2026 | Ask FEAF panel on every page, UI overhaul, QA hardening |
 | 1.0.0 | 12 Nov 2026 | Finalist package (AAIC 2026) |
+
+### 13.1 Third-party resources
+
+Competition rules, Article 13. Summary of [`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md) (Indonesian), which also records the verification status of each item.
+
+| Name | Type | Purpose | Data scope | License or terms |
+|---|---|---|---|---|
+| Gemini API (Google) | Model in the application | Extracts entities from public filing text and checks them against the exchange document; Ask FEAF uses it to call tools and summarise their results, with every number checked. `gemini-3.6-flash`, temperature 0, paid tier, automatic backup `gemini-3.5-flash` | Public MOPS filing text and public numbers, with personal fields removed first; for Ask FEAF also the question text. No API keys or credentials | [Google AI Studio terms](https://ai.google.dev/terms) |
+| FinMind API | Market data | Quarterly financial statements (balance sheet, income, cash flow) of Taiwan issuers | Stock codes and public statement data; 12-hour local cache, 300 requests per hour without a token | [FinMind open data](https://finmind.github.io/) |
+| TWSE OpenAPI | Official market data | Issuer profiles, shares outstanding (`t187ap03_L`), official financial statements (`t187ap06_L_ci`, `t187ap07_L_ci`) and today's filings | Public disclosure data of the Taiwan Stock Exchange | [Taiwan Open Government Data License](https://openapi.twse.com.tw/) |
+| TPEx OpenAPI | Official market data | Profiles and filings of OTC issuers (Taipei Exchange) | Public profile and disclosure data | [TPEx open data terms](https://www.tpex.org.tw/web/about/opendata/) |
+| TWSE and TPEx websites | Historical market data | Daily closing prices of stocks and the TAIEX index, to compute weekly beta | Public closing prices, 2 years | [TWSE website terms](https://www.twse.com.tw/zh/page/terms.html) |
+| MOPS | Official disclosure system | Primary citation source and filing download | Citation links and original filings; history download only from a Taiwan network | [MOPS](https://mops.twse.com.tw/) |
+| Yahoo Finance | Market data | Used for beta in an early prototype; **no longer used** (replaced by official TWSE/TPEx prices) | None | [Yahoo terms](https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html) |
+| Damodaran Online (NYU Stern) | Academic reference data | Equity risk premium for Taiwan, used in the WACC input | One country constant | [Damodaran Online data](https://pages.stern.nyu.edu/~adamodar/) |
+| Taiwan 10-year government bond yield (Central Bank of the Republic of China) | Reference rate | Risk-free rate for the cost of equity | One reference-rate constant | [CBC Taiwan](https://www.cbc.gov.tw/) |
+| fastapi | Library | Async HTTP backend | Local dependency (`requirements.txt`) | [MIT](https://github.com/fastapi/fastapi/blob/master/LICENSE) |
+| uvicorn | Library | ASGI server that runs the app | Local runtime dependency | [BSD 3-Clause](https://github.com/encode/uvicorn/blob/master/LICENSE.md) |
+| jinja2 | Library | HTML template engine | Local dependency | [BSD 3-Clause](https://github.com/pallets/jinja/blob/main/LICENSE.txt) |
+| httpx | Library | HTTP client for `TestClient`, tests only | Local test dependency | [BSD 3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) |
+| Swagger UI (`swagger-ui-dist`) | Library, loaded in the browser | Interactive API page at `/docs`, loaded from jsDelivr by FastAPI | None sent; the browser fetches the script | [Apache 2.0](https://github.com/swagger-api/swagger-ui/blob/master/LICENSE) |
+| Google Fonts (Instrument Sans, IBM Plex Mono) | Typefaces, loaded in the browser | Fonts of every page, fetched from `fonts.googleapis.com` | None sent by the app; the browser requests the stylesheet | [SIL Open Font License](https://fonts.google.com/) |
+| Playwright (Microsoft) | Screenshot tool | Headless browser for screenshots and responsive QA; not part of the server package | Local browser | [Apache 2.0](https://github.com/microsoft/playwright/blob/main/LICENSE) |
+| Mermaid | Diagram tool | Diagrams in the Markdown documentation; not in the app runtime | Local diagram text | [MIT](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE) |
+| Claude Code (Anthropic) and Antigravity (Google) | AI coding assistants, **development tools, not part of the product** | Pair programming on architecture, routes, tests, the automatic DCF and attack-resilience checks | Local source snippets, task instructions, test output and session text files | [Anthropic Commercial Terms](https://www.anthropic.com/legal/commercial-terms); [Google Cloud AI terms](https://cloud.google.com/terms/service-terms) |
+| Humanizer and anti-slop skills | AI skills, **development tools, not part of the product** | Editing documentation prose and auditing code comments | Local Markdown and code text | [MIT](https://github.com/blader/humanizer/blob/main/LICENSE); [MIT](https://github.com/miqdadbadjuber/anti-slop/blob/main/LICENSE) |
+
+### 13.2 License
 
 All rights reserved. See [`LICENSE`](LICENSE). AAIC 2026 organisers and judges may run and inspect this repository to evaluate the entry. Third-party components and data keep their own licences ([`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)).
 
