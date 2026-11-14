@@ -287,6 +287,20 @@ class TestUI(unittest.TestCase):
         self.assertRegex(app_css, r"@media \(min-width: 1441px\)\s*\{\s*\.isi\s*\{[^}]*padding-left:\s*40px")
         self.assertRegex(app_css, r"\.catatan[^{]*\{[^}]*max-width:\s*80ch")
 
+    def test_tombol_memuat_l2_simpan_dan_pulihkan_teks_asli(self) -> None:
+        """L2: spinner menggantikan ikon ⟳; teks asli disimpan di data-teks-asli dan dipulihkan saat pageshow."""
+        akar = Path(__file__).resolve().parent.parent
+        ui_js = (akar / "app" / "static" / "ui.js").read_text(encoding="utf-8")
+
+        self.assertIn("data-teks-asli", ui_js)
+        self.assertIn("\\u27F3", ui_js)
+        # pemulihan terjadi di jalur yang dipanggil oleh pageshow
+        bagian_pageshow = ui_js[ui_js.index('addEventListener("pageshow"'):]
+        self.assertIn("bersihkanMemuat()", bagian_pageshow)
+        mulai = ui_js.index("function bersihkanMemuat")
+        fungsi_bersih = ui_js[mulai:ui_js.index('document.addEventListener("submit"', mulai)]
+        self.assertIn("data-teks-asli", fungsi_bersih)
+
 
 if __name__ == "__main__":
     unittest.main()

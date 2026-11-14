@@ -369,8 +369,22 @@
   });
 
   /* 8. Status loading pada form aksi dan tautan segarkan (A1.2a) */
+  /* Node teks pertama yang berisi huruf/simbol (bukan spasi saja). */
+  function simpulTeksPertama(el) {
+    for (var n = el.firstChild; n; n = n.nextSibling) {
+      if (n.nodeType === 3 && n.nodeValue.trim() !== "") return n;
+    }
+    return null;
+  }
+
   function tandaiMemuat(btn) {
     if (!btn) return;
+    /* Spinner menggantikan ikon ⟳ di awal teks tombol (L2): simpan teks asli, buang awalan. */
+    var simpul = simpulTeksPertama(btn);
+    if (simpul && !btn.hasAttribute("data-teks-asli") && /^\s*\u27F3/.test(simpul.nodeValue)) {
+      btn.setAttribute("data-teks-asli", simpul.nodeValue);
+      simpul.nodeValue = simpul.nodeValue.replace(/^\s*\u27F3\s*/, "");
+    }
     btn.classList.add("sedang-memuat");
     btn.setAttribute("aria-busy", "true");
     if (btn.tagName === "A") {
@@ -381,6 +395,11 @@
   function bersihkanMemuat() {
     document.querySelectorAll("form[data-sedang-kirim]").forEach(function (f) {
       delete f.dataset.sedangKirim;
+    });
+    document.querySelectorAll("[data-teks-asli]").forEach(function (el) {
+      var simpul = simpulTeksPertama(el);
+      if (simpul) simpul.nodeValue = el.getAttribute("data-teks-asli");
+      el.removeAttribute("data-teks-asli");
     });
     document.querySelectorAll(".sedang-memuat").forEach(function (el) {
       el.classList.remove("sedang-memuat");
