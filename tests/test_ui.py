@@ -274,6 +274,19 @@ class TestUI(unittest.TestCase):
         self.assertIn("view-transition-name: garis-tab", app_css)
         self.assertIn("[hidden] { display: none !important; }", app_css)
 
+    def test_tata_letak_l1_konten_lebar_penuh(self) -> None:
+        """L1: .isi tidak lagi dibatasi 1180px; maks 1600px dan ditengahkan; prosa dibatasi 80ch."""
+        akar = Path(__file__).resolve().parent.parent
+        app_css = (akar / "app" / "static" / "app.css").read_text(encoding="utf-8")
+
+        self.assertNotIn("max-width: 1180px", app_css)
+        self.assertRegex(
+            app_css,
+            r"\.isi\s*\{[^}]*max-width:\s*1600px;[^}]*margin-inline:\s*auto",
+        )
+        self.assertRegex(app_css, r"@media \(min-width: 1441px\)\s*\{\s*\.isi\s*\{[^}]*padding-left:\s*40px")
+        self.assertRegex(app_css, r"\.catatan[^{]*\{[^}]*max-width:\s*80ch")
+
 
 if __name__ == "__main__":
     unittest.main()

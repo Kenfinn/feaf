@@ -185,6 +185,22 @@ def _cek_halaman(page, url: str, lebar: int, desktop: bool) -> list[str]:
                 if (rr.right > ri.left + 1) {
                     terpotong.push(`.rail menimpa .isi (${Math.round(rr.right)} > ${Math.round(ri.left)})`);
                 }
+                // L1: konten mengisi ruang di kanan menu samping sampai 1600px; di atas itu ditengahkan
+                const lebarTersedia = document.documentElement.clientWidth - rr.right;
+                const diharapkan = Math.min(lebarTersedia, 1600);
+                if (ri.width < diharapkan - 2) {
+                    terpotong.push(`.isi kurang lebar (${Math.round(ri.width)}px, seharusnya ${Math.round(diharapkan)}px)`);
+                }
+                if (document.documentElement.clientWidth >= 1900 && ri.width < 1500) {
+                    terpotong.push(`.isi < 1500px di layar >= 1900px (${Math.round(ri.width)}px)`);
+                }
+                if (lebarTersedia > 1600 + 2) {
+                    const kiri = ri.left - rr.right;
+                    const kanan = document.documentElement.clientWidth - ri.right;
+                    if (Math.abs(kiri - kanan) > 2) {
+                        terpotong.push(`.isi tidak ditengahkan (kiri=${Math.round(kiri)}px, kanan=${Math.round(kanan)}px)`);
+                    }
+                }
             }
             if (status && status.scrollWidth > status.clientWidth + 1) {
                 terpotong.push(`kotak status meluap (${status.scrollWidth}>${status.clientWidth})`);
@@ -381,8 +397,8 @@ def jalankan_qa(
                                 page.screenshot(path=str(out_dir / f"laci-{bhs}-{lebar}.png"))
                                 page.keyboard.press("Escape")
 
-                        # Uji #cp-fab dan #cp-panel di 390 dan 1440 (serta di halaman saham)
-                        if lebar in (390, 1440):
+                        # Uji #cp-fab dan #cp-panel di 390, 1440, 1920, 2560 (serta di halaman saham)
+                        if lebar in (390, 1440, 1920, 2560):
                             for r_chat in ("/", "/saham/2330?tab=ringkasan"):
                                 for m in _cek_panel_chat(page, f"{base_url}{r_chat}"):
                                     gagal.append(f"[{bhs} {lebar}px CHAT {r_chat}] {m}")
@@ -398,7 +414,7 @@ def jalankan_qa(
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lebar", nargs="+", type=int, default=[390, 1440])
+    ap.add_argument("--lebar", nargs="+", type=int, default=[390, 1440, 1920, 2560])
     ap.add_argument("--bahasa", nargs="+", default=["en", "zh", "id"])
     ap.add_argument("--simpan-foto", default=None, help="Simpan tangkapan layar ke folder ini")
     ap.add_argument("--izin-gagal", action="store_true", help="Tetap keluar 0 meski ada temuan (untuk baseline 'sebelum')")
