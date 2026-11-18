@@ -245,7 +245,8 @@ def alat_valuasi(kode: str) -> dict:
             "otomatis": bool(d.get("otomatis")),
             "harga_pasar_ntd": r.get("price_per_share"),
             "wacc_persen": round(r["wacc"] * 100, 2),
-            "pertumbuhan_tersirat_pasar_persen": round(r["implied_growth"] * 100, 2),
+            "pertumbuhan_tersirat_pasar_persen": (round(r["implied_growth"] * 100, 2)
+                                                  if r.get("implied_growth") is not None else None),
             "batas_pertumbuhan_skenario_persen": round(g * 100, 2) if g is not None else None,
             "nilai_wajar_skenario_ntd": round(f["fair_value"], 1) if f.get("fair_value") is not None else None,
             "melampaui_batas": r.get("exceeds_ceiling"),

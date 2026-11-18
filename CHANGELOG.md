@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.3.3 · 18 Nov 2026
+
+- Fix: every page still returned 500 after 1.3.2, now with `TypeError: unsupported operand
+  type(s) for -: 'NoneType' and 'float'`. A clause-20 scenario replaces last year's capex with the
+  amount in the filing; when that capex exceeds operating cash flow, FCFF0 is not positive and the
+  reverse DCF has no meaningful answer (the implied growth comes out at or above WACC). The
+  circularity check in `scripts/dcf.py` then computed `None - float`, the pipeline stopped, and
+  every page that needs its results failed.
+- `scripts/dcf.py`: when FCFF0 is not positive, `implied_growth`, the circularity values and the
+  sensitivity grid (when there is no forward growth) are `None`/empty instead of raising. Positive
+  FCFF0 gives exactly the same numbers as before.
+- The post-calculation checker (`app/agent/verify.py`) fails closed: such a filing is held for
+  review with the reason "free cash flow after this scenario is not positive", never published.
+- `app/agent/pipeline.py`: an unexpected error in one filing no longer stops the run. That filing
+  is held for review (`galat_proses`, cannot be approved as is) with the error in its trace, and the
+  other filings are processed normally. Traces are written atomically.
+- `app/agent/recompute.py`, `app/chat.py` and the valuation page handle an undefined implied growth.
+- Tests: `tests/test_fcff_negatif.py` (9 tests; 7 fail on 1.3.2); 333 tests.
+
 ## 1.3.2 · 18 Nov 2026
 
 - Fix: every page returned 500 on feaf.web.id. Two threads (the automatic pull and a page

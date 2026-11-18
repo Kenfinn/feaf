@@ -143,7 +143,10 @@ def compute(d: dict, basis: str | None = None,
 
     shares = d["market"]["shares_issued_thousands"]
     price = d["market"]["price_per_share"]
-    g = implied_growth(ev, fcff0, wacc_val)
+    # FCFF0 <= 0: EV = FCFF0(1+g)/(WACC-g) tidak punya g yang bermakna (hasil baliknya selalu
+    # >= WACC), jadi reverse DCF tidak terdefinisi. None, bukan angka yang tampak sah. Ini terjadi
+    # pada skenario pasal 20 yang capex-nya melebihi arus kas operasi.
+    g = implied_growth(ev, fcff0, wacc_val) if fcff0 > 0 else None
     ceiling = a.get("terminal_growth_ceiling")
 
     r: dict = {
@@ -161,14 +164,14 @@ def compute(d: dict, basis: str | None = None,
 
     # g hasil reverse dimasukkan kembali wajib mengembalikan EV yang sama.
     # Selisih yang tidak nol berarti ada bug di aritmetikanya, bukan temuan pasar.
-    back = ev_from_growth(fcff0, g, wacc_val)
+    back = ev_from_growth(fcff0, g, wacc_val) if g is not None else None
     r["circularity"] = {
         "ev_back": back,
-        "drift_pct": abs(back - ev) / ev * 100,
-        "price_back": equity_per_share(back, debt, cash, shares),
+        "drift_pct": abs(back - ev) / ev * 100 if back is not None else None,
+        "price_back": equity_per_share(back, debt, cash, shares) if back is not None else None,
     }
 
-    r["exceeds_ceiling"] = bool(ceiling is not None and g > ceiling)
+    r["exceeds_ceiling"] = bool(ceiling is not None and g is not None and g > ceiling)
 
     if forward_g is not None:
         evf = ev_from_growth(fcff0, forward_g, wacc_val)
@@ -181,16 +184,19 @@ def compute(d: dict, basis: str | None = None,
         }
 
     centre = forward_g if forward_g is not None else g
-    gs = [centre - 0.01, centre - 0.005, centre, centre + 0.005, centre + 0.01]
-    ws = [wacc_val - 0.01, wacc_val - 0.005, wacc_val, wacc_val + 0.005, wacc_val + 0.01]
-    grid = []
-    for wv in ws:
-        row = []
-        for gv in gs:
-            e = ev_from_growth(fcff0, gv, wv)
-            row.append(None if e is None else equity_per_share(e, debt, cash, shares))
-        grid.append(row)
-    r["sensitivity"] = {"g_axis": gs, "wacc_axis": ws, "grid": grid}
+    if centre is None:
+        r["sensitivity"] = {"g_axis": [], "wacc_axis": [], "grid": []}
+    else:
+        gs = [centre - 0.01, centre - 0.005, centre, centre + 0.005, centre + 0.01]
+        ws = [wacc_val - 0.01, wacc_val - 0.005, wacc_val, wacc_val + 0.005, wacc_val + 0.01]
+        grid = []
+        for wv in ws:
+            row = []
+            for gv in gs:
+                e = ev_from_growth(fcff0, gv, wv)
+                row.append(None if e is None else equity_per_share(e, debt, cash, shares))
+            grid.append(row)
+        r["sensitivity"] = {"g_axis": gs, "wacc_axis": ws, "grid": grid}
 
     # Sumber yang masih bertanda placeholder. Angka boleh dihitung, tapi belum
     # boleh masuk deck sebelum tiap input punya URL yang bisa dibuka juri.
@@ -265,26 +271,29 @@ def main() -> int:
     ceiling = r["terminal_growth_ceiling"]
 
     print("\nREVERSE DCF — pertumbuhan yang diasumsikan pasar")
-    print(f"  g tersirat             {g * 100:13.2f}%")
+    if g is None:
+        print("  g tersirat             tidak terdefinisi (FCFF dasar <= 0)")
+    else:
+        print(f"  g tersirat             {g * 100:13.2f}%")
 
-    print(f"\n  Pemeriksaan sirkularitas:")
-    print(f"    g dimasukkan kembali → EV {fmt_t(c['ev_back'])}, masukan {fmt_t(ev)}"
-          f"  (selisih {c['drift_pct']:.4f}%)")
-    print(f"    Harga per lembar hasilnya {c['price_back']:,.0f}"
-          f" NTD, harga pasar {r['price_per_share']:,} NTD")
-    print(f"    Sama persis — itu identitas, bukan valuasi. Reverse DCF tidak bisa")
-    print(f"    dipakai untuk menilai murah atau mahal.")
+        print(f"\n  Pemeriksaan sirkularitas:")
+        print(f"    g dimasukkan kembali → EV {fmt_t(c['ev_back'])}, masukan {fmt_t(ev)}"
+              f"  (selisih {c['drift_pct']:.4f}%)")
+        print(f"    Harga per lembar hasilnya {c['price_back']:,.0f}"
+              f" NTD, harga pasar {r['price_per_share']:,} NTD")
+        print(f"    Sama persis — itu identitas, bukan valuasi. Reverse DCF tidak bisa")
+        print(f"    dipakai untuk menilai murah atau mahal.")
 
-    if ceiling:
-        print(f"\n  UJI KEWAJARAN")
-        print(f"    Batas pertumbuhan abadi {ceiling * 100:11.2f}%   (PDB nominal jangka panjang)")
-        if r["exceeds_ceiling"]:
-            print(f"    g tersirat {g * 100:.2f}% MELAMPAUI batas {ceiling * 100:.2f}%.")
-            print(f"    Pasar memberi harga untuk pertumbuhan yang tidak bisa")
-            print(f"    dipertahankan selamanya → indikasi OVERVALUED.")
-        else:
-            print(f"    g tersirat {g * 100:.2f}% masih di bawah batas {ceiling * 100:.2f}%.")
-            print(f"    Asumsi pasar tidak melanggar batas perpetuitas.")
+        if ceiling:
+            print(f"\n  UJI KEWAJARAN")
+            print(f"    Batas pertumbuhan abadi {ceiling * 100:11.2f}%   (PDB nominal jangka panjang)")
+            if r["exceeds_ceiling"]:
+                print(f"    g tersirat {g * 100:.2f}% MELAMPAUI batas {ceiling * 100:.2f}%.")
+                print(f"    Pasar memberi harga untuk pertumbuhan yang tidak bisa")
+                print(f"    dipertahankan selamanya → indikasi OVERVALUED.")
+            else:
+                print(f"    g tersirat {g * 100:.2f}% masih di bawah batas {ceiling * 100:.2f}%.")
+                print(f"    Asumsi pasar tidak melanggar batas perpetuitas.")
 
     # --- forward -----------------------------------------------------------
     if "forward" in r:

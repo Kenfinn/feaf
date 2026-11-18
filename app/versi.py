@@ -1,3 +1,3 @@
 """Nomor rilis FEAF. Naikkan saat memberi tag git (vX.Y.Z) — /sehat dan /docs menampilkannya."""
 
-VERSI = "1.3.2"
+VERSI = "1.3.3"
