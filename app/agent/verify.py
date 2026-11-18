@@ -192,6 +192,13 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
 def periksa_hasil(hasil: dict) -> list[dict]:
     """Pemeriksaan setelah kalkulator jalan."""
     drift = hasil["sesudah"]["circularity"]["drift_pct"]
+    if drift is None:
+        # FCFF sesudah skenario <= 0: reverse DCF tidak terdefinisi, jadi angka tidak bisa
+        # diperiksa. Gagal-aman: pengumuman ditahan untuk manusia, tidak diterbitkan.
+        return [_cek(
+            "Sirkularitas utuh", False,
+            "FCFF sesudah skenario tidak positif: reverse DCF tidak terdefinisi, hasil tidak bisa diperiksa",
+            "cek.sirkular", kunci_alasan="cek.sirkular.tak_terdefinisi")]
     utuh = drift < BATAS_DRIFT_PERSEN
     return [_cek(
         "Sirkularitas utuh",

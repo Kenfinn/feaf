@@ -101,7 +101,8 @@ def hitung_ulang(d: dict, input_nama: str, nilai: float) -> dict:
         "sesudah": sesudah,
         "delta": {
             "fcff0": sesudah["fcff0"] - sebelum["fcff0"],
-            "g_tersirat": sesudah["implied_growth"] - sebelum["implied_growth"],
+            "g_tersirat": (None if (sesudah["implied_growth"] is None or sebelum["implied_growth"] is None)
+                           else sesudah["implied_growth"] - sebelum["implied_growth"]),
             "nilai_wajar": (None if (wajar(sebelum) is None or wajar(sesudah) is None)
                             else wajar(sesudah) - wajar(sebelum)),
         },

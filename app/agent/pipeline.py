@@ -23,7 +23,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from .. import config, pasar, review, store, umpan_balik
+from .. import berkas, config, pasar, review, store, umpan_balik
 from . import extract, llm, recompute, screen, sinyal, triase, verify
 from ..i18n import pesan
 
@@ -428,10 +428,7 @@ def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str,
 
 
 def _simpan_jejak(hasil: dict) -> None:
-    os.makedirs(config.TRACE_DIR, exist_ok=True)
-    path = os.path.join(config.TRACE_DIR, f"{hasil['id']}.json")
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(hasil, f, ensure_ascii=False, indent=2)
+    berkas.tulis_json_atomik(os.path.join(config.TRACE_DIR, f"{hasil['id']}.json"), hasil, indent=2)
 
 
 def jalankan_semua() -> list[dict]:
@@ -439,8 +436,35 @@ def jalankan_semua() -> list[dict]:
     detail, _ = store.muat_detail()
     keluar = []
     for d in detail:
-        keluar.append(jalankan(d, store.muat_valuasi(d.get("code", ""))))
+        try:
+            keluar.append(jalankan(d, store.muat_valuasi(d.get("code", ""))))
+        except Exception as e:                        # noqa: BLE001 — satu pengumuman, bukan seluruh situs
+            h = _gagal_diproses(d, e)
+            if h is not None:
+                keluar.append(h)
     return keluar
+
+
+def _gagal_diproses(detail: dict, e: Exception) -> dict | None:
+    """Galat tak terduga di satu pengumuman: tahan untuk manusia, catat sebabnya, lanjut.
+
+    Sebelumnya satu pengumuman yang galat menghentikan jalankan_semua(), dan karena setiap
+    halaman membutuhkan hasilnya, seluruh situs menjadi 500.
+    """
+    galat = f"{type(e).__name__}: {e}"
+    print(f"[pipeline] {detail.get('code')} {detail.get('date')} gagal diproses: {galat}", flush=True)
+    try:
+        j = Jejak(store.id_pengumuman(detail))
+        j.catat("Galat pemrosesan", "gagal", {"pasal": detail.get("clause")}, {"galat": galat},
+                i18n=pesan("tahap.galat_proses"))
+        return _selesai(j, "ditahan", detail,
+                        {"tahan": {"jenis": "galat_proses", "boleh_setujui": False}},
+                        f"Galat saat memproses pengumuman ini ({galat}). Ditahan untuk diperiksa manusia.",
+                        pesan("akhir.galat_proses", galat=galat))
+    except Exception as e2:                           # noqa: BLE001
+        print(f"[pipeline] {detail.get('code')} dilewati, jejak galat pun gagal: {type(e2).__name__}: {e2}",
+              flush=True)
+        return None
 
 
 def muat_jejak(pengenal: str) -> dict | None:
