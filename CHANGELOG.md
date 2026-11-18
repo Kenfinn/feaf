@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.3.2 · 18 Nov 2026
+
+- Fix: every page returned 500 on feaf.web.id. Two threads (the automatic pull and a page
+  request) wrote the TWSE price cache through the same fixed `harga_twse.json.tmp`, leaving
+  valid JSON followed by leftover bytes ("Extra data"). The side menu and the pipeline read that
+  cache on every page and did not catch the error, and the cache was never fetched again
+  because the read failed before the refetch step.
+- Market caches (`app/pasar.py`): a corrupt cache file is now treated as missing, logged as
+  `[pasar] cache <name> rusak, diabaikan`, fetched again and overwritten. The site recovers on
+  its own; no manual cleanup of `/data/pasar/` is needed after deploying this version.
+- JSON files are written through `app/berkas.py` (`tulis_json_atomik`), which gives each writer
+  its own temporary file before `os.replace`. Used by the market caches, the filing store and
+  pull status (`app/tarik.py`), and the triage thresholds (`app/umpan_balik.py`), which had the
+  same fixed `.tmp` name.
+- Tests: `tests/test_berkas_atomik.py` (11 tests: corrupt cache ignored and refetched, side menu
+  and pipeline unaffected, concurrent writers leave valid JSON and no `.tmp`); 324 tests.
+
 ## 1.3.1 · 14 Nov 2026
 
 - Privacy (PDPA data minimisation): raw OpenAPI snapshots in `DATA_DIR/raw/openapi/` are now
